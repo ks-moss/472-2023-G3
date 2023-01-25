@@ -1,7 +1,7 @@
 # 472-2023-G3
 
-Names	Email	Discord-ID	
-Anthony Deleon	deleoa5@unlv.nevada.edu	Aizawa#1337	
+# Names	Email	Discord-ID	
+Anthony Deleon	deleoa5@unlv.nevada.edu	Aizawa#1337
 Conner Weiss	weissc2@unlv.nevada.edu	Conner Weiss#8861	
 Cody Nguyen	nguyec15@unlv.nevada.edu	Proxhi#5186	
 Cody Wine	winec1@unlv.nevada.edu	Cody#3158	
