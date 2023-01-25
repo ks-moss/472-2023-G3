@@ -1,4 +1,4 @@
-# 472-2023-GROUP 3
+# 472-2023-GROUP-3
 
 # Names	Email	Discord-ID	
 Anthony Deleon	deleoa5@unlv.nevada.edu	Aizawa#1337
