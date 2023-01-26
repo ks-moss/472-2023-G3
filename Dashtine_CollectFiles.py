@@ -66,8 +66,7 @@ repo = 'scottyab/rootbeer'
 # I would advise to create more than one token for repos with heavy commits
 lstTokens = ["fd02a694b606c4120b8ca7bbe7ce29229376ee",
                 "16ce529bdb32263fb90a392d38b5f53c7ecb6b",
-                "8cea5715051869e98044f38b60fe897b350d4a",
-                "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"]
+                "8cea5715051869e98044f38b60fe897b350d4a"]
 
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)
