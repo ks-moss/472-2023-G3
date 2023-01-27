@@ -50,7 +50,8 @@ def countfiles(dictfiles, lsttokens, repo):
                     if (len(filename) > 5):
                         if (filename[-5:] == ".java"):
                             dictfiles[filename] = dictfiles.get(filename, 0) + 1
-                            print(filename)
+                            #print(filename)
+                            edits.append([filename, shaDetails["commit"]["author"]["name"], shaDetails["commit"]["author"]["date"]])
             ipage += 1
     except:
         print("Error receiving data")
@@ -67,6 +68,9 @@ repo = 'scottyab/rootbeer'
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
 lstTokens = ["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"]
+
+#array of fileEdits
+edits = []
 
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)
@@ -90,3 +94,8 @@ for filename, count in dictfiles.items():
         bigfilename = filename
 fileCSV.close()
 print('The file ' + bigfilename + ' has been touched ' + str(bigcount) + ' times.')
+
+plotData = open("plotdata.txt", "w")
+for x in edits:
+    plotData.write(x[0] + "\n" + x[1] + "\n" + x[2] + "\n")
+plotData.close()
