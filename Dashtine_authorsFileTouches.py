@@ -50,7 +50,6 @@ def countfiles(dictfiles, lsttokens, repo):
                 filesjson = shaDetails['files']
 
                 cmtAuth = shaDetails['commit']
-          #      authObj = cmtAuth.get('author')
                 authObj = cmtAuth['author']
                 authDate = authObj['date']
                 authName = authObj['name']
