@@ -42,6 +42,7 @@ def countfiles(dictfiles, lsttokens, repo):
             for shaObject in jsonCommits:
                 sha = shaObject['sha']
                 author = shaObject['commit']['author']['name']
+                date = shaObject['commit']['author']['date']
                 # For each commit, use the GitHub commit API to extract the files touched by the commit
                 shaUrl = 'https://api.github.com/repos/' + repo + '/commits/' + sha
                 shaDetails, ct = github_auth(shaUrl, lsttokens, ct)
@@ -52,6 +53,8 @@ def countfiles(dictfiles, lsttokens, repo):
                         dictfiles[filename] = dictfiles.get(filename, [0,''])
                         dictfiles[filename][0] += 1
                         dictfiles[filename][1] = author
+                        dictfiles[filename].append(date)
+                        dictfiles[filename].append(author)
                         print(filename)
             ipage += 1
     except:
@@ -68,9 +71,9 @@ repo = 'scottyab/rootbeer'
 # Remember to empty the list when going to commit to GitHub.
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
-lstTokens = ["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123",
-                "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456",
-                "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789"]
+lstTokens = ["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",
+                "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",
+                "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"]
 
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)
@@ -87,7 +90,7 @@ writer.writerow(rows)
 bigcount = None
 bigfilename = None
 for filename, count in dictfiles.items():
-    rows = [filename, count]
+    rows = [filename, count, dictfiles[filename][1], dictfiles[filename][2], dictfiles[filename][3]]
     writer.writerow(rows)
     if bigcount is None or count > bigcount:
         bigcount = count
