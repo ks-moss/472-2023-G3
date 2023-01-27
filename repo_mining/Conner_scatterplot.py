@@ -50,9 +50,12 @@ for name in fileAuthors:
         if (trackNames[i][0] == name):
             trackNames[i][1] = trackNames[i][1] + 1
 bestPerformer = trackNames[0]
+worstPerformer = trackNames[0]
 for i in range(0, len(trackNames)):
     if (trackNames[i][1] > bestPerformer[1]):
         bestPerformer = trackNames[i]
+    if (trackNames[i][1] < worstPerformer[1]):
+        worstPerformer = trackNames[i]
 
 #convert time string to date object
 for i in range(0, len(fileTimes)):
@@ -91,7 +94,8 @@ for i in range(0, len(fileNames)):
 print(len(fileNames))
 print(len(fileAuthors))
 print(len(fileTimes))
-print(bestPerformer)
+print("Best: ", bestPerformer)
+print("Worst: ", worstPerformer)
 
 plt.scatter(fileNames, fileTimes, c=fileAuthors)
 plt.gray()
