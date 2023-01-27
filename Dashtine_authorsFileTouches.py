@@ -10,6 +10,7 @@ if not os.path.exists("data"):
 # GitHub Authentication function
 def github_auth(url, lsttoken, ct):
     jsonData = None
+    
     try:
         ct = ct % len(lstTokens)
         headers = {'Authorization': 'Bearer {}'.format(lsttoken[ct])}
@@ -26,18 +27,20 @@ def github_auth(url, lsttoken, ct):
 # @repo, GitHub repo
 def countfiles(dictfiles, lsttokens, repo):
     ipage = 1  # url page counter
+    unique_authCount = 0 
+    dict_authors = dict()
     ct = 0  # token counter
-
     try:
         # loop though all the commit pages until the last returned empty page
         while True:
             spage = str(ipage)
             commitsUrl = 'https://api.github.com/repos/' + repo + '/commits?page=' + spage + '&per_page=100'
             jsonCommits, ct = github_auth(commitsUrl, lsttokens, ct)
-
             # break out of the while loop if there are no more commits in the pages
             if len(jsonCommits) == 0:
                 break
+
+            
             # iterate through the list of commits in  spage
             for shaObject in jsonCommits:
                 sha = shaObject['sha']
@@ -45,14 +48,40 @@ def countfiles(dictfiles, lsttokens, repo):
                 shaUrl = 'https://api.github.com/repos/' + repo + '/commits/' + sha
                 shaDetails, ct = github_auth(shaUrl, lsttokens, ct)
                 filesjson = shaDetails['files']
+
+                cmtAuth = shaDetails['commit']
+          #      authObj = cmtAuth.get('author')
+                authObj = cmtAuth['author']
+                authDate = authObj['date']
+                authName = authObj['name']
                 for filenameObj in filesjson:
                     filename = filenameObj['filename']
-                    dictfiles[filename] = dictfiles.get(filename, 0) + 1
-                    print(filename)
+                    name_split = os.path.splitext(filename)
+                    file_ext = name_split[1]
+                    if file_ext == ".java":
+                        dictfiles[filename] = dictfiles.get(filename, 0) + 1
+                        unique_authCount += 1
+                        if dict_authors.get(authName) is not None:
+                            auth_val = dict_authors[authName]
+                            dict_authors[authName] = auth_val + 1
+                        else:
+                            dict_authors[authName] = 1
+
+                        print(filename)
+                        newRow = [str(filename), str(authName), str(authDate)]
+                        with open("myCSV.csv", "a") as filestream:
+                            writer = csv.writer(filestream)
+                            writer.writerow(newRow)
+                            filestream.close()
+
             ipage += 1
     except:
         print("Error receiving data")
         exit(0)
+    print(dict_authors)
+    print("Total number of authors who touched unique files = " + str(len(dict_authors)))
+    
+
 # GitHub repo
 repo = 'scottyab/rootbeer'
 # repo = 'Skyscanner/backpack' # This repo is commit heavy. It takes long to finish executing
@@ -67,24 +96,15 @@ repo = 'scottyab/rootbeer'
 lstTokens = ["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"]
 
 dictfiles = dict()
-countfiles(dictfiles, lstTokens, repo)
-print('Total number of files: ' + str(len(dictfiles)))
 
 file = repo.split('/')[1]
 # change this to the path of your file
-fileOutput = 'data/file_' + file + '.csv'
-rows = ["Filename", "Touches"]
+fileOutput = 'myCSV.csv'
+rows = ["Filename", "Author", "Date"]
 fileCSV = open(fileOutput, 'w')
 writer = csv.writer(fileCSV)
 writer.writerow(rows)
-
-bigcount = None
-bigfilename = None
-for filename, count in dictfiles.items():
-    rows = [filename, count]
-    writer.writerow(rows)
-    if bigcount is None or count > bigcount:
-        bigcount = count
-        bigfilename = filename
 fileCSV.close()
-print('The file ' + bigfilename + ' has been touched ' + str(bigcount) + ' times.')
+
+countfiles(dictfiles, lstTokens, repo)
+print('Total number of files: ' + str(len(dictfiles)))
