@@ -3,7 +3,7 @@
 
 # 472-2023-GROUP-3
 
-#Names	Email	Discord-ID
+# Names	Email	Discord-ID
 
 Krisada Sinamkam	sinamkam@unlv.nevada.edu	Moss#1160
 Anthony Deleon	deleoa5@unlv.nevada.edu	Aizawa#1337
