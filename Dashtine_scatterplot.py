@@ -34,11 +34,9 @@ with open("myCSV.csv", 'r') as file:
             dictFiles[file_name][line['Author']] = line['Date']
 
 
-x =[5, 7, 8, 7, 2, 17, 2, 9,
-    4, 11, 12, 9, 6]
+x =[3, 2, 1]
  
-y =[99, 86, 87, 88, 100,
-    103, 87, 94, 78, 77, 85, 86, 24]
+y =[1, 2, 3]
  
 plt.scatter(x, y, c =rand_color)
 plt.xlabel("File")
