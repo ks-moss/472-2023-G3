@@ -97,5 +97,5 @@ print('The file ' + bigfilename + ' has been touched ' + str(bigcount) + ' times
 
 plotData = open("plotdata.txt", "w")
 for x in edits:
-    plotData.write(x[0] + "\n" + x[1] + "\n" + x[2] + "\n")
+    plotData.write(x[0] + "," + x[1] + "," + x[2] + "\n")
 plotData.close()

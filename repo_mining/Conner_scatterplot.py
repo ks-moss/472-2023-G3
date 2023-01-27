@@ -39,6 +39,21 @@ for c in contents:
             target = "fileNames"
 #fileTimes.append(fileTime)
 
+trackNames = []
+for name in fileAuthors:
+    if not(name in trackNames):
+        trackNames.append(name)
+for i in range(0, len(trackNames)):
+    trackNames[i] = [trackNames[i], 1]
+for name in fileAuthors:
+    for i in range(0, len(trackNames)):
+        if (trackNames[i][0] == name):
+            trackNames[i][1] = trackNames[i][1] + 1
+bestPerformer = trackNames[0]
+for i in range(0, len(trackNames)):
+    if (trackNames[i][1] > bestPerformer[1]):
+        bestPerformer = trackNames[i]
+
 #convert time string to date object
 for i in range(0, len(fileTimes)):
     year = fileTimes[i][:4]
@@ -76,6 +91,7 @@ for i in range(0, len(fileNames)):
 print(len(fileNames))
 print(len(fileAuthors))
 print(len(fileTimes))
+print(bestPerformer)
 
 plt.scatter(fileNames, fileTimes, c=fileAuthors)
 plt.gray()
