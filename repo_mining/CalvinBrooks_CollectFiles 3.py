@@ -45,11 +45,16 @@ def countfiles(dictfiles, lsttokens, repo):
                 shaUrl = 'https://api.github.com/repos/' + repo + '/commits/' + sha
                 shaDetails, ct = github_auth(shaUrl, lsttokens, ct)
                 filesjson = shaDetails['files']
-                for filenameObj in filesjson:
-                    filename = filenameObj['filename']
-                    if ".java" in filename:
+                for filenameObj in filesjson:    #NEED TO FILTER SOURCE FILES HERE
+                    filename = filenameObj['filename'] #This creates string of filename
+                    nameLength = len(filename) #.java is five characters so find the final five of string and compare
+                    ending = filename[nameLength - 5: nameLength] #slicing to find final five of file
+                    desiredEnding = ".java"             #we want to check sliced string against this 'desired' string
+                    if(ending == desiredEnding):       #if file ends in .java, add it
                         dictfiles[filename] = dictfiles.get(filename, 0) + 1
                         print(filename)
+                    
+                    
             ipage += 1
     except:
         print("Error receiving data")
@@ -65,7 +70,12 @@ repo = 'scottyab/rootbeer'
 # Remember to empty the list when going to commit to GitHub.
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
-lstTokens = ["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"]
+#lstTokens = ["fd02a694b606c4120b8ca7bbe7ce29229376ee",
+                #"16ce529bdb32263fb90a392d38b5f53c7ecb6b",
+                #"8cea5715051869e98044f38b60fe897b350d4a"]
+                
+#REMOVE BEFORE COMMITTING
+#lstTokens = ["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"]
 
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)

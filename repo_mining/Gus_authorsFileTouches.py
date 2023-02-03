@@ -7,6 +7,12 @@ import os
 if not os.path.exists("data"):
  os.makedirs("data")
 
+class touch:
+    def __init__(self, author, date, file):
+        self.author = author
+        self.date = date
+        self.file = file
+
 # GitHub Authentication function
 def github_auth(url, lsttoken, ct):
     jsonData = None
@@ -24,7 +30,7 @@ def github_auth(url, lsttoken, ct):
 # @dictFiles, empty dictionary of files
 # @lstTokens, GitHub authentication tokens
 # @repo, GitHub repo
-def countfiles(dictfiles, lsttokens, repo):
+def counttouches(dictfiles, lsttokens, repo, lsttouches):
     ipage = 1  # url page counter
     ct = 0  # token counter
 
@@ -45,15 +51,26 @@ def countfiles(dictfiles, lsttokens, repo):
                 shaUrl = 'https://api.github.com/repos/' + repo + '/commits/' + sha
                 shaDetails, ct = github_auth(shaUrl, lsttokens, ct)
                 filesjson = shaDetails['files']
+                commitDetails = shaDetails['commit']
+                authorDetails = commitDetails['author']
+                name = authorDetails['name']
+                date = authorDetails['date']
+                lstfilestouched = []
                 for filenameObj in filesjson:
-                    filename = filenameObj['filename']
-                    if ".java" in filename:
+                    if (filenameObj['filename'].endswith('.java') or filenameObj['filename'].endswith('.kt') 
+                        or filenameObj['filename'].endswith('.c') or filenameObj['filename'].endswith('.cpp') 
+                        or filenameObj['filename'].endswith('.cmake')): 
+                        filename = filenameObj['filename']
                         dictfiles[filename] = dictfiles.get(filename, 0) + 1
-                        print(filename)
+                        lstfilestouched.append(filename)
+                for touchedfile in lstfilestouched:
+                    lsttouches.append(touch(name, date, touchedfile))
+                    # print('Author\'s name: ' + name + ' Date touched: ' + date + ' File: ' + filename)
             ipage += 1
     except:
         print("Error receiving data")
         exit(0)
+
 # GitHub repo
 repo = 'scottyab/rootbeer'
 # repo = 'Skyscanner/backpack' # This repo is commit heavy. It takes long to finish executing
@@ -65,27 +82,26 @@ repo = 'scottyab/rootbeer'
 # Remember to empty the list when going to commit to GitHub.
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
-lstTokens = ["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"]
+lstTokens = ["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"]
 
 dictfiles = dict()
-countfiles(dictfiles, lstTokens, repo)
+lsttouches = []
+counttouches(dictfiles, lstTokens, repo, lsttouches)
+
 print('Total number of files: ' + str(len(dictfiles)))
 
 file = repo.split('/')[1]
 # change this to the path of your file
-fileOutput = 'data/file_' + file + '.csv'
-rows = ["Filename", "Touches"]
+fileOutput = 'data/file_' + file + '_touches.csv'
+rows = ["Author", "Date", "Filename"]
 fileCSV = open(fileOutput, 'w')
 writer = csv.writer(fileCSV)
 writer.writerow(rows)
 
-bigcount = None
-bigfilename = None
-for filename, count in dictfiles.items():
-    rows = [filename, count]
+for touchObj in lsttouches:
+    author = touchObj.author
+    date = touchObj.date
+    filename = touchObj.file
+    rows = [author, date, filename]
     writer.writerow(rows)
-    if bigcount is None or count > bigcount:
-        bigcount = count
-        bigfilename = filename
 fileCSV.close()
-print('The file ' + bigfilename + ' has been touched ' + str(bigcount) + ' times.')

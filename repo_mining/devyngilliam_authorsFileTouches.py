@@ -47,7 +47,7 @@ def countfiles(dictfiles, lsttokens, repo):
                 filesjson = shaDetails['files']
                 for filenameObj in filesjson:
                     filename = filenameObj['filename']
-                    if ".java" in filename:
+                    if filename.endswith(".java"):
                         dictfiles[filename] = dictfiles.get(filename, 0) + 1
                         print(filename)
             ipage += 1
@@ -65,7 +65,7 @@ repo = 'scottyab/rootbeer'
 # Remember to empty the list when going to commit to GitHub.
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
-lstTokens = ["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"]
+lstTokens = ["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"]
 
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)

@@ -24,6 +24,9 @@ def github_auth(url, lsttoken, ct):
 # @dictFiles, empty dictionary of files
 # @lstTokens, GitHub authentication tokens
 # @repo, GitHub repo
+
+edits = []
+
 def countfiles(dictfiles, lsttokens, repo):
     ipage = 1  # url page counter
     ct = 0  # token counter
@@ -47,10 +50,17 @@ def countfiles(dictfiles, lsttokens, repo):
                 filesjson = shaDetails['files']
                 for filenameObj in filesjson:
                     filename = filenameObj['filename']
-                    if ".java" in filename:
-                        dictfiles[filename] = dictfiles.get(filename, 0) + 1
-                        print(filename)
+                    dictfiles[filename] = dictfiles.get(filename, 0) + 1
+                    #print(filename)
+                    index = filename.find(".java")
+                    if (index > 0):
+                        edits.append([filename, shaDetails["commit"]["author"]["name"], shaDetails["commit"]["author"]["date"]])
             ipage += 1
+
+            
+            for x in edits:
+                print(x)
+
     except:
         print("Error receiving data")
         exit(0)
@@ -65,7 +75,7 @@ repo = 'scottyab/rootbeer'
 # Remember to empty the list when going to commit to GitHub.
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
-lstTokens = ["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"]
+lstTokens = ["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00"] #added 2 zeros
 
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)
@@ -87,5 +97,12 @@ for filename, count in dictfiles.items():
     if bigcount is None or count > bigcount:
         bigcount = count
         bigfilename = filename
+        #print('The file ' + bigfilename + ' has been touched ' + str(bigcount) + ' times.')
 fileCSV.close()
-print('The file ' + bigfilename + ' has been touched ' + str(bigcount) + ' times.')
+#print('The file ' + bigfilename + ' has been touched ' + str(bigcount) + ' times.')
+
+#write results to a file
+openSesame = open("fileAuthorDate.txt", "w")
+for x in edits:
+    openSesame.write(x[0] + "," + x[1] + "," + x[2] + "\n")
+openSesame.close
