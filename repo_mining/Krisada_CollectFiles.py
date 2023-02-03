@@ -1,7 +1,6 @@
 import json
 import requests
 import csv
-
 import os
 
 if not os.path.exists("data"):
@@ -47,9 +46,8 @@ def countfiles(dictfiles, lsttokens, repo):
                 filesjson = shaDetails['files']
                 for filenameObj in filesjson:
                     filename = filenameObj['filename']
-                    if ".java" in filename:
-                        dictfiles[filename] = dictfiles.get(filename, 0) + 1
-                        print(filename)
+                    dictfiles[filename] = dictfiles.get(filename, 0) + 1
+                    print(filename)
             ipage += 1
     except:
         print("Error receiving data")
@@ -65,7 +63,9 @@ repo = 'scottyab/rootbeer'
 # Remember to empty the list when going to commit to GitHub.
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
-lstTokens = ["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"]
+lstTokens = ["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  (REMOVE-THIS)",
+                "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  (REMOVE-THIS)",
+                "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  (REMOVE-THIS)"]
 
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)

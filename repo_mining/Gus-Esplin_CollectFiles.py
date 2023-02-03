@@ -46,8 +46,12 @@ def countfiles(dictfiles, lsttokens, repo):
                 shaDetails, ct = github_auth(shaUrl, lsttokens, ct)
                 filesjson = shaDetails['files']
                 for filenameObj in filesjson:
-                    filename = filenameObj['filename']
-                    if ".java" in filename:
+                    ### Gus Esplin - The only change I made to the file is this if statement. The script now only
+                    ### includes source files
+                    if (filenameObj['filename'].endswith('.java') or filenameObj['filename'].endswith('.kt') 
+                        or filenameObj['filename'].endswith('.c') or filenameObj['filename'].endswith('.cpp') 
+                        or filenameObj['filename'].endswith('.cmake')): 
+                        filename = filenameObj['filename']
                         dictfiles[filename] = dictfiles.get(filename, 0) + 1
                         print(filename)
             ipage += 1
@@ -65,7 +69,7 @@ repo = 'scottyab/rootbeer'
 # Remember to empty the list when going to commit to GitHub.
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
-lstTokens = ["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"]
+lstTokens = ["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"]
 
 dictfiles = dict()
 countfiles(dictfiles, lstTokens, repo)

@@ -21,10 +21,12 @@ def github_auth(url, lsttoken, ct):
         print(e)
     return jsonData, ct
 
-# @dictFiles, empty dictionary of files
+
+# @dictAuthors, empty dictionary of authors and dates
 # @lstTokens, GitHub authentication tokens
 # @repo, GitHub repo
-def countfiles(dictfiles, lsttokens, repo):
+# @fileData, data from csv file of file names
+def countfiles(dictAuthors, lsttokens, repo, fileNames):
     ipage = 1  # url page counter
     ct = 0  # token counter
 
@@ -45,11 +47,15 @@ def countfiles(dictfiles, lsttokens, repo):
                 shaUrl = 'https://api.github.com/repos/' + repo + '/commits/' + sha
                 shaDetails, ct = github_auth(shaUrl, lsttokens, ct)
                 filesjson = shaDetails['files']
+                # Get the author and date of commit
+                author = shaDetails['commit']['author']['name']
+                date = shaDetails['commit']['author']['date']
+
                 for filenameObj in filesjson:
                     filename = filenameObj['filename']
-                    if ".java" in filename:
-                        dictfiles[filename] = dictfiles.get(filename, 0) + 1
-                        print(filename)
+                    if filename in fileNames:
+                        dictAuthors.append({'file': filename, 'author': author, 'date': date})
+                        print(filename, author, date)
             ipage += 1
     except:
         print("Error receiving data")
@@ -65,27 +71,28 @@ repo = 'scottyab/rootbeer'
 # Remember to empty the list when going to commit to GitHub.
 # Otherwise they will all be reverted and you will have to re-create them
 # I would advise to create more than one token for repos with heavy commits
-lstTokens = ["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"]
+lstTokens = [""]
 
-dictfiles = dict()
-countfiles(dictfiles, lstTokens, repo)
-print('Total number of files: ' + str(len(dictfiles)))
+# collect data from file_rootbeer.csv
+fileData = []
+with open('data/file_rootbeer.csv') as file:
+    csvFile = csv.DictReader(file)
+    for row in csvFile:
+        fileData.append(row['Filename'])
+
+dictAuthors = []
+countfiles(dictAuthors, lstTokens, repo, fileData)
+print('Total number of commits: ' + str(len(dictAuthors)))
 
 file = repo.split('/')[1]
 # change this to the path of your file
-fileOutput = 'data/file_' + file + '.csv'
-rows = ["Filename", "Touches"]
+fileOutput = 'data/commits_' + file + '.csv'
+rows = ["Filename", "Author", "Date"]
 fileCSV = open(fileOutput, 'w')
 writer = csv.writer(fileCSV)
 writer.writerow(rows)
 
-bigcount = None
-bigfilename = None
-for filename, count in dictfiles.items():
-    rows = [filename, count]
+for x in dictAuthors:
+    rows = [x['file'], x['author'], x['date']]
     writer.writerow(rows)
-    if bigcount is None or count > bigcount:
-        bigcount = count
-        bigfilename = filename
 fileCSV.close()
-print('The file ' + bigfilename + ' has been touched ' + str(bigcount) + ' times.')
