@@ -1,6 +1,7 @@
 # Element class
 # attributes:
 #	attributeListDictionary - dictionary of attributes
+#	elementType - 
 # methods:
 #	Append
 #	__getitem__ overload
@@ -15,9 +16,11 @@ class Element:
 	# postcondition:
 	#	new Element instance exists with attributeValueList
 	#	defined by parameters
-	def __init__(self, attributeTypeList = [], attributeValueList = []):
+	def __init__(self, elementType = "VEHICLE", attributeTypeList = [], attributeValueList = []):
 		assert len(attributeTypeList) == len(attributeValueList)
+		assert (elementType in ["VEHICLE", "TRAFFIC LIGHT", "ROAD", "VEHICLE GENERATOR"])
 		self.attributeListDictionary = {}
+		self.elementType = elementType
 		for i in range(0, len(attributeTypeList)):
 			self.attributeListDictionary.update({attributeTypeList[i]: attributeValueList[i]})
 	# Append
@@ -63,6 +66,7 @@ class Element:
 #	GetElementsByAttributeType
 #	PrintElements
 #	AppendElement
+#	ReadElementsFromFile
 class TrafficSystem:
 	# Constructor
 	# parameters:
@@ -100,3 +104,89 @@ class TrafficSystem:
 	#	elementList now contains [element]
 	def AppendElement(self, element):
 		self.elementList.append(element)
+	# ReadAttributesFromString
+	# parameters:
+	#	input
+	# precondition:
+	#	input contains a formatted Attribute description
+	# postcondition:
+	#	input no longer contains the formatted Attribute description
+	# returns:
+	#	input
+	#	attributeTypeList
+	#	attributeValueList
+	def ReadAttributesFromString(self, input):
+		attributeTypeList = []
+		attributeValueList = []
+		while (True):
+			openBraceIndex = 0
+			while (input[openBraceIndex] != '<'):
+				openBraceIndex += 1
+			assert (openBraceIndex < len(input))
+			input = input[openBraceIndex:]
+			openBraceIndex = 0
+			closeBraceIndex = openBraceIndex + 1
+			while (input[closeBraceIndex] != '>'):
+				if (input[closeBraceIndex] == '/'):
+					return (input, attributeTypeList, attributeValueList)
+				closeBraceIndex += 1
+			assert (closeBraceIndex < len(input))
+			attributeTypeList.append(input[openBraceIndex + 1: closeBraceIndex])
+			input = input[closeBraceIndex + 1:]
+			openBraceIndex = 0
+			while (input[openBraceIndex] != '<'):
+				openBraceIndex += 1
+			assert (openBraceIndex < len(input))
+			attributeValueList.append(input[:openBraceIndex])
+			closeBraceIndex = openBraceIndex + 1
+			while (input[closeBraceIndex] != '>'):
+				closeBraceIndex += 1
+			assert (closeBraceIndex < len(input))
+			assert (input[openBraceIndex + 1: closeBraceIndex] == "/" + attributeTypeList[len(attributeTypeList) - 1])
+			input = input[closeBraceIndex + 1:]
+	# ReadElementsFromString
+	# parameters:
+	#	input
+	# precondition:
+	#	input contains a formatted TrafficSystem description
+	# postcondition:
+	#	TrafficSystem contains Elements described in file
+	def ReadElementsFromString(self, input):
+		while (input != ""):
+			openBraceIndex = 0
+			while (input[openBraceIndex] != '<'):
+				openBraceIndex += 1
+			assert (openBraceIndex < len(input))
+			input = input[openBraceIndex:]
+			openBraceIndex = 0
+			closeBraceIndex = openBraceIndex + 1
+			while (input[closeBraceIndex] != '>'):
+				closeBraceIndex += 1
+			assert (closeBraceIndex < len(input))
+			elementType = input[openBraceIndex + 1: closeBraceIndex]
+			assert (elementType != "")
+			input = input[closeBraceIndex + 1:]
+			input, attributeTypeList, attributeValueList = self.ReadAttributesFromString(input)
+			openBraceIndex = 0
+			while (input[openBraceIndex] != '<'):
+				openBraceIndex += 1
+			assert(openBraceIndex < len(input))
+			closeBraceIndex = openBraceIndex + 1
+			while (input[closeBraceIndex] != '>'):
+				closeBraceIndex += 1
+			assert (input[openBraceIndex + 1: closeBraceIndex] == "/" + elementType)
+			element = Element(elementType, attributeTypeList, attributeValueList)
+			self.AppendElement(element)
+			input = input[closeBraceIndex + 1:]
+	# ReadElementsFromFile
+	# parameters:
+	#	filename
+	# precondition:
+	#	file exists with formatted TrafficSystem description
+	# postcondition:
+	#	TrafficSystem contains Elements described in file
+	def ReadElementsFromFile(self, filename):
+		file = open(filename, "r")
+		fileString = file.read()
+		file.close()
+		self.ReadElementsFromString(fileString)
