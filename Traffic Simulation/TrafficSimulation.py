@@ -57,7 +57,7 @@ class Element:
 	# returns:
 	#	attributeListDictionary.__str__()
 	def __str__(self):
-		return self.attributeListDictionary.__str__()
+		return (self.elementType, self.attributeListDictionary).__str__()
 
 # TrafficSystem class
 # attributes:
@@ -156,6 +156,8 @@ class TrafficSystem:
 			openBraceIndex = 0
 			while (input[openBraceIndex] != '<'):
 				openBraceIndex += 1
+				if (openBraceIndex >= len(input)):
+					return
 			assert (openBraceIndex < len(input))
 			input = input[openBraceIndex:]
 			openBraceIndex = 0
@@ -167,6 +169,7 @@ class TrafficSystem:
 			assert (elementType != "")
 			input = input[closeBraceIndex + 1:]
 			input, attributeTypeList, attributeValueList = self.ReadAttributesFromString(input)
+			assert(input != "")
 			openBraceIndex = 0
 			while (input[openBraceIndex] != '<'):
 				openBraceIndex += 1
