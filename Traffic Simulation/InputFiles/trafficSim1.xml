@@ -1,19 +1,17 @@
-<root>
-	<ROAD>
-		<name>Rochelle</name>
-		<length>500</length>
-	</ROAD>
-	<TRAFFICLIGHT>
-		<road>Rochelle</road>
-		<position>400</position>
-		<cycle>30</cycle>
-	</TRAFFICLIGHT>
-	<VEHICLE>
-		<road>Rochelle</road>
-		<position>20</position>
-	</VEHICLE>
-	<VEHICLE>
-		<road>Rochelle</road>
-		<position>0</position>
-	</VEHICLE>
-</root>
+<ROAD>
+	<name>Rochelle</name>
+	<length>500</length>
+</ROAD>
+<TRAFFICLIGHT>
+	<road>Rochelle</road>
+	<position>400</position>
+	<cycle>30</cycle>
+</TRAFFICLIGHT>
+<VEHICLE>
+	<road>Rochelle</road>
+	<position>20</position>
+</VEHICLE>
+<VEHICLE>
+	<road>Rochelle</road>
+	<position>0</position>
+</VEHICLE>
