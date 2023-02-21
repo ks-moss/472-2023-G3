@@ -1,64 +1,92 @@
 from TrafficSimulation2 import TrafficSystem
 import math
 
-trafficSystem = TrafficSystem()
-trafficSystem.ReadElementsFromFile("./InputFiles/trafficSim2.xml")
-
-vehicles = trafficSystem.vehicleList
-# Appendix B.6 - Default Values
-length = 4
-maximumSpeed = 16.6
-maximumAcceleration = 1.44
-maximumBrakingFactor = 4.61
-minimumFollowingDistance = 4
-simulationTime = 0.0166
-decelerationDistance = 50
-stoppingDistance = 15
-delayFactor = 0.4
-
-# 3.1 - Calculate the Speed and Position of Vehicle
-def calculateVehicleSpeedAndPosition(vehicleIndex):
-    vehicle = vehicles[vehicleIndex]
-    speed = maximumSpeed
-    position = 0
-    acceleration = calculateAcceleration(vehicleIndex - 1, vehicleIndex)
-    if (speed + acceleration*simulationTime) < 0:
-        position = position - (speed*speed)/2*acceleration
-        speed = 0
-    else:
-        speed = speed + acceleration*simulationTime
-        position = position + speed*simulationTime + acceleration*((simulationTime*simulationTime)/2)
-
-    #DEBUG
-    #print("Speed: ", speed)
-    #print("Position ", position)
-    return [speed, position]
-
-def calculateAcceleration(frontVehicleIndex, backVehicleIndex):
-    try:
-        frontVehicle = vehicles[frontVehicleIndex]
-    except NameError:
-        vehicleExists = False
-    else:
-        vehicleExists = True
-
-    backVehicle = vehicles[backVehicleIndex]  
-
-    speed = maximumSpeed
-
-    positionDifference = frontVehicle["position"] - backVehicle["position"] - length
-
-    speedDifference = 0 # It should be backVehicleSpeed - frontVehicleSpeed
-
-    if(vehicleExists == True):
-        vehicleInteration = (minimumFollowingDistance + max(0, speed + ((maximumSpeed*speedDifference)/(2*math.sqrt(maximumAcceleration*maximumBrakingFactor))))/positionDifference)
-    else:
-        vehicleInteration = 0
+class MovingVehicle:
     
-    acceleration = maximumAcceleration*(1 - (speed/maximumSpeed)**4 - vehicleInteration**2)
+    def __init__(self):
 
-    #DEBUG
-    #print("Acceleration: ", acceleration)
-    return acceleration
+        self.trafficSystem = TrafficSystem()
+        self.trafficSystem.ReadElementsFromFile("./InputFiles/trafficSim2.xml")
 
-calculateVehicleSpeedAndPosition(1)
+        self.vehicles = self.trafficSystem.vehicleList
+
+        # Appendix B.6 - Default Values
+        self.length = 4
+        self.maximumSpeed = 16.6
+        self.maximumAcceleration = 1.44
+        self.maximumBrakingFactor = 4.61
+        self.minimumFollowingDistance = 4
+        self.simulationTime = 0.0166
+        self.decelerationDistance = 50
+        self.stoppingDistance = 15
+        self.delayFactor = 0.4
+
+        # Calculate the New Speed and Position of Vehicle
+        # parameters:
+        #   vehicleIndex - The index of the vehicle inside of the list
+        #   currentSpeed - The current speed of the vehicle being calculated
+        #   currentAcceleration - The current acceleration of the vehicle being calculated
+        # returns:
+        #   speed - The new speed of the vehicle
+        #   position - The new position of the vehicle
+    def calculateVehicleSpeedAndPosition(self, vehicleIndex, currentSpeed, currentAcceleration):
+        vehicle = self.vehicles[vehicleIndex]
+        speed = currentSpeed
+        position = vehicle["position"]
+        acceleration = currentAcceleration
+        if (speed + acceleration*self.simulationTime) < 0:
+            position = position - (speed*speed)/2*acceleration
+            speed = 0
+        else:
+            speed = speed + acceleration*self.simulationTime
+            position = position + (speed*self.simulationTime) + acceleration*((self.simulationTime*self.simulationTime)/2)
+
+        #vehicle["speed"] = speed
+        #DEBUG
+        print("Speed: ", speed)
+        print("Position ", position)
+        return [speed, position]
+
+    # Calculates The New Acceleration of Vehicle
+    # parameters:
+    #   vehicleIndex - The index of the vehicle inside of the list
+    #   currentSpeed - The current speed of the vehicle being calculated
+    #   currentFrontSpeed - The current acceleration of the vehicle being calculated
+    # returns:
+    #   acceleration - The new acceleration of the vehicle
+    def calculateAcceleration(self, vehicleIndex, currentSpeed, currentFrontSpeed):
+        try:
+            frontVehicle = self.vehicles[vehicleIndex - 1]
+        except NameError:
+            vehicleExists = False
+        else:
+            vehicleExists = True
+
+        backVehicle = self.vehicles[vehicleIndex]  
+
+        speed = currentSpeed
+
+        positionDifference = frontVehicle["position"] - backVehicle["position"] - self.length
+            
+        # print("Front Vehicle Position ", frontVehicle["position"])
+        # print("Back Vehicle Position ", backVehicle["position"])
+        # print("Position Difference ", positionDifference)
+
+        speedDifference = speed - currentFrontSpeed
+
+        if(vehicleExists == True):
+            vehicleInteration = ((self.minimumFollowingDistance + max(0, speed + ((speed*speedDifference)/(2*math.sqrt(self.maximumAcceleration*self.maximumBrakingFactor)))))/positionDifference)
+        else:
+            vehicleInteration = 0
+            
+        acceleration = self.maximumAcceleration*(1 - (speed/self.maximumSpeed)**4 - vehicleInteration**2)
+
+        #DEBUG
+        # print("Acceleration: ", acceleration)
+        return acceleration
+
+
+
+movingVehicle = MovingVehicle()
+movingVehicle.calculateVehicleSpeedAndPosition(0,16,1)
+movingVehicle.calculateAcceleration(0,16,16)
