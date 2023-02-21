@@ -13,6 +13,7 @@ class MovingVehicle:
         # Appendix B.6 - Default Values
         self.length = 4
         self.maximumSpeed = 16.6
+        self.absoluteMaxSpeed = 16.6
         self.maximumAcceleration = 1.44
         self.maximumBrakingFactor = 4.61
         self.minimumFollowingDistance = 4
@@ -85,8 +86,43 @@ class MovingVehicle:
         # print("Acceleration: ", acceleration)
         return acceleration
 
+    # Sets the maximum speed of the vehicles
+    # calling "calculateVehicleSpeedAndPosition" function will slow down each 
+    # vehicle according to the max speed possible
+    # parameters:
+    #   isSlowingDown - (Boolean) True: slow down vehicles | False: speed up vehicles
+    # returns:
+    #   void
+    def adjustDesiredMaxSpeed(self, isSlowingDown):
+        if (isSlowingDown):
+            # Eq:  v_max = sV_max
+            maximumSpeed = self.delayFactor*self.absoluteMaxSpeed
+        else:
+            # Eq:  v_max = V_max
+            maximumSpeed = self.absoluteMaxSpeed
+
+        #DEBUG
+        # print("Max Speed set to: ", maximumSpeed)
+
+    # Sets the acceleration in each simulation step according to the
+    # current speed of the vehicle. This function should be called for 
+    # each simulation step when stopping a vehicle
+    # parameters:
+    #   currentSpeed - the speed of the current vehicle being calculated
+    # return:
+    #   acceleration - the new acceleration of the vehicle
+    def adjustAccelerationToStop(self, currentSpeed):
+        # Eq:  a = -(b_max*v / v_max)
+        acceleration = -1 * ((self.maximumBrakingFactor * currentSpeed) / self.maximumSpeed)
+
+        #DEBUG
+        # print("Acceleration Set to: ", acceleration)
+
+        return acceleration
 
 
 movingVehicle = MovingVehicle()
 movingVehicle.calculateVehicleSpeedAndPosition(0,16,1)
 movingVehicle.calculateAcceleration(0,16,16)
+movingVehicle.adjustDesiredMaxSpeed(isSlowingDown=True)
+movingVehicle.adjustAccelerationToStop(16.6)
