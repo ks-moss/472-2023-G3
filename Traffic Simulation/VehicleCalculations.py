@@ -8,6 +8,7 @@ vehicles = trafficSystem.vehicleList
 # Appendix B.6 - Default Values
 length = 4
 maximumSpeed = 16.6
+absoluteMaxSpeed = 16.6
 maximumAcceleration = 1.44
 maximumBrakingFactor = 4.61
 minimumFollowingDistance = 4
@@ -80,5 +81,41 @@ def calculateAcceleration(vehicleIndex, currentSpeed, currentFrontSpeed):
     # print("Acceleration: ", acceleration)
     return acceleration
 
+# Sets the maximum speed of the vehicles
+# calling "calculateVehicleSpeedAndPosition" function will slow down each 
+# vehicle according to the max speed possible
+# parameters:
+#   isSlowingDown - (Boolean) True: slow down vehicles | False: speed up vehicles
+# returns:
+#   void
+def adjustDesiredMaxSpeed(isSlowingDown):
+    if (isSlowingDown):
+        # Eq:  v_max = sV_max
+        maximumSpeed = delayFactor*absoluteMaxSpeed
+    else:
+        # Eq:  v_max = V_max
+        maximumSpeed = absoluteMaxSpeed
+    
+    #DEBUG
+    # print("Max Speed set to: ", maximumSpeed)
+
+# Sets the acceleration in each simulation step according to the
+# current speed of the vehicle. This function should be called for 
+# each simulation step when stopping a vehicle
+# parameters:
+#   currentSpeed - the speed of the current vehicle being calculated
+# return:
+#   acceleration - the new acceleration of the vehicle
+def adjustAccelerationToStop(currentSpeed):
+    # Eq:  a = -(b_max*v / v_max)
+    acceleration = -1 * ((maximumBrakingFactor * currentSpeed) / maximumSpeed)
+
+    #DEBUG
+    # print("Acceleration Set to: ", acceleration)
+
+    return acceleration
+
 calculateVehicleSpeedAndPosition(0,16,1)
 calculateAcceleration(0,16,16)
+adjustDesiredMaxSpeed(isSlowingDown=True)
+adjustAccelerationToStop(16.6)
