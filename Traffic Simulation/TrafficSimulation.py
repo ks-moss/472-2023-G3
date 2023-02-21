@@ -55,7 +55,7 @@ class Element:
 	# postcondition:
 	#	none
 	# returns:
-	#	attributeListDictionary.__str__()
+	#	Element properties cast as a string
 	def __str__(self):
 		return (self.elementType, self.attributeListDictionary).__str__()
 

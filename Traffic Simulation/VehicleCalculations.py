@@ -5,6 +5,7 @@ class MovingVehicle:
     
     def __init__(self):
 
+
         self.trafficSystem = TrafficSystem()
         self.trafficSystem.ReadElementsFromFile("./InputFiles/trafficSim2.xml")
 
