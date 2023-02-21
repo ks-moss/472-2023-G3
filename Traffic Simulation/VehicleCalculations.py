@@ -115,7 +115,40 @@ def adjustAccelerationToStop(currentSpeed):
 
     return acceleration
 
+# Checks to see if a vehicle is out of bounds by 
+# comparing the length of the street and the position
+# of the vehicle.
+# parameters:
+#   vehicleIndex -  the index of the vehicle to be checked
+#   newPosition  -  the new position that the vehicle will be on the 
+#                   next simulation step
+# precondition:
+#   a new positon is calculated for the vehicle
+# postcondition:
+#   vehicle will be removed from list if the new position
+#   is off the street
+# return:
+#   void
+def vehicleOutOfBounds(vehicleIndex, newPosition):
+    roads = trafficSystem.roadList
+
+    vehicle = vehicles[vehicleIndex]
+
+    # search for the current road the vehicle is on
+    for road in roads:
+        if (road["name"] == vehicle["road"]):
+            # check if vehicle is off the road
+            if (newPosition > road["length"]):
+                # remove vehicle from road
+                del vehicles[vehicleIndex]
+                break
+    
+    #DEBUG
+    # print('current vehicle list', *vehicles, sep="\n")
+
+
 calculateVehicleSpeedAndPosition(0,16,1)
 calculateAcceleration(0,16,16)
 adjustDesiredMaxSpeed(isSlowingDown=True)
 adjustAccelerationToStop(16.6)
+vehicleOutOfBounds(3, 1510)
