@@ -20,7 +20,7 @@ class Element:
     #   defined by parameters
     def __init__(self, elementType="VEHICLE", attributeTypeList=[], attributeValueList=[]):
         assert len(attributeTypeList) == len(attributeValueList)
-        assert elementType in ["VEHICLE", "TRAFFIC LIGHT", "ROAD", "VEHICLE GENERATOR",]
+        assert elementType in ["VEHICLE", "TRAFFIC LIGHT", "ROAD", "VEHICLE GENERATOR"]
         self.attributeListDictionary = {}
         self.elementType = elementType
         for i in range(0, len(attributeTypeList)):
@@ -97,27 +97,28 @@ class TrafficSystem:
                 self.roadList.append({"name": name, "length": length})
             elif elem.tag == "TRAFFICLIGHT":
                 for subelem in elem:
-                    if subelem.tag != "road" and subelem.tag != "position" and subelem.tag != "cycle":
+                    if subelem.tag != "road" and subelem.tag != "position" and subelem.tag != "cycle" and (subelem.tag == "type" and not subelem.text):
                         print("Bad Input Found: \"",subelem.tag,"\" is not an acceptable attribute of \"",elem.tag,"\"")
                 road = elem.find("road").text
                 position = int(elem.find("position").text)
                 cycle = int(elem.find("cycle").text)
-                self.trafficLightList.append({"road": road, "position": position, "cycle": cycle})
+                type = elem.find("type").text if elem.find("type") is not None else None
+                self.trafficLightList.append({"road": road, "position": position, "cycle": cycle, "type": type})
             elif elem.tag == "VEHICLE":
                 for subelem in elem:
-                    if subelem.tag != "road" and subelem.tag != "position" and subelem.tag != "type":
+                    if subelem.tag != "road" and subelem.tag != "position" and (subelem.tag == "type" and not subelem.text):
                         print("Bad Input Found: \"",subelem.tag,"\" is not an acceptable attribute of \"",elem.tag,"\"")
                 road = elem.find("road").text
                 position = int(elem.find("position").text)
-                type = elem.find("type").text
+                type = elem.find("type").text if elem.find("type") is not None else None
                 self.vehicleList.append({"road": road, "position": position, "type": type})
             elif elem.tag == "VEHICLEGENERATOR":
                 for subelem in elem:
-                    if subelem.tag != "name" and subelem.tag != "frequency" and subelem.tag != "type":
+                    if subelem.tag != "name" and subelem.tag != "frequency" and (subelem.tag == "type" and not subelem.text):
                         print("Bad Input Found: \"",subelem.tag,"\" is not an acceptable attribute of \"",elem.tag,"\"")
                 name = elem.find("name").text
                 frequency = int(elem.find("frequency").text)
-                type = elem.find("type").text
+                type = elem.find("type").text if elem.find("type") is not None else None
                 self.vehicleGeneratorList.append({"name": name, "frequency": frequency, "type": type})
             #checking for unacceptable element input
             else:
