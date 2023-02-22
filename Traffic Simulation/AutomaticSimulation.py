@@ -3,7 +3,27 @@ from TrafficSimulation2 import *
 import VehicleCalculations
 import TrafficLightSimulation
 
+# Goal: Run simulation automatically
+# Precondition: The system contains a diagram of the virtual road network.
+# Postcondition: The traffic in the road network is simulated.
 
+
+# AutomaticSimulation contains all object lists and functions necessary for automatic simulation.
+# First create AutomaticSimulation object, then call update on that object
+# Atributes:
+#   trafficSystem
+#       - TrafficSystem object from TrafficSimulation2.py
+#   vehicle_list
+#       - vehicle list generated from trafficSystem
+#   traffic_light_list
+#       - traffic light list generated from trafficSystem
+# Methods:
+#   vehicle_on_road()
+#       -prints all vehicles' position and road
+#   traffic_light_on_road()
+#       -prints all traffic lights' position and cycle
+#   update()
+#       -calls vehicle_on_road() and traffic_light_on_road()
 class AutomaticSimulation:
     def __init__(self):
          # create a TrafficSystem object from the input file
@@ -24,8 +44,8 @@ class AutomaticSimulation:
             print("Vehicle:" , i)
             print("    -> road: ", self.vehicle_list[i]["road"])
             print("    -> position: ", self.vehicle_list[i]["position"])
-            VehicleCalculations.calculateVehicleSpeedAndPosition(i, 16.6, 100)
-            print(i)
+            #VehicleCalculations.calculateVehicleSpeedAndPosition(i, 16.6, 100)
+            #print(i)
         
     def traffic_light_on_road(self):
         
@@ -37,7 +57,7 @@ class AutomaticSimulation:
             # TrafficLightSimulation.trafficLightInteraction(self.trafficSystem, self.vehicle_list, self.traffic_light_list[i]["cycle"])
 
     def update(self):
-        #self.vehicle_on_road()
+        self.vehicle_on_road()
         self.traffic_light_on_road()
 
 
