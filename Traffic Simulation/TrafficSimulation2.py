@@ -80,7 +80,7 @@ class TrafficSystem:
         self.roadList = []
         self.trafficLightList = []
         self.vehicleList = []
-        self.vehicleGeneratorList = []
+        self.vehicleGeneratorList = []          
 
     def ReadElementsFromFile(self, fileName):
         tree = ET.parse(fileName)
@@ -91,7 +91,7 @@ class TrafficSystem:
                 #error checking for invalid attributes of element - this is done for each element type
                 for subelem in elem:
                     if subelem.tag != "name" and subelem.tag != "length":
-                        print("Bad Input Found: \"",subelem.tag,"\" is not an acceptable attribute of \"",elem.tag,"\"") 
+                        print("Bad Input Found: \"",subelem.tag,"\" is not an acceptable attribute of \"",elem.tag,"\"")
                 name = elem.find("name").text
                 length = int(elem.find("length").text)
                 self.roadList.append({"name": name, "length": length})
@@ -106,12 +106,14 @@ class TrafficSystem:
                 self.trafficLightList.append({"road": road, "position": position, "cycle": cycle, "type": type})
             elif elem.tag == "VEHICLE":
                 for subelem in elem:
-                    if subelem.tag != "road" and subelem.tag != "position" and (subelem.tag == "type" and not subelem.text):
+                    if subelem.tag != "road" and subelem.tag != "position" and subelem.tag != "speed" and subelem.tag != "acceleration" and (subelem.tag == "type" and not subelem.text):
                         print("Bad Input Found: \"",subelem.tag,"\" is not an acceptable attribute of \"",elem.tag,"\"")
                 road = elem.find("road").text
                 position = int(elem.find("position").text)
+                speed = int(elem.find("speed").text)
+                acceleration = int(elem.find("acceleration").text)
                 type = elem.find("type").text if elem.find("type") is not None else None
-                self.vehicleList.append({"road": road, "position": position, "type": type})
+                self.vehicleList.append({"road": road, "position": position, "speed": speed, "acceleration": acceleration, "type": type})
             elif elem.tag == "VEHICLEGENERATOR":
                 for subelem in elem:
                     if subelem.tag != "name" and subelem.tag != "frequency" and (subelem.tag == "type" and not subelem.text):
