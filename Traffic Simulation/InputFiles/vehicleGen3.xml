@@ -15,10 +15,14 @@
     <VEHICLE>
         <road>Flamingo</road>
         <position>220</position>
+        <speed>50</speed>
+        <acceleration>11</acceleration>
     </VEHICLE>
     <VEHICLE>
         <road>Tropicana</road>
         <position>1400</position>
+        <speed>65</speed>
+        <acceleration>15</acceleration>
     </VEHICLE>
     <ROAD>
         <name>Durango</name>
@@ -32,10 +36,14 @@
     <VEHICLE>
         <road>Durango</road>
         <position>770</position>
+        <speed>45</speed>
+        <acceleration>7</acceleration>
     </VEHICLE>
     <VEHICLE>
         <road>Tropicana</road>
         <position>345</position>
+        <speed>75</speed>
+        <acceleration>15</acceleration>
     </VEHICLE>
     <VEHICLEGENERATOR>
         <name>Tropicana</name>

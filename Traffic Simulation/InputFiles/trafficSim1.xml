@@ -11,9 +11,13 @@
 	<VEHICLE>
 		<road>Rochelle</road>
 		<position>20</position>
+		<speed>50</speed>
+        <acceleration>11</acceleration>
 	</VEHICLE>
 	<VEHICLE>
 		<road>Rochelle</road>
 		<position>0</position>
+		<speed>45</speed>
+        <acceleration>11</acceleration>
 	</VEHICLE>
 </root>
