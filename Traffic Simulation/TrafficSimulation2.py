@@ -113,8 +113,12 @@ class TrafficSystem:
                         type = elem.find("type").text   #recognized a type in the vehicle element so found it - finding when its not there throws an error
                 road = elem.find("road").text
                 position = int(elem.find("position").text)
-                speed = int(elem.find("speed").text)
-                acceleration = int(elem.find("acceleration").text)
+                if '.' in (elem.find("speed").text) or (elem.find("acceleration").text):
+                    speed = float(elem.find("speed").text)
+                    acceleration = float(elem.find("acceleration").text)
+                else:
+                    speed = int(elem.find("speed").text)
+                    acceleration = int(elem.find("acceleration").text)
                 self.vehicleList.append({"road": road, "position": position, "speed": speed, "acceleration": acceleration, "type": type})
             elif elem.tag == "VEHICLEGENERATOR":
                 type = None 
