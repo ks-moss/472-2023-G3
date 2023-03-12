@@ -8,6 +8,11 @@
 		<position>400</position>
 		<cycle>30</cycle>
 	</TRAFFICLIGHT>
+	<BUSSTOP>
+		<name>Rochelle</name>
+		<position>250</position>
+		<waitingtime>20</waitingtime>
+	</BUSSTOP>
 	<VEHICLE>
 		<road>Rochelle</road>
 		<position>20</position>
