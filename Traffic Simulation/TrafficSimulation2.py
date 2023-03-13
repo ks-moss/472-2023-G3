@@ -20,7 +20,7 @@ class Element:
     #   defined by parameters
     def __init__(self, elementType="VEHICLE", attributeTypeList=[], attributeValueList=[]):
         assert len(attributeTypeList) == len(attributeValueList)
-        assert elementType in ["VEHICLE", "TRAFFIC LIGHT", "ROAD", "VEHICLE GENERATOR"]
+        assert elementType in ["VEHICLE", "TRAFFIC LIGHT", "ROAD", "VEHICLE GENERATOR", "BUSSTOP"]
         self.attributeListDictionary = {}
         self.elementType = elementType
         for i in range(0, len(attributeTypeList)):
@@ -79,6 +79,7 @@ class TrafficSystem:
     def __init__(self):
         self.roadList = []
         self.trafficLightList = []
+        self.busStopList = []
         self.vehicleList = []
         self.vehicleGeneratorList = []
         self.errorList = []          
@@ -104,6 +105,14 @@ class TrafficSystem:
                 position = int(elem.find("position").text)
                 cycle = int(elem.find("cycle").text)
                 self.trafficLightList.append({"road": road, "position": position, "cycle": cycle})
+            elif elem.tag == "BUSSTOP":
+                for subelem in elem:
+                    if subelem.tag != "road" and subelem.tag != "position" and subelem.tag != "cycle":
+                        self.errorList.append("- \"" + subelem.tag + "\" is not an acceptable attribute of \"" + elem.tag + "\"")
+                name = elem.find("name").text
+                position = int(elem.find("position").text)
+                waitingtime = int(elem.find("cycle").text)
+                self.busStopList.append({"name": name, "position": position, "waitingtime": waitingtime})    
             elif elem.tag == "VEHICLE":
                 type = None #if a type is recognized it will be updated - these can be removed down the road when/if type becomes required
                 for subelem in elem:
@@ -130,6 +139,8 @@ class TrafficSystem:
                 name = elem.find("name").text
                 frequency = int(elem.find("frequency").text)
                 self.vehicleGeneratorList.append({"name": name, "frequency": frequency, "type": type})
+
+    
             #checking for unacceptable element input
             else:
                 self.errorList.append("- \"" + elem.tag + "\" is not an acceptable element")
