@@ -19,7 +19,7 @@ vehicles = traffic_system.vehicleGeneratorList
 def addVehicle():
     for i in range(len(vehicles)):
         road = vehicles[i]["name"]
-        print("Vehicle with frequency ", vehicles[i]["frequency"], " added to ", vehicles[i]["name"], " road")
+        print("Vehicle of type", vehicles[i]["type"], "with frequency ", vehicles[i]["frequency"], " added to ", vehicles[i]["name"], " road")
         traffic_system.vehicleList.append({"road": road, "position": 0})
         
 addVehicle()
