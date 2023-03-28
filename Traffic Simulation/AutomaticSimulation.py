@@ -33,6 +33,8 @@ class AutomaticSimulation:
         self.vehicle_list = self.trafficSystem.vehicleList
         # Get Traffic Light List
         self.traffic_light_list = self.trafficSystem.trafficLightList
+        # Get Road List
+        self.road_list = self.trafficSystem.roadList
         # Store current state of vehicle
         self.vehicle_current_state = []
         for i in range(len(self.vehicle_list)):
@@ -55,9 +57,10 @@ class AutomaticSimulation:
             print("    -> position: ", self.vehicle_list[i]["position"])
             self.vehicle_current_state[i]["road"] = self.vehicle_list[i]["road"]
             self.vehicle_current_state[i]["position"] = self.vehicle_list[i]["position"]
-            #VehicleCalculations.calculateVehicleSpeedAndPosition(i, 16.6, 100)
-            #print(i)
-        
+            VehicleCalculations.calculateVehicleSpeedAndPosition(self.vehicle_list, i)
+            #VehicleCalculations.vehicleOutOfBounds(self.vehicle_list, i, self.road_list)
+
+
     def traffic_light_on_road(self):
         
         # 2. FOR any traffic light in the road network
@@ -72,11 +75,11 @@ class AutomaticSimulation:
 
     def update(self):
         self.vehicle_on_road()
-        self.traffic_light_on_road()
+        #self.traffic_light_on_road()
         
 
-
-"""simulation = AutomaticSimulation()
+"""
+simulation = AutomaticSimulation()
 simulation.update()
 print(simulation.vehicle_current_state)
 print(simulation.vehicle_current_state[0]["road"])
