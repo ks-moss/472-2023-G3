@@ -1,11 +1,13 @@
 import VehicleCalculations
-
+import datetime
+import time
 # Goal: Simulating traffic lights
 # Precondition: The system contains a diagram of the virtual road network. There is a traffic light on a road.
 # Postcondition: Vehicles adapt depending on the state of the traffic light.
 
-# Local Variables
+# Global Variables
 green_light = True
+light_Times = {}    # (road name, time since traffic light was last changed)
 
 # Vehicles adapt depending on the state of the traffic light.
 # Parameters:
@@ -20,6 +22,14 @@ def trafficLightInteraction (trafficLight, vehicles, timeSinceLastChange):
     trafficLight_position = trafficLight["position"]
     trafficLight_cycle = trafficLight["cycle"]
     
+    # Track the time when the traffic light was first read
+    if trafficLight_road not in light_Times:
+        light_Times[trafficLight_road] = datetime.datetime.now()
+    # If the time of the traffic light was previously recorded, calculate the difference between now and recorded time
+    else:
+        difference_time = datetime.datetime.now() - light_Times[trafficLight_road]
+        timeSinceLastChange = difference_time.total_seconds()
+
     # 1 & 1.1. IF time since last change > cycle, THEN change the color of the light (green ⇐⇒ red)
     if timeSinceLastChange > trafficLight_cycle:
         if green_light:
