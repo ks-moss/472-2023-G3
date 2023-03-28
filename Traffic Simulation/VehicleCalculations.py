@@ -1,10 +1,10 @@
 from TrafficSimulation2 import TrafficSystem
 import math
 
-trafficSystem = TrafficSystem()
-trafficSystem.ReadElementsFromFile("./InputFiles/trafficSim2.xml")
+# trafficSystem = TrafficSystem()
+# trafficSystem.ReadElementsFromFile("./InputFiles/trafficSim2.xml")
 
-vehicles = trafficSystem.vehicleList
+# vehicles = trafficSystem.vehicleList
 # Appendix B.6 - Default Values
 length = 4
 maximumSpeed = 16.6
@@ -19,17 +19,16 @@ delayFactor = 0.4
 
 # Calculate the New Speed and Position of Vehicle
 # parameters:
+#   vehicleList - The vehicleList from TrafficSystem()
 #   vehicleIndex - The index of the vehicle inside of the list
-#   currentSpeed - The current speed of the vehicle being calculated
-#   currentAcceleration - The current acceleration of the vehicle being calculated
 # returns:
-#   speed - The new speed of the vehicle
-#   position - The new position of the vehicle
-def calculateVehicleSpeedAndPosition(vehicleIndex, currentSpeed, currentAcceleration):
-    vehicle = vehicles[vehicleIndex]
-    speed = currentSpeed
+#   none
+def calculateVehicleSpeedAndPosition(vehicleList: TrafficSystem, vehicleIndex):
+    vehicle = vehicleList[vehicleIndex]
+    speed = vehicle["speed"]
     position = vehicle["position"]
-    acceleration = currentAcceleration
+    acceleration = vehicle["acceleration"]
+    
     if (speed + acceleration*simulationTime) < 0:
         position = position - (speed*speed)/2*acceleration
         speed = 0
@@ -37,38 +36,39 @@ def calculateVehicleSpeedAndPosition(vehicleIndex, currentSpeed, currentAccelera
         speed = speed + acceleration*simulationTime
         position = position + (speed*simulationTime) + acceleration*((simulationTime*simulationTime)/2)
 
-    #vehicle["speed"] = speed
+    vehicle["speed"] = speed
+    vehicle["position"] = position
+
     #DEBUG
-    print("Speed: ", speed)
-    print("Position ", position)
-    return [speed, position]
+    # print("Speed: ", speed)
+    # print("Position ", position)
+    # return [speed, position]
 
 # Calculates The New Acceleration of Vehicle
 # parameters:
+#   vehicleList - The vehicleList from TrafficSystem()
 #   vehicleIndex - The index of the vehicle inside of the list
-#   currentSpeed - The current speed of the vehicle being calculated
-#   currentFrontSpeed - The current acceleration of the vehicle being calculated
 # returns:
-#   acceleration - The new acceleration of the vehicle
-def calculateAcceleration(vehicleIndex, currentSpeed, currentFrontSpeed):
+#   none
+def calculateAcceleration(vehicleList: TrafficSystem, vehicleIndex):
     try:
-        frontVehicle = vehicles[vehicleIndex - 1]
+        frontVehicle = vehicleList[vehicleIndex - 1]
     except NameError:
         vehicleExists = False
     else:
         vehicleExists = True
 
-    backVehicle = vehicles[vehicleIndex]  
+    vehicle = vehicleList[vehicleIndex]  
 
-    speed = currentSpeed
+    speed = vehicle["speed"]
 
-    positionDifference = frontVehicle["position"] - backVehicle["position"] - length
+    positionDifference = frontVehicle["position"] - vehicle["position"] - length
     
     # print("Front Vehicle Position ", frontVehicle["position"])
     # print("Back Vehicle Position ", backVehicle["position"])
     # print("Position Difference ", positionDifference)
 
-    speedDifference = speed - currentFrontSpeed
+    speedDifference = speed - frontVehicle["speed"]
 
     if(vehicleExists == True):
         vehicleInteration = ((minimumFollowingDistance + max(0, speed + ((speed*speedDifference)/(2*math.sqrt(maximumAcceleration*maximumBrakingFactor)))))/positionDifference)
@@ -77,9 +77,10 @@ def calculateAcceleration(vehicleIndex, currentSpeed, currentFrontSpeed):
     
     acceleration = maximumAcceleration*(1 - (speed/maximumSpeed)**4 - vehicleInteration**2)
 
+    vehicle["acceleration"] = acceleration
     #DEBUG
     # print("Acceleration: ", acceleration)
-    return acceleration
+    # return acceleration
 
 # Sets the maximum speed of the vehicles
 # calling "calculateVehicleSpeedAndPosition" function will slow down each 
@@ -119,7 +120,9 @@ def adjustAccelerationToStop(currentSpeed):
 # comparing the length of the street and the position
 # of the vehicle.
 # parameters:
+#   vehicleList  -  vehicleList from TrafficSystem()
 #   vehicleIndex -  the index of the vehicle to be checked
+#   roadList     -  roadList from TrafficSystem()
 #   newPosition  -  the new position that the vehicle will be on the 
 #                   next simulation step
 # precondition:
@@ -129,10 +132,10 @@ def adjustAccelerationToStop(currentSpeed):
 #   is off the street
 # return:
 #   void
-def vehicleOutOfBounds(vehicleIndex, newPosition):
-    roads = trafficSystem.roadList
+def vehicleOutOfBounds(vehicleList: TrafficSystem, vehicleIndex, roadList: TrafficSystem, newPosition):
+    roads = roadList
 
-    vehicle = vehicles[vehicleIndex]
+    vehicle = vehicleList[vehicleIndex]
 
     # search for the current road the vehicle is on
     for road in roads:
@@ -140,15 +143,15 @@ def vehicleOutOfBounds(vehicleIndex, newPosition):
             # check if vehicle is off the road
             if (newPosition > road["length"]):
                 # remove vehicle from road
-                del vehicles[vehicleIndex]
+                del vehicleList[vehicleIndex]
                 break
     
     #DEBUG
     # print('current vehicle list', *vehicles, sep="\n")
 
 
-calculateVehicleSpeedAndPosition(0,16,1)
-calculateAcceleration(0,16,16)
-adjustDesiredMaxSpeed(isSlowingDown=True)
-adjustAccelerationToStop(16.6)
-vehicleOutOfBounds(3, 1510)
+#calculateVehicleSpeedAndPosition(vehicles,0)
+#calculateAcceleration(vehicles,0)
+# adjustDesiredMaxSpeed(isSlowingDown=True)
+# adjustAccelerationToStop(16.6)
+# vehicleOutOfBounds(3, 1510)

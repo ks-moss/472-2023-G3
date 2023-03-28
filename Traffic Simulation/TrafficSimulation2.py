@@ -20,7 +20,7 @@ class Element:
     #   defined by parameters
     def __init__(self, elementType="VEHICLE", attributeTypeList=[], attributeValueList=[]):
         assert len(attributeTypeList) == len(attributeValueList)
-        assert elementType in ["VEHICLE", "TRAFFIC LIGHT", "ROAD", "VEHICLE GENERATOR",]
+        assert elementType in ["VEHICLE", "TRAFFIC LIGHT", "ROAD", "VEHICLE GENERATOR", "BUSSTOP"]
         self.attributeListDictionary = {}
         self.elementType = elementType
         for i in range(0, len(attributeTypeList)):
@@ -79,8 +79,10 @@ class TrafficSystem:
     def __init__(self):
         self.roadList = []
         self.trafficLightList = []
+        self.busStopList = []
         self.vehicleList = []
         self.vehicleGeneratorList = []
+        self.errorList = []          
 
     def ReadElementsFromFile(self, fileName):
         tree = ET.parse(fileName)
@@ -91,34 +93,54 @@ class TrafficSystem:
                 #error checking for invalid attributes of element - this is done for each element type
                 for subelem in elem:
                     if subelem.tag != "name" and subelem.tag != "length":
-                        print("Bad Input Found: \"",subelem.tag,"\" is not an acceptable attribute of \"",elem.tag,"\"") 
+                        self.errorList.append("- \"" + subelem.tag + "\" is not an acceptable attribute of \"" + elem.tag + "\"")
                 name = elem.find("name").text
                 length = int(elem.find("length").text)
                 self.roadList.append({"name": name, "length": length})
             elif elem.tag == "TRAFFICLIGHT":
                 for subelem in elem:
                     if subelem.tag != "road" and subelem.tag != "position" and subelem.tag != "cycle":
-                        print("Bad Input Found: \"",subelem.tag,"\" is not an acceptable attribute of \"",elem.tag,"\"")
+                        self.errorList.append("- \"" + subelem.tag + "\" is not an acceptable attribute of \"" + elem.tag + "\"")
                 road = elem.find("road").text
                 position = int(elem.find("position").text)
                 cycle = int(elem.find("cycle").text)
                 self.trafficLightList.append({"road": road, "position": position, "cycle": cycle})
-            elif elem.tag == "VEHICLE":
+            elif elem.tag == "BUSSTOP":
                 for subelem in elem:
-                    if subelem.tag != "road" and subelem.tag != "position" and subelem.tag != "type":
-                        print("Bad Input Found: \"",subelem.tag,"\" is not an acceptable attribute of \"",elem.tag,"\"")
+                    if subelem.tag != "road" and subelem.tag != "position" and subelem.tag != "cycle":
+                        self.errorList.append("- \"" + subelem.tag + "\" is not an acceptable attribute of \"" + elem.tag + "\"")
+                name = elem.find("name").text
+                position = int(elem.find("position").text)
+                waitingtime = int(elem.find("cycle").text)
+                self.busStopList.append({"name": name, "position": position, "waitingtime": waitingtime})    
+            elif elem.tag == "VEHICLE":
+                type = None #if a type is recognized it will be updated - these can be removed down the road when/if type becomes required
+                for subelem in elem:
+                    if subelem.tag != "road" and subelem.tag != "position" and subelem.tag != "speed" and subelem.tag != "acceleration" and subelem.tag != "type":
+                        self.errorList.append("- \"" + subelem.tag + "\" is not an acceptable attribute of \"" + elem.tag + "\"")
+                    if subelem.tag == "type":
+                        type = elem.find("type").text   #recognized a type in the vehicle element so found it - finding when its not there throws an error
                 road = elem.find("road").text
                 position = int(elem.find("position").text)
-                type = elem.find("type").text
-                self.vehicleList.append({"road": road, "position": position, "type": type})
+                if '.' in (elem.find("speed").text) or (elem.find("acceleration").text):
+                    speed = float(elem.find("speed").text)
+                    acceleration = float(elem.find("acceleration").text)
+                else:
+                    speed = int(elem.find("speed").text)
+                    acceleration = int(elem.find("acceleration").text)
+                self.vehicleList.append({"road": road, "position": position, "speed": speed, "acceleration": acceleration, "type": type})
             elif elem.tag == "VEHICLEGENERATOR":
+                type = None 
                 for subelem in elem:
                     if subelem.tag != "name" and subelem.tag != "frequency" and subelem.tag != "type":
-                        print("Bad Input Found: \"",subelem.tag,"\" is not an acceptable attribute of \"",elem.tag,"\"")
+                        self.errorList.append("- \"" + subelem.tag + "\" is not an acceptable attribute of \"" + elem.tag + "\"")
+                    if subelem.tag == "type":
+                        type = elem.find("type").text
                 name = elem.find("name").text
                 frequency = int(elem.find("frequency").text)
-                type = elem.find("type").text
                 self.vehicleGeneratorList.append({"name": name, "frequency": frequency, "type": type})
+
+    
             #checking for unacceptable element input
             else:
-                print("Bad Input Found: \"",elem.tag, "\" is not an acceptable element")
+                self.errorList.append("- \"" + elem.tag + "\" is not an acceptable element")

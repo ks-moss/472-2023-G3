@@ -9,6 +9,7 @@ traffic_system.ReadElementsFromFile("./InputFiles/trafficSim2.xml")
 vehicles = traffic_system.vehicleList
 roads = traffic_system.roadList
 trafficLights = traffic_system.trafficLightList
+errors = traffic_system.errorList
 
 # create a start time and a time check whenever runtime needed
 startTime = time.time()
@@ -22,3 +23,6 @@ for i in range(len(vehicles)):
     print("    -> position: ",vehicles[i]["position"])
     print("    -> speed: 16.6")
    
+if errors: 
+    print("\nThe following bad input was found:")
+    print(*errors, sep = "\n")

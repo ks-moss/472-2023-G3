@@ -122,7 +122,10 @@ class TrafficSystem:
 			openBraceIndex = 0
 			while (input[openBraceIndex] != '<'):
 				openBraceIndex += 1
-			assert (openBraceIndex < len(input))
+			#assert (openBraceIndex < len(input))
+				if(openBraceIndex >= len(input)):
+					print("Input not properly formatted, data may not have been read")
+					return
 			input = input[openBraceIndex:]
 			openBraceIndex = 0
 			closeBraceIndex = openBraceIndex + 1
@@ -130,18 +133,27 @@ class TrafficSystem:
 				if (input[closeBraceIndex] == '/'):
 					return (input, attributeTypeList, attributeValueList)
 				closeBraceIndex += 1
-			assert (closeBraceIndex < len(input))
+			#assert (closeBraceIndex < len(input))
+				if(closeBraceIndex >= len(input)):
+					print("Input not properly formatted, data may not have been read")
+					return
 			attributeTypeList.append(input[openBraceIndex + 1: closeBraceIndex])
 			input = input[closeBraceIndex + 1:]
 			openBraceIndex = 0
 			while (input[openBraceIndex] != '<'):
 				openBraceIndex += 1
-			assert (openBraceIndex < len(input))
+			#assert (openBraceIndex < len(input))
+				if(openBraceIndex >= len(input)):
+					print("Input not properly formatted, data may not have been read")
+					return
 			attributeValueList.append(input[:openBraceIndex])
 			closeBraceIndex = openBraceIndex + 1
 			while (input[closeBraceIndex] != '>'):
 				closeBraceIndex += 1
-			assert (closeBraceIndex < len(input))
+			#assert (closeBraceIndex < len(input))
+				if(closeBraceIndex >= len(input)):
+					print("Input not properly formatted, data may not have been read")
+					return
 			assert (input[openBraceIndex + 1: closeBraceIndex] == "/" + attributeTypeList[len(attributeTypeList) - 1])
 			input = input[closeBraceIndex + 1:]
 	# ReadElementsFromString
@@ -158,13 +170,19 @@ class TrafficSystem:
 				openBraceIndex += 1
 				if (openBraceIndex >= len(input)):
 					return
-			assert (openBraceIndex < len(input))
+			#assert (openBraceIndex < len(input))
+				if(openBraceIndex >= len(input)):
+					print("Input not properly formatted, data may not have been read")
+					return
 			input = input[openBraceIndex:]
 			openBraceIndex = 0
 			closeBraceIndex = openBraceIndex + 1
 			while (input[closeBraceIndex] != '>'):
 				closeBraceIndex += 1
-			assert (closeBraceIndex < len(input))
+			#assert (closeBraceIndex < len(input))
+				if(closeBraceIndex >= len(input)):
+					print("Input not properly formatted, data may not have been read")
+					return
 			elementType = input[openBraceIndex + 1: closeBraceIndex]
 			assert (elementType != "")
 			input = input[closeBraceIndex + 1:]
@@ -173,7 +191,10 @@ class TrafficSystem:
 			openBraceIndex = 0
 			while (input[openBraceIndex] != '<'):
 				openBraceIndex += 1
-			assert(openBraceIndex < len(input))
+			#assert(openBraceIndex < len(input))
+				if(openBraceIndex >= len(input)):
+					print("Input not properly formatted, data may not have been read")
+					return
 			closeBraceIndex = openBraceIndex + 1
 			while (input[closeBraceIndex] != '>'):
 				closeBraceIndex += 1
@@ -193,3 +214,7 @@ class TrafficSystem:
 		fileString = file.read()
 		file.close()
 		self.ReadElementsFromString(fileString)
+
+
+#mySystem = TrafficSystem()
+#mySystem.ReadElementsFromFile("InputFiles/trafficSim1.xml")

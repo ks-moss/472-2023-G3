@@ -15,10 +15,16 @@
     <VEHICLE>
         <road>Flamingo</road>
         <position>220</position>
+        <speed>10</speed>
+        <acceleration>1.2</acceleration>
+        <type>bus</type>
     </VEHICLE>
     <VEHICLE>
         <road>Tropicana</road>
         <position>0</position>
+        <speed>8</speed>
+        <acceleration>1.2</acceleration>
+        <type>police van</type>
     </VEHICLE>
     <ROAD>
         <name>Durango</name>
@@ -32,10 +38,16 @@
     <VEHICLE>
         <road>Durango</road>
         <position>770</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
     </VEHICLE>
     <VEHICLE>
         <road>Tropicana</road>
         <position>345</position>
+        <speed>12</speed>
+        <acceleration>1.2</acceleration>
+        <type>fire truck</type>
     </VEHICLE>
 
 </root>
