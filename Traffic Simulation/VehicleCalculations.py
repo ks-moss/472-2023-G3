@@ -150,6 +150,24 @@ def vehicleOutOfBounds(vehicleList: TrafficSystem, vehicleIndex, roadList: Traff
     # print('current vehicle list', *vehicles, sep="\n")
 
 
+# Applies the deceleration factor to the Ith vehicle in the list of vehicles.
+# The deceleration factor is applied by adjusting the vehicle's acceleration attribute.
+# parameters:
+#   vehicles     -  vehicleList from TrafficSystem()
+#   i            -  the index of the vehicle to be checked
+# precondition:
+#   vehicle is interacting with traffic light
+# postcondition:
+#   acceleration attribute is adjusted for the traffic light
+# return:
+#   void
+def applyDecelerationFactor(vehicles, i):
+
+    deceleration_factor = 0.5  # Slow it down by half
+    
+    # Apply the deceleration factor to the ith vehicle
+    vehicles[i]["acceleration"] *= deceleration_factor
+
 #calculateVehicleSpeedAndPosition(vehicles,0)
 #calculateAcceleration(vehicles,0)
 # adjustDesiredMaxSpeed(isSlowingDown=True)
