@@ -15,11 +15,15 @@
     <VEHICLE>
         <road>Flamingo</road>
         <position>220</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
         <type>bus</type>
     </VEHICLE>
     <VEHICLE>
         <road>Tropicana</road>
         <position>1400</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
         <type>fire truck</type>
     </VEHICLE>
     <ROAD>
@@ -34,11 +38,16 @@
     <VEHICLE>
         <road>Durango</road>
         <position>770</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
         <type>police van</type>
     </VEHICLE>
     <VEHICLE>
         <road>Tropicana</road>
         <position>345</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>police van</type>
     </VEHICLE>
     <VEHICLEGENERATOR>
         <name>Tropicana</name>
