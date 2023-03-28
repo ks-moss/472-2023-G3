@@ -47,7 +47,8 @@ def trafficLightInteraction (trafficLight, vehicles, timeSinceLastChange):
                 # Adjust acceleration of vehicle if the vehicle is behind the traffic light's position
                 if vehicles[i]["position"] < trafficLight_position:
                     VehicleCalculations.calculateAcceleration(vehicles, i)
-
+            i += 1
+                    
     # 3.1 IF traffic light is red
     if green_light == False:
         # 3.1.1 THEN IF the first vehicle in front of the light is in the deceleration distance
