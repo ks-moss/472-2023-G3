@@ -66,6 +66,12 @@ def trafficLightInteraction (trafficLight, vehicles, timeSinceLastChange):
         # 3.1.2 ELSE IF the first vehicle in front of the light is in the first half of the stopping distance
         elif distance > (VehicleCalculations.stoppingDistance / 2) & distance < VehicleCalculations.stoppingDistance:
             # 3.1.2.1 THEN stop the vehicle
+            def stopVehicle(vehicles):
+                # iterate through all vehicles and set them to stop at their current position
+                i = 0
+                while i < len(vehicles):
+                    vehicles[i]["position"] = "position"
+                    i += 1
             1 # Function unavailable (Pending 3.1 team)
     
     # Return the list of vehicles that have interacted with the traffic light with updated attributes
