@@ -40,12 +40,20 @@ def trafficLightInteraction (trafficLight, vehicles, timeSinceLastChange):
         # 3.1.1 THEN IF the first vehicle in front of the light is in the deceleration distance
         distance = trafficLight_position - vehicles[0]["position"] # Calculate distance between traffic light & first vehicle position
         if distance > 0 & distance < VehicleCalculations.decelerationDistance:
-            # 3.1.1.1 THEN apply the deceleration factor to the vehicle
-            1 # Function unavailable (Pending 3.1 team) 
+            # Apply the deceleration factor to the first vehicle and all vehicles behind it within the deceleration distance
+            first_vehicle_index = 0
+            while first_vehicle_index < len(vehicles) and vehicles[first_vehicle_index]["position"] >= trafficLight_position:
+                first_vehicle_index += 1
+
+            for i in range(first_vehicle_index):
+                distance_to_traffic_light = trafficLight_position - vehicles[i]["position"]
+                if distance_to_traffic_light <= VehicleCalculations.decelerationDistance:
+                    VehicleCalculations.applyDecelerationFactor(vehicles, i)
+
         # 3.1.2 ELSE IF the first vehicle in front of the light is in the first half of the stopping distance
         elif distance > (VehicleCalculations.stoppingDistance / 2) & distance < VehicleCalculations.stoppingDistance:
             # 3.1.2.1 THEN stop the vehicle
             1 # Function unavailable (Pending 3.1 team)
     
-    # Return the list of vehicles that have interacted with the traffic light with updated attributes\
+    # Return the list of vehicles that have interacted with the traffic light with updated attributes
     return vehicles
