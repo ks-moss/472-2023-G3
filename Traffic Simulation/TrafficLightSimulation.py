@@ -27,7 +27,13 @@ def trafficLightInteraction (trafficLight, vehicles, timeSinceLastChange):
     # 2 & 2.1. IF traffic light is green, THEN vehicles in front of the traffic light may accelerate back up
     if green_light == True:
         # Invoke acceleration function for ALL vehicles in front of the current traffic light
-        1 # Function unavailable (Pending 3.1 team)
+        i = 0
+        while i < len(vehicles):
+            # Make sure the current vehicle is on the current road
+            if vehicles[i]["road"] == trafficLight_road:        
+                # Adjust acceleration of vehicle if the vehicle is behind the traffic light's position
+                if vehicles[i]["position"] < trafficLight_position:
+                    VehicleCalculations.calculateAcceleration(vehicles, i)
 
     # 3.1 IF traffic light is red
     if green_light == False:
