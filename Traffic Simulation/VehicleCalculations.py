@@ -168,6 +168,30 @@ def applyDecelerationFactor(vehicles, i):
     # Apply the deceleration factor to the ith vehicle
     vehicles[i]["acceleration"] *= deceleration_factor
 
+# Calculates the time required for a vehicle to travel a certain distance.
+# parameters:
+#   speed (float): The current speed of the vehicle in meters per second.
+#   acceleration (float): The acceleration of the vehicle in meters per second squared.
+#   distance (float): The distance to be traveled in meters.
+#   timeStep (float): The duration of the simulation time step in seconds.
+# return:
+#   float: The time required for the vehicle to travel the specified distance in seconds.
+def calculateTravelTime(speed, acceleration, distance, timeStep):
+    
+    # Calculate the time required to reach maximum speed
+    t_max = (absoluteMaxSpeed - speed) / acceleration
+    # Calculate the distance traveled during acceleration
+    d_acc = speed * t_max + 0.5 * acceleration * t_max ** 2
+    # Calculate the remaining distance to be traveled
+    d_rem = distance - d_acc
+    # Calculate the time required to travel the remaining distance at maximum speed
+    t_rem = d_rem / absoluteMaxSpeed
+    # Calculate the total time required
+    total_time = t_max + t_rem
+    # Adjust the total time for the simulation time step
+    total_time += timeStep
+    return total_time
+
 #calculateVehicleSpeedAndPosition(vehicles,0)
 #calculateAcceleration(vehicles,0)
 # adjustDesiredMaxSpeed(isSlowingDown=True)
