@@ -22,7 +22,10 @@ def trafficLightInteraction (trafficLight, vehicles, timeSinceLastChange):
     
     # 1 & 1.1. IF time since last change > cycle, THEN change the color of the light (green ⇐⇒ red)
     if timeSinceLastChange > trafficLight_cycle:
-        green_light = False
+        if green_light:
+            green_light = False
+        else:
+            green_light = True
     
     # 2 & 2.1. IF traffic light is green, THEN vehicles in front of the traffic light may accelerate back up
     if green_light == True:

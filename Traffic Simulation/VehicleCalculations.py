@@ -51,26 +51,27 @@ def calculateVehicleSpeedAndPosition(vehicleList: TrafficSystem, vehicleIndex):
 # returns:
 #   none
 def calculateAcceleration(vehicleList: TrafficSystem, vehicleIndex):
-    try:
-        frontVehicle = vehicleList[vehicleIndex - 1]
-    except NameError:
-        vehicleExists = False
-    else:
-        vehicleExists = True
-
-    vehicle = vehicleList[vehicleIndex]  
+    vehicle = vehicleList[vehicleIndex]
+    frontVehicle = {"position": 999999999}
+    vehicleExists = False  
+    for i in range(len(vehicleList)):
+        currVehicle = vehicleList[i]
+        if (i != vehicleIndex and currVehicle["road"] == vehicle["road"] and 
+            currVehicle["position"] > vehicle["position"]):
+            vehicleExists = True
+            if (frontVehicle["position"] > currVehicle["position"]):
+                frontVehicle = vehicleList[i]
 
     speed = vehicle["speed"]
-
-    positionDifference = frontVehicle["position"] - vehicle["position"] - length
     
     # print("Front Vehicle Position ", frontVehicle["position"])
     # print("Back Vehicle Position ", backVehicle["position"])
     # print("Position Difference ", positionDifference)
 
-    speedDifference = speed - frontVehicle["speed"]
 
     if(vehicleExists == True):
+        positionDifference = frontVehicle["position"] - vehicle["position"] - length
+        speedDifference = speed - frontVehicle["speed"]
         vehicleInteration = ((minimumFollowingDistance + max(0, speed + ((speed*speedDifference)/(2*math.sqrt(maximumAcceleration*maximumBrakingFactor)))))/positionDifference)
     else:
         vehicleInteration = 0
@@ -132,7 +133,7 @@ def adjustAccelerationToStop(currentSpeed):
 #   is off the street
 # return:
 #   void
-def vehicleOutOfBounds(vehicleList: TrafficSystem, vehicleIndex, roadList: TrafficSystem, newPosition):
+def vehicleOutOfBounds(vehicleList: TrafficSystem, vehicleIndex, roadList: TrafficSystem):
     roads = roadList
 
     vehicle = vehicleList[vehicleIndex]
@@ -141,7 +142,7 @@ def vehicleOutOfBounds(vehicleList: TrafficSystem, vehicleIndex, roadList: Traff
     for road in roads:
         if (road["name"] == vehicle["road"]):
             # check if vehicle is off the road
-            if (newPosition > road["length"]):
+            if (vehicle["position"] > road["length"]):
                 # remove vehicle from road
                 del vehicleList[vehicleIndex]
                 break
