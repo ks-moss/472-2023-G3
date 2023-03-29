@@ -1,4 +1,5 @@
 #3.7 Simulation of intersections
+from TrafficSimulation2 import *
 from AutomaticSimulation import *
 import random
 
@@ -33,16 +34,21 @@ import random
 
 # Set the yield distance of the traffic light
 # When vehicle is close to the traffic light with assigned distance, starts choosing the road then turn
-APPROACHING_DISTANCE = 5
+APPROACHING_DISTANCE = 3
 
 class IntersectionSim:
 
     def __init__(self):
 
+        # create a TrafficSystem object from the input file
+        self.trafficSystem = TrafficSystem()
+        self.trafficSystem.ReadElementsFromFile("./InputFiles/trafficSim1.xml")
+
         self.autoSim = AutomaticSimulation()
         self.autoSim.update()
         self.vehicle_state = self.autoSim.vehicle_current_state
-        self.trafficlight_state = self.autoSim.trafficlight_current_state
+        # Get Crossroads
+        self.intersection_list = self.trafficSystem.intersectionList
 
         print("\n==============================================")
         print(self.vehicle_state)
@@ -52,44 +58,62 @@ class IntersectionSim:
     def is_approaching_N_selected_road(self):
 
         for i in range(len(self.vehicle_state)):
-            for j in range(len(self.trafficlight_state)):
+            for j in range(len(self.intersection_list)):
+                for k in range(len(self.intersection_list[j])):
 
-                # Is on the current road?
-                if self.vehicle_state[i]["road"] == (self.trafficlight_state[j]["road"]):
-                    print("\n---FOUND MATCH---")
-                    print("Index:", i , "vehicle on the road :-", self.vehicle_state[i]["road"])
-                    print("Index:", j , "trafficInter road name :-", self.trafficlight_state[j]["road"], "\n")
+                    # Is on the current road?
+                    # This will check if the current vehicle is on the same road as the intersection
 
-                    # print(i, "position",  self.vehicle_state[i]["position"])
-                    # print(j , "position", self.trafficlight_state[j]["position"], "\n")
+                    if (self.vehicle_state[i]["road"] == self.intersection_list[j][k]["road"]):
+                        print("\n\n================================================================")
+                        print("---> FOUND VEHICLE ON THE ROAD / INTERSECTION <---")
+                        print("| Vehicle Type: ", self.vehicle_state[i]["type"])
+                        print("| Vehicle is on the road: ", self.vehicle_state[i]["road"])
+                        print("| Intersection on the road: ", self.intersection_list[j][k]["road"])
 
-                    # (self.trafficlight_state[j]["position"])-APPROACHING_DISTANCE
-                    # This will get the distance of the road and subtract it from the yield distance
-                    # If the vehicle is in the yield distance, then start the process
-                    if self.vehicle_state[i]["position"] >= (self.trafficlight_state[j]["position"])-APPROACHING_DISTANCE: 
+                        print("| Vehicle Position: ",  self.vehicle_state[i]["position"])
+                        print("| Intersection Position: ", self.intersection_list[j][k]["position"])
 
-                        # Choose a different road randomly
-                        selected_road_loop = True
-                        while(selected_road_loop):
+                        # self.intersection_list[j][k]["position"]-APPROACHING_DISTANCE
+                        # This will get the distance of the road and subtract it from the yield distance
+                        # If the vehicle is in the yield distance, then start the process
+                        trafficlight_position = (self.intersection_list[j][k]["position"])
+                        vehicle_position = (self.vehicle_state[i]["position"]+APPROACHING_DISTANCE)
+                        yield_distance = (self.intersection_list[j][k]["position"]-APPROACHING_DISTANCE)
 
-                            # This will decide what road shoud bee taken next
-                            num = random.randint(0, len(self.vehicle_state)-1)
+                        print("--------------------------------------------------")
+                        print("| Traffic Light Lists: ", self.intersection_list[j])
+                        print("| Trafficlight Position:", trafficlight_position)
+                        print("| Vehicle Position:", vehicle_position)
+                        print("| Yield Distance:", yield_distance)
+                        print("| Index j: ", j)
+                        print("| Index k: ", k)
+                        print("--------------------------------------------------")
+                        
+                        if (vehicle_position < trafficlight_position) and (vehicle_position >= yield_distance): 
+                            print("\n==========> VEHICLE IS APPROACHING THE INTERSECTION <==========")
+
+                            selected_road = ''
+
+                            if(k == 0):   
+                                print("| Selected Road: ", self.intersection_list[j][1]["road"])    
+                                selected_road = self.intersection_list[j][1]["road"]
                             
-                            # Use the implementation of 1.5 here to get the road name
-                            # Replace self.vehicle_state[i]["road"] with case 1.5
-                            if(self.vehicle_state[i]["road"] != self.vehicle_state[num]["road"]):
-                                print("---SWAP ROAD---")
-                                print("Index:", i , self.vehicle_state[i]["road"], "SWAP WITH", "Index:", num , self.vehicle_state[num]["road"])
-                                self.vehicle_state[i]["road"] = self.vehicle_state[num]["road"]
+                            if(k == 1):
+                                print("| Selected Road: ", self.intersection_list[j][0]["road"])
+                                selected_road = self.intersection_list[j][0]["road"]
+                            
 
-                                print("After Swap")
-                                print("Index:", i , self.vehicle_state[i]["road"])
-                                selected_road_loop = False
+                            self.vehicle_state[i]["road"] = selected_road
+                            print("| Vehicle Type: ", self.vehicle_state[i]["type"])
+                            print("| Swap The current Road With Selected Road: ", self.vehicle_state[i]["road"])
 
-                                print("--------------------")
-                                print(self.vehicle_state)
-                                print("--------------------")
+                            print("================================================================")
+                        else:
+                            print("| ", self.vehicle_state[i]["type"], "Is Far Away From The Intersection")
 
+                            print("================================================================")
+                                           
 
     def update(self):
         self.is_approaching_N_selected_road()

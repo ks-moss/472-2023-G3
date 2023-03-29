@@ -7,6 +7,10 @@
         <name>Tropicana</name>
         <length>1500</length>
     </ROAD>
+    <CROSSROADS>
+		<road position="1000">Rochelle</road>
+		<road position="1000">Tropicana</road>
+	</CROSSROADS>
     <TRAFFICLIGHT>
         <road>Flamingo</road>
         <position>700</position>
@@ -49,5 +53,10 @@
         <acceleration>1.2</acceleration>
         <type>fire truck</type>
     </VEHICLE>
+    <BUSSTOP>
+		<road>Tropicana</road>
+		<position>200</position>
+		<waitingtime>20</waitingtime>
+	</BUSSTOP>
 
 </root>

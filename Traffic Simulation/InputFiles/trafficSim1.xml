@@ -3,24 +3,36 @@
 		<name>Rochelle</name>
 		<length>500</length>
 	</ROAD>
+	<CROSSROADS>
+		<road position="500">Rochelle</road>
+		<road position="500">Maryland</road>
+	</CROSSROADS>
+	<CROSSROADS>
+		<road position="225">Flamingo</road>
+		<road position="225">Tropicana</road>
+	</CROSSROADS>
 	<TRAFFICLIGHT>
 		<road>Rochelle</road>
 		<position>400</position>
 		<cycle>30</cycle>
 	</TRAFFICLIGHT>
 	<BUSSTOP>
-		<name>Rochelle</name>
+		<road>Rochelle</road>
 		<position>250</position>
 		<waitingtime>20</waitingtime>
 	</BUSSTOP>
 	<VEHICLE>
 		<road>Rochelle</road>
 		<position>20</position>
+		<speed>10</speed>
+        <acceleration>1.2</acceleration>
 		<type>police van</type>
 	</VEHICLE>
 	<VEHICLE>
 		<road>Rochelle</road>
 		<position>0</position>
+		<speed>15</speed>
+        <acceleration>1.0</acceleration>
 		<type>ambulance</type>
 	</VEHICLE>
 </root>
