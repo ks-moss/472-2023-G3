@@ -20,7 +20,7 @@ class Element:
     #   defined by parameters
     def __init__(self, elementType="VEHICLE", attributeTypeList=[], attributeValueList=[]):
         assert len(attributeTypeList) == len(attributeValueList)
-        assert elementType in ["VEHICLE", "TRAFFIC LIGHT", "ROAD", "VEHICLE GENERATOR", "BUSSTOP"]
+        assert elementType in ["VEHICLE", "TRAFFIC LIGHT", "ROAD", "VEHICLE GENERATOR", "BUSSTOP", "CROSSROADS"]
         self.attributeListDictionary = {}
         self.elementType = elementType
         for i in range(0, len(attributeTypeList)):
@@ -82,7 +82,8 @@ class TrafficSystem:
         self.busStopList = []
         self.vehicleList = []
         self.vehicleGeneratorList = []
-        self.errorList = []          
+        self.errorList = []   
+        self.intersectionList = []  # This is 2D array      
 
     def ReadElementsFromFile(self, fileName):
         tree = ET.parse(fileName)
@@ -109,10 +110,10 @@ class TrafficSystem:
                 for subelem in elem:
                     if subelem.tag != "road" and subelem.tag != "position" and subelem.tag != "cycle":
                         self.errorList.append("- \"" + subelem.tag + "\" is not an acceptable attribute of \"" + elem.tag + "\"")
-                name = elem.find("name").text
+                name = elem.find("road").text
                 position = int(elem.find("position").text)
-                waitingtime = int(elem.find("cycle").text)
-                self.busStopList.append({"name": name, "position": position, "waitingtime": waitingtime})    
+                waitingtime = int(elem.find("waitingtime").text)
+                self.busStopList.append({"road": name, "position": position, "waitingtime": waitingtime})    
             elif elem.tag == "VEHICLE":
                 type = None #if a type is recognized it will be updated - these can be removed down the road when/if type becomes required
                 for subelem in elem:
@@ -122,7 +123,7 @@ class TrafficSystem:
                         type = elem.find("type").text   #recognized a type in the vehicle element so found it - finding when its not there throws an error
                 road = elem.find("road").text
                 position = int(elem.find("position").text)
-                if '.' in (elem.find("speed").text) or (elem.find("acceleration").text):
+                if (elem.find("speed") is not None and '.' in elem.find("speed").text) or (elem.find("acceleration") is not None and '.' in elem.find("acceleration").text):
                     speed = float(elem.find("speed").text)
                     acceleration = float(elem.find("acceleration").text)
                 else:
@@ -139,6 +140,25 @@ class TrafficSystem:
                 name = elem.find("name").text
                 frequency = int(elem.find("frequency").text)
                 self.vehicleGeneratorList.append({"name": name, "frequency": frequency, "type": type})
+            if elem.tag == "CROSSROADS":
+                temp_list = []
+                # iterate through the child elements of the CROSSROADS element
+                for subelem in elem:
+                    # check if the child element is a road element
+                    if subelem.tag == "road":
+                        # get the position attribute and text of the road element
+                        position = subelem.get("position")
+                        road = subelem.text
+                        # add the intersection to the intersection list
+                        temp_list.append({"position": int(position), "road": road})
+                    else:
+                        # handle the case where the child element is not a road element
+                        error_msg = "- \"" + subelem.tag + "\" is not an acceptable attribute of \"" + elem.tag + "\""
+                        self.errorList.append(error_msg)
+
+                self.intersectionList.append(temp_list)
+            
+            
 
     
             #checking for unacceptable element input
