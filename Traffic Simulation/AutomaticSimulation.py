@@ -26,7 +26,7 @@ from TrafficLightSimulation  import *
 #       -calls vehicle_on_road() and traffic_light_on_road()
 class AutomaticSimulation:
     def __init__(self):
-         # create a TrafficSystem object from the input file
+        # create a TrafficSystem object from the input file
         self.trafficSystem = TrafficSystem()
         self.trafficSystem.ReadElementsFromFile("./InputFiles/trafficSim2.xml")        
         # Get Vehicle List
@@ -35,10 +35,14 @@ class AutomaticSimulation:
         self.traffic_light_list = self.trafficSystem.trafficLightList
         # Get Road List
         self.road_list = self.trafficSystem.roadList
+        # Get Crossroads
+        # self.intersection_list = self.trafficSystem.intersectionList
+        #Get Bus Stop list
+        self.bust_stop_list = self.trafficSystem.busStopList
         # Store current state of vehicle
         self.vehicle_current_state = []
         for i in range(len(self.vehicle_list)):
-            self.vehicle_current_state.append({"road": '', "position": 0})
+            self.vehicle_current_state.append({"road": '', "position": 0, "speed" : 0, "acceleration" : 0, "type" : ''})
         
         # Store current state of trafficlight
         self.trafficlight_current_state = []
@@ -48,6 +52,7 @@ class AutomaticSimulation:
 
 
     def vehicle_on_road(self):
+        
         # 1. FOR any vehicle in the road network
         for i in range(len(self.vehicle_list)):
             # 3.1 GOES HERE
@@ -55,10 +60,29 @@ class AutomaticSimulation:
             print("Vehicle:" , i)
             print("    -> road: ", self.vehicle_list[i]["road"])
             print("    -> position: ", self.vehicle_list[i]["position"])
+            print("    -> speed: ", self.vehicle_list[i]["speed"])
+            print("    -> acceleration: ", self.vehicle_list[i]["acceleration"])
+            print("    -> type: ", self.vehicle_list[i]["type"])
+
             self.vehicle_current_state[i]["road"] = self.vehicle_list[i]["road"]
             self.vehicle_current_state[i]["position"] = self.vehicle_list[i]["position"]
+            self.vehicle_current_state[i]["speed"] = self.vehicle_list[i]["speed"]
+            self.vehicle_current_state[i]["acceleration"] = self.vehicle_list[i]["acceleration"]
+            self.vehicle_current_state[i]["type"] = self.vehicle_list[i]["type"]
             VehicleCalculations.calculateVehicleSpeedAndPosition(self.vehicle_list, i)
             #VehicleCalculations.vehicleOutOfBounds(self.vehicle_list, i, self.road_list)
+           
+        """
+        for i in range(len(self.bust_stop_list)):
+            #for j in range(len(self.intersection_list[i])):
+            print("Road: ", self.bust_stop_list[i]["road"])
+            print("Position: ", self.bust_stop_list[i]["position"])
+            print("Waitingtime: ", self.bust_stop_list[i]["waitingtime"])
+            print("\n")
+        """
+        
+            
+             
 
 
     def traffic_light_on_road(self):
@@ -78,9 +102,11 @@ class AutomaticSimulation:
         #self.traffic_light_on_road()
         
 
-"""
+
 simulation = AutomaticSimulation()
 simulation.update()
+
+"""
 print(simulation.vehicle_current_state)
 print(simulation.vehicle_current_state[0]["road"])
 print(simulation.trafficlight_current_state)
