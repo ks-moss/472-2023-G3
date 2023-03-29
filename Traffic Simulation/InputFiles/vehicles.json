@@ -1,45 +1,42 @@
-{
-    "vehicles": [
-      {
-        "type": "car",
-        "length": 4,
-        "maximum speed": 16.6,
-        "maximum acceleration": 1.44,
-        "maximum braking factor": 4.61,
-        "minimum following distance": 4
-      },
-      {
-        "type": "bus",
-        "length": 12,
-        "maximum speed": 11.4,
-        "maximum acceleration": 1.22,
-        "maximum braking factor": 4.29,
-        "minimum following distance": 12
-      },
-      {
-        "type": "fire truck",
-        "length": 10,
-        "maximum speed": 14.6,
-        "maximum acceleration": 1.33,
-        "maximum braking factor": 4.56,
-        "minimum following distance": 10
-      },
-      {
-        "type": "ambulance",
-        "length": 8,
-        "maximum speed": 15.5,
-        "maximum acceleration": 1.44,
-        "maximum braking factor": 4.47,
-        "minimum following distance": 8
-      },
-      {
-        "type": "police van",
-        "length": 6,
-        "maximum speed": 17.2,
-        "maximum acceleration": 1.55,
-        "maximum braking factor": 4.92,
-        "minimum following distance": 6
-      }
-    ]
+[
+  {
+    "type": "car",
+    "length": 4,
+    "maximumSpeed": 16.6,
+    "maximumAcceleration": 1.44,
+    "maximumBrakingFactor": 4.61,
+    "minimumFollowingDistance": 4
+  },
+  {
+    "type": "bus",
+    "length": 12,
+    "maximumSpeed": 11.4,
+    "maximumAcceleration": 1.22,
+    "maximumBrakingFactor": 4.29,
+    "minimumFollowingDistance": 12
+  },
+  {
+    "type": "fire truck",
+    "length": 10,
+    "maximumSpeed": 14.6,
+    "maximumAcceleration": 1.33,
+    "maximumBrakingFactor": 4.56,
+    "minimumFollowingDistance": 10
+  },
+  {
+    "type": "ambulance",
+    "length": 8,
+    "maximumSpeed": 15.5,
+    "maximumAcceleration": 1.44,
+    "maximumBrakingFactor": 4.47,
+    "minimumFollowingDistance": 8
+  },
+  {
+    "type": "police van",
+    "length": 6,
+    "maximumSpeed": 17.2,
+    "maximumAcceleration": 1.55,
+    "maximumBrakingFactor": 4.92,
+    "minimumFollowingDistance": 6
   }
-  
+]

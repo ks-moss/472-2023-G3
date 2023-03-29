@@ -1,17 +1,59 @@
 from TrafficSimulation2 import TrafficSystem
 import math
+import json
 
 # trafficSystem = TrafficSystem()
 # trafficSystem.ReadElementsFromFile("./InputFiles/trafficSim2.xml")
 
+# Parse the JSON data from the vehicle configuration file (json)
+with open('vehicles.json') as f:
+    data = json.load(f)
+
+# Gather each vehicle's specs as a list
+list_of_objects = list(data)
+
+types = []
+lengths = []
+maxSpeeds = []
+maxAccels = []
+maxBrakingFactors = []
+minFollowingDists = []
+
+# Loop through the JSON data and process each object
+for obj in data:
+    # Now you can work with the individual object
+    print(obj)
+
+# Add specs to list
+for obj in list_of_objects:
+    types.append(obj['type'])
+    lengths.append(obj['length'])
+    maxSpeeds.append(obj["maximumSpeed"])
+    maxAccels.append(obj["maximumAcceleration"])
+    maxBrakingFactors.append(obj["maximumBrakingFactor"])
+    minFollowingDists.append(obj["minimumFollowingDistance"])
+
+# NOTE: Each vehicle corresponds to the same index, ie index 0 for each array contains a car's specs
+    # types[0] = car, lengths[0] = 4 (car's length)
+
+#tentative variable to choose type of vehicle from config file (json)
+setVehicle = 0; #0 = car
+
+type = types[setVehicle]
+length = lengths[setVehicle]
+maximumSpeed = maxSpeeds[setVehicle]
+maximumAcceleration = maxAccels[setVehicle]
+maximumBrakingFactor = maxBrakingFactors[setVehicle]
+minimumFollowingDistance = minFollowingDists[setVehicle]
+
 # vehicles = trafficSystem.vehicleList
 # Appendix B.6 - Default Values
-length = 4
-maximumSpeed = 16.6
+#length = 4
+#maximumSpeed = 16.6
 absoluteMaxSpeed = 16.6
-maximumAcceleration = 1.44
-maximumBrakingFactor = 4.61
-minimumFollowingDistance = 4
+#maximumAcceleration = 1.44
+#maximumBrakingFactor = 4.61
+#minimumFollowingDistance = 4
 simulationTime = 0.0166
 decelerationDistance = 50
 stoppingDistance = 15
