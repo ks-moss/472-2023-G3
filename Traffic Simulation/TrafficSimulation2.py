@@ -108,7 +108,7 @@ class TrafficSystem:
                 self.trafficLightList.append({"road": road, "position": position, "cycle": cycle})
             elif elem.tag == "BUSSTOP":
                 for subelem in elem:
-                    if subelem.tag != "road" and subelem.tag != "position" and subelem.tag != "cycle" and subelem.tag != "waitingtime":
+                    if subelem.tag != "road" and subelem.tag != "position" and subelem.tag != "cycle":
                         self.errorList.append("- \"" + subelem.tag + "\" is not an acceptable attribute of \"" + elem.tag + "\"")
                 name = elem.find("road").text
                 position = int(elem.find("position").text)
@@ -140,7 +140,7 @@ class TrafficSystem:
                 name = elem.find("name").text
                 frequency = int(elem.find("frequency").text)
                 self.vehicleGeneratorList.append({"name": name, "frequency": frequency, "type": type})
-            elif elem.tag == "CROSSROADS":
+            if elem.tag == "CROSSROADS":
                 temp_list = []
                 # iterate through the child elements of the CROSSROADS element
                 for subelem in elem:
