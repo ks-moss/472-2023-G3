@@ -8,7 +8,7 @@
         <length>1500</length>
     </ROAD>
     <CROSSROADS>
-		<road position="1000">Rochelle</road>
+		<road position="1000">Flamingo</road>
 		<road position="1000">Tropicana</road>
 	</CROSSROADS>
     <TRAFFICLIGHT>
