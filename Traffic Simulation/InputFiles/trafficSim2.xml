@@ -13,8 +13,8 @@
 	</CROSSROADS>
     <TRAFFICLIGHT>
         <road>Flamingo</road>
-        <position>700</position>
-        <cycle>30</cycle>
+        <position>272</position>
+        <cycle>10</cycle>
     </TRAFFICLIGHT>
     <VEHICLE>
         <road>Flamingo</road>
@@ -37,7 +37,7 @@
     <TRAFFICLIGHT>
         <road>Durango</road>
         <position>800</position>
-        <cycle>20</cycle>
+        <cycle>15</cycle>
     </TRAFFICLIGHT>
     <VEHICLE>
         <road>Durango</road>
