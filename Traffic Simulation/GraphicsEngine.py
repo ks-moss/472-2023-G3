@@ -112,6 +112,8 @@ class GraphicsEngine(Ursina):
         roads = self.simData.road_list
         croads = self.simData.intersection_list
 
+
+
         # only used in method @createWorldMap
         # places a texture onto the map grid based on the x & y inputs
         # will extend the grid if x | y falls out of bounds
@@ -125,7 +127,7 @@ class GraphicsEngine(Ursina):
         # return:
         #   startx  - same as startx | different if map is expanded
         #   starty  - same as starty | different if map is expanded
-        #   map     - updated map with expansions & textures
+        #   map     - updated map with expansions (only needed if map extension is possible)
         def setTile(x, y, texture, map, startx, starty):
             # if x or y out of bounds
             if (x >= self.mapSizeX):                                        # extend right
@@ -143,13 +145,42 @@ class GraphicsEngine(Ursina):
 
             self.mapSizeX = len(map[0])
             self.mapSizeY = len(map)
-            x = clamp(x, 0, self.mapSizeX)
-            y = clamp(y, 0, self.mapSizeY)
+            x = clamp(x, 0, self.mapSizeX - 1)
+            y = clamp(y, 0, self.mapSizeY - 1)
 
             map[y][x] = texture
             return startx, starty, map
 
+
+
         #TODO add method for shrinking map for empty rows or columns
+        def cutMap(map):
+            y = 0
+            while (y < len(map)):
+                for x in range(len(map[0])):
+                    if map[y][x] != color.green and map[y][x] != color.white and map[y][x] != '':
+                        y += 1
+                        break
+                else:
+                    # remove slice
+                    map.pop(y)
+
+            x = 0
+            while (x < len(map[0])):
+                for y in range(len(map)):
+                    if map[y][x] != color.green and map[y][x] != color.white and map[y][x] != '':
+                        x += 1
+                        break
+                else:
+                    for i in range(len(map)): 
+                        map[i].pop(x)
+            
+            self.mapSizeX = len(map[0])
+            self.mapSizeY = len(map)
+            return map
+                
+
+
 
         # create intersections
         for i in croads:
@@ -182,8 +213,50 @@ class GraphicsEngine(Ursina):
                                                         (iy + n) if iroad else iy, 
                                                         color.blue if iroad else color.red, 
                                                         self.worldMap, ix, iy)
+                
+                r['isPlaced'] = True
             
-            #TODO add remaining roads
+        self.worldMap = cutMap(self.worldMap)
+
+        #TODO add remaining roads
+        for road in roads:
+            if 'isPlaced' in road.keys():
+                continue
+
+            # find a clear path to place the road
+            isClear = False
+            cDir = [{'x' : 0, 'y' : 1},     # north
+                    {'x' : 1, 'y' : 0},     # west
+                    {'x' : 0, 'y' : -1},    # south
+                    {'x' : -1, 'y' : 0}]    # east
+
+            while not isClear:
+                # get a random starting position
+                x = rng.randint(0, self.mapSizeX)
+                y = rng.randint(0, self.mapSizeY)
+                length = road['length'] // self.SCALE
+
+                for d in cDir:
+                    for l in range(length):
+                        try:
+                            tile = self.worldMap[y + (l * d['y'])][x + (l * d['x'])]
+                        except(IndexError):
+                            tile = ''    
+                        if tile == color.blue or tile == color.red:
+                            break
+                    else:
+                        isClear = True
+                        break
+            
+            # place the road
+            setTile(x, y, color.brown, self.worldMap, x, y)
+            for l in range(1, length):
+                x, y, self.worldMap = setTile(x + (l * d['x']), y + (l * d['y']), color.yellow, self.worldMap, x, y)
+
+            self.worldMap = cutMap(self.worldMap)
+
+
+
 
     # Creates the environment of the scene (Sky, Fog, Terrain, Roads)
     # Uses the worldMap field to create the road layout
