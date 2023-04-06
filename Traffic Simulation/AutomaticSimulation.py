@@ -2,6 +2,7 @@
 from TrafficSimulation2 import *
 from VehicleCalculations import *
 from TrafficLightSimulation  import *
+import time
 
 # Goal: Run simulation automatically
 # Precondition: The system contains a diagram of the virtual road network.
@@ -49,20 +50,22 @@ class AutomaticSimulation:
         for i in range(len(self.traffic_light_list)):
             self.trafficlight_current_state.append({"road": '', "position": 0, "cycle" : 0})
 
-
-
     def vehicle_on_road(self):
         
+
         # 1. FOR any vehicle in the road network
         for i in range(len(self.vehicle_list)):
             # 3.1 GOES HERE
             # Execute use-case 3.1 out on the vehicle
+            
             print("Vehicle:" , i)
             print("    -> road: ", self.vehicle_list[i]["road"])
             print("    -> position: ", self.vehicle_list[i]["position"])
             print("    -> speed: ", self.vehicle_list[i]["speed"])
             print("    -> acceleration: ", self.vehicle_list[i]["acceleration"])
             print("    -> type: ", self.vehicle_list[i]["type"])
+            
+
 
             self.vehicle_current_state[i]["road"] = self.vehicle_list[i]["road"]
             self.vehicle_current_state[i]["position"] = self.vehicle_list[i]["position"]
@@ -80,13 +83,10 @@ class AutomaticSimulation:
             print("Waitingtime: ", self.bust_stop_list[i]["waitingtime"])
             print("\n")
         """
-        
-            
-             
 
 
     def traffic_light_on_road(self):
-        
+
         # 2. FOR any traffic light in the road network
         for i in range(len(self.traffic_light_list)):
             print("Road: ", self.traffic_light_list[i]["road"])
@@ -95,16 +95,22 @@ class AutomaticSimulation:
             self.trafficlight_current_state[i]["road"] = self.traffic_light_list[i]["road"]
             self.trafficlight_current_state[i]["position"] = self.traffic_light_list[i]["position"]
             self.trafficlight_current_state[i]["cycle"] = self.traffic_light_list[i]["cycle"]
-            # TrafficLightSimulation.trafficLightInteraction(self.trafficSystem, self.vehicle_list, self.traffic_light_list[i]["cycle"])
+            trafficLightInteraction(self.traffic_light_list, self.vehicle_list, i)
 
     def update(self):
         self.vehicle_on_road()
-        #self.traffic_light_on_road()
+        self.traffic_light_on_road()
         
 
 
 simulation = AutomaticSimulation()
-simulation.update()
+
+
+t_end = time.time() + 60 * 15
+while time.time() < t_end:
+    print("====================================================")
+    simulation.update()
+    time.sleep(1)
 
 """
 print(simulation.vehicle_current_state)
