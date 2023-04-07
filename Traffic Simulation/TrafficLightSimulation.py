@@ -69,16 +69,23 @@ def trafficLightInteraction (trafficLight, vehicles, light_index):
 
         # 3.1.1 THEN IF the first vehicle in front of the light is in the deceleration distance
         distance = trafficLight_position - vehicles[0]["position"] # Calculate distance between traffic light & first vehicle position
-        if distance > 0.0 and distance < VehicleCalculations.decelerationDistance:
-            # Apply the deceleration factor to the first vehicle and all vehicles behind it within the deceleration distance
-            first_vehicle_index = 0
-            while first_vehicle_index < len(vehicles) and vehicles[first_vehicle_index]["position"] >= trafficLight_position:
-                first_vehicle_index += 1
-
-            for i in range(first_vehicle_index):
+        closest_vehicle_index = 0
+        closest_vehicle_distance = abs(trafficLight_position - vehicles[0]["position"])
+        for i in range(1, len(vehicles)):
+            # Calculate the distance between the traffic light and the current vehicle
+            distance_to_traffic_light = abs(trafficLight_position - vehicles[i]["position"])
+            # If the current vehicle is closer to the traffic light than the previous closest vehicle, update the closest vehicle
+            if distance_to_traffic_light < closest_vehicle_distance:
+                closest_vehicle_index = i
+                closest_vehicle_distance = distance_to_traffic_light
+        if closest_vehicle_distance > 0.0 and closest_vehicle_distance < VehicleCalculations.decelerationDistance:
+            # Apply the deceleration factor to the closest vehicle and all vehicles behind it within the deceleration distance
+            for i in range(closest_vehicle_index, len(vehicles)):
                 distance_to_traffic_light = trafficLight_position - vehicles[i]["position"]
                 if distance_to_traffic_light <= VehicleCalculations.decelerationDistance:
                     VehicleCalculations.applyDecelerationFactor(vehicles, i)
+                    # Debug print
+                    # print("Applied Deceleration Factor to Vehicle: ", vehicles[i]["type"])
 
         # 3.1.2 ELSE IF the first vehicle in front of the light is in the first half of the stopping distance
         elif distance > (VehicleCalculations.stoppingDistance / 2) and distance < VehicleCalculations.stoppingDistance:
