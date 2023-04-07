@@ -1,6 +1,5 @@
 #2.3
 from AutomaticSimulation import *
-import random as rng
 from src.GridMap import GridMap
 
 # importing Ursina Engine
@@ -63,8 +62,8 @@ class GraphicsEngine(Ursina):
     # CLASS VARIABLES
     SCALE = 50              # the size of tiles (ex. 100 = 100x100 units)
     ZOOM_SENSITIVITY = 5    # sensitivity of zoooooom
-    MIN_PADDING = 4         # minimum distance between roads
-    MAX_PADDING = 6         # maximum distance between roads
+    MIN_PADDING = 4         # minimum distance between roads \ These two can't equal
+    MAX_PADDING = 10        # maximum distance between roads / or problems happen
 
     # Called when the GraphicsEngine class is instantiated
     # this will be a child class of the Ursina game engine
@@ -72,7 +71,6 @@ class GraphicsEngine(Ursina):
     # then it will start the loading process of the game 'self.start()'
     def __init__(self):
         super().__init__(development_mode=True)
-        rng.seed(rng.random())
 
         # window module settings
         window.title = "Traffic Simulation 3D"
