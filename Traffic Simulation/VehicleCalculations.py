@@ -6,7 +6,7 @@ import json
 # trafficSystem.ReadElementsFromFile("./InputFiles/trafficSim2.xml")
 
 # Parse the JSON data from the vehicle configuration file (json)
-with open('vehicles.json') as f:
+with open('./InputFiles/vehicles.json') as f:
     data = json.load(f)
 
 # Gather each vehicle's specs as a list

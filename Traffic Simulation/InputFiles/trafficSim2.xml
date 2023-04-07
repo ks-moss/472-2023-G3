@@ -7,15 +7,41 @@
         <name>Tropicana</name>
         <length>1500</length>
     </ROAD>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
     <CROSSROADS>
-		<road position="1000">Flamingo</road>
-		<road position="1000">Tropicana</road>
+		<road position="223">Flamingo</road>
+		<road position="223">Durango</road>
 	</CROSSROADS>
     <TRAFFICLIGHT>
         <road>Flamingo</road>
-        <position>272</position>
+        <position>223</position>
         <cycle>10</cycle>
     </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+        <road>Durango</road>
+        <position>223</position>
+        <cycle>15</cycle>
+    </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
+    <CROSSROADS>
+		<road position="227">Flamingo</road>
+		<road position="227">Tropicana</road>
+	</CROSSROADS>
+    <TRAFFICLIGHT>
+        <road>Flamingo</road>
+        <position>227</position>
+        <cycle>10</cycle>
+    </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+        <road>Tropicana</road>
+        <position>227</position>
+        <cycle>15</cycle>
+    </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
     <VEHICLE>
         <road>Flamingo</road>
         <position>220</position>
@@ -25,7 +51,7 @@
     </VEHICLE>
     <VEHICLE>
         <road>Tropicana</road>
-        <position>0</position>
+        <position>224</position>
         <speed>8</speed>
         <acceleration>1.2</acceleration>
         <type>police van</type>
@@ -34,11 +60,6 @@
         <name>Durango</name>
         <length>900</length>
     </ROAD>
-    <TRAFFICLIGHT>
-        <road>Durango</road>
-        <position>800</position>
-        <cycle>15</cycle>
-    </TRAFFICLIGHT>
     <VEHICLE>
         <road>Durango</road>
         <position>770</position>
