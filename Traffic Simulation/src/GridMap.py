@@ -3,15 +3,16 @@ import random as rng
 
 class GridMap:
 
-    SCALE = 50      # the size of tiles (ex. 100 = 100x100 units)
-    PADDING = 4     # minimum distance between roads
+    SCALE = 50          # the size of tiles (ex. 100 = 100x100 units)
+    MIN_PADDING = 4     # minimum distance between roads
+    MAX_PADDING = 6     # maximum distance between roads
 
     def __init__(self, roads, intersections):
         self.roads = roads
         self.intersections = intersections
         self.xSize = ceil(max([r['length'] for r in self.roads]) / self.SCALE)
         self.ySize = self.xSize
-        self.map = [[color.green for _ in range(self.xSize)] for _ in range(self.ySize)]
+        self.map = [['' for _ in range(self.xSize)] for _ in range(self.ySize)]
         self.map[0][0] = ''
 
 
@@ -33,15 +34,15 @@ class GridMap:
         # if x or y out of bounds
         if (x >= self.xSize):                                        # extend right
             for row in range(len(self.map)): 
-                self.map[row].extend([color.white])
+                self.map[row].extend([''])
         elif (x < 0):                                                   # extend left
             for row in range(len(self.map)): 
-                self.map[row] = [color.white, *self.map[row]]
+                self.map[row] = ['', *self.map[row]]
             startx += 1
         if (y >= self.ySize):                                        # extend up
-            self.map = [*self.map, [color.white for _ in range(self.xSize)]]
+            self.map = [*self.map, ['' for _ in range(self.xSize)]]
         elif (y < 0):                                                   # extend down
-            self.map = [[color.white for _ in range(self.xSize)], *self.map]
+            self.map = [['' for _ in range(self.xSize)], *self.map]
             starty += 1
 
         self.xSize = len(self.map[0])
@@ -59,7 +60,7 @@ class GridMap:
         y = 0
         while (y < len(self.map)):
             for x in range(len(self.map[0])):
-                if self.map[y][x] != color.green and self.map[y][x] != color.white and self.map[y][x] != '':
+                if self.map[y][x] != '':
                     y += 1
                     break
             else:
@@ -69,7 +70,7 @@ class GridMap:
         x = 0
         while (x < len(self.map[0])):
             for y in range(len(self.map)):
-                if self.map[y][x] != color.green and self.map[y][x] != color.white and self.map[y][x] != '':
+                if self.map[y][x] != '':
                     x += 1
                     break
             else:
@@ -81,55 +82,103 @@ class GridMap:
 
     
 
-    def paddingCheck(self, x, y):
-        padding = self.PADDING
+    def paddingCheck(self, x, y, isFirst):
+        minP = self.MIN_PADDING
+        maxP = self.MAX_PADDING
+
+        # check for minimum padding first
 
         # check horizontals
-        for p in range(-padding, padding):
+        for p in range(-minP, minP):
             try:
                 tile = self.map[x + p][y]
             except(IndexError):
                 tile = ''
-            if tile == color.blue or tile == color.red:
+            if tile != '':
                 return False
         
         # check verticals
-        for p in range(-padding, padding):
+        for p in range(-minP, minP):
             try:
                 tile = self.map[x + p][y]
             except(IndexError):
                 tile = ''
-            if  tile == color.blue or tile == color.red:
+            if  tile != '':
                 return False
             
         # check diagonals
-        for p in range(-padding, padding):
+        for p in range(-minP, minP):
             try:
                 tile = self.map[x+p][y+p]
             except(IndexError):
                 tile = ''
-            if tile == color.blue or tile == color.red:
+            if tile != '':
                 return False
             
-
             try:
                 tile = self.map[x+p][y-p]
             except(IndexError):
                 tile = ''
-            if tile == color.blue or tile == color.red:
+            if tile != '':
                 return False
         
-        return True
+        # check for maximum padding
+        if isFirst: # since the first road placed won't have other roads to compare to
+            return True
+
+        roadExists = False
+
+        # check horizontals
+        for p in [*range(-maxP, -minP), *range(minP, maxP)]:
+            try:
+                tile = self.map[x + p][y]
+            except(IndexError):
+                tile = ''
+            if tile != '':
+                roadExists = True
+                break
+        
+        # check verticals
+        for p in [*range(-maxP, -minP), *range(minP, maxP)]:
+            try:
+                tile = self.map[x + p][y]
+            except(IndexError):
+                tile = ''
+            if  tile != '':
+                roadExists = True
+                break
+            
+        # check diagonals
+        for p in [*range(-maxP, -minP), *range(minP, maxP)]:
+            try:
+                tile = self.map[x+p][y+p]
+            except(IndexError):
+                tile = ''
+            if tile != '':
+                roadExists = True
+                break
+            
+            try:
+                tile = self.map[x+p][y-p]
+            except(IndexError):
+                tile = ''
+            if tile != '':
+                roadExists = True
+                break
+        
+        return roadExists
     
 
 
     def createIntersections(self):
         # create intersections
+        isFirst = True
         for i in self.intersections:
             while True:
                 ix = rng.randint(0, self.xSize)
                 iy = rng.randint(0, self.ySize)
-                if self.paddingCheck(ix, iy):
+                if self.paddingCheck(ix, iy, isFirst):
+                    isFirst = False
                     break
             self.setTile(ix, iy, color.black, ix, iy)
 
@@ -147,17 +196,17 @@ class GridMap:
 
                 # place road behind intersection
                 for n in range(1, backDist - 1):
-                        ix, iy = self.setTile(ix if iroad else ix - n, 
-                                                        (iy - n) if iroad else iy, 
-                                                        color.blue if iroad else color.red, 
-                                                        ix, iy)
+                    ix, iy = self.setTile(ix if iroad else ix - n, 
+                                        (iy - n) if iroad else iy, 
+                                        color.blue if iroad else color.red, 
+                                        ix, iy)
 
                 # place road ahead intersection
                 for n in range(1, frontDist - 1):
-                        ix, iy = self.setTile(ix if iroad else ix + n, 
-                                                        (iy + n) if iroad else iy, 
-                                                        color.blue if iroad else color.red, 
-                                                        ix, iy)
+                    ix, iy = self.setTile(ix if iroad else ix + n, 
+                                        (iy + n) if iroad else iy, 
+                                        color.blue if iroad else color.red, 
+                                        ix, iy)
                 
                 r['isPlaced'] = True
         self.cutMap()
@@ -184,11 +233,7 @@ class GridMap:
 
                 for d in cDir:
                     for l in range(length):
-                        try:
-                            tile = self.map[y + (l * d['y'])][x + (l * d['x'])]
-                        except(IndexError):
-                            tile = ''    
-                        if not self.paddingCheck(x+(l*d['x']), y+(l*d['y'])):
+                        if not self.paddingCheck(x+(l*d['x']), y+(l*d['y']), False):
                             break
                     else:
                         isClear = True

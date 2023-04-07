@@ -63,7 +63,8 @@ class GraphicsEngine(Ursina):
     # CLASS VARIABLES
     SCALE = 50              # the size of tiles (ex. 100 = 100x100 units)
     ZOOM_SENSITIVITY = 5    # sensitivity of zoooooom
-    PADDING = 4             # minimum distance between roads
+    MIN_PADDING = 4         # minimum distance between roads
+    MAX_PADDING = 6         # maximum distance between roads
 
     # Called when the GraphicsEngine class is instantiated
     # this will be a child class of the Ursina game engine
@@ -88,8 +89,9 @@ class GraphicsEngine(Ursina):
         self.simData = AutomaticSimulation()
         self.Map = GridMap(self.simData.road_list, self.simData.intersection_list)
         GridMap.SCALE = self.SCALE
-        GridMap.PADDING = self.PADDING
-        
+        GridMap.MIN_PADDING = self.MIN_PADDING
+        GridMap.MAX_PADDING = self.MAX_PADDING
+
         self.createScene()
 
 
