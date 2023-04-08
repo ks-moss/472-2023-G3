@@ -12,6 +12,16 @@ except(e):
     exit()
 
 
+# what to do next
+#TODO click on tile to focus
+#TODO refresh function (delete map & create new one)
+#TODO add cars
+#TODO data pipeline from vehicle generator
+#TODO add bus stops
+#TODO add traffic lights
+#TODO 4.1 GUI for simulation
+#TODO 4.2 GUI for traffic lights
+#TODO 4.3 GUI for vehicle generator
 
 
 # Camera Class

@@ -1,6 +1,9 @@
 from ursina import *
 import random as rng
 
+# what to do next
+#TODO add textures
+#TODO Hopefully not work with roads that are in multiple cross roads
 
 # GridMap class used in the GraphicsEngine Class
 # used for creating the road maps for the simulation
@@ -25,8 +28,6 @@ class GridMap:
         self.xSize = ceil(max([r['length'] for r in self.roads]) / self.SCALE)
         self.ySize = self.xSize
         self.map = [['' for _ in range(self.xSize)] for _ in range(self.ySize)]
-        self.map[0][0] = color.black
-        self.map[0][1] = color.white
 
 
     # only used in method @createWorldMap
