@@ -21,7 +21,7 @@ class GridMap:
     def __init__(self, roads, intersections):
         rng.seed(rng.random())
         self.roads = roads
-        self.intersections = intersections
+        self.crossRoads = intersections
         self.xSize = ceil(max([r['length'] for r in self.roads]) / self.SCALE)
         self.ySize = self.xSize
         self.map = [['' for _ in range(self.xSize)] for _ in range(self.ySize)]
@@ -166,51 +166,117 @@ class GridMap:
 
     
 
-    # createIntersections
+    # createCrossRoad
     # This function should be called before @createRoads
-    # Places the intersections on the map using the intersection list
+    # Places the cross roads on the map using the cross road list
+    # function is recursive to help with a bunch of tabs happening &
+    # ease of use
+    # parameters:
+    #   xRoads  - the list of intersections
     # PostCondition:
-    #   map will have all of the intersections placed without any collisions
-    #TODO add ability to use more than one intersection
-    #TODO check if path is clear before placing roads
-    def createIntersections(self):
-        # create intersections
-        for i in self.intersections:
-            while True:
-                ix = rng.randint(0, self.xSize)
-                iy = rng.randint(0, self.ySize)
-                if self.paddingCheck(ix, iy, False):
-                    break
-            self.setTile(ix, iy, color.black, ix, iy)
+    #   map will have all of the cross roads placed without any collisions
 
-            # create roads for those intersections
-            for iroad in [0, 1]:
-                # find road in road list
-                for r in self.roads:
-                    if r['name'] == i[iroad]['road']:
-                        road = r
-                        break
-                
-                # get the length of the road split by the intersection
-                frontDist = (road['length'] - i[iroad]['position']) // self.SCALE
-                backDist = i[iroad]['position'] // self.SCALE
+    firstCall = True
+    def createCrossRoad(self, xRoads):
+        if not len(xRoads):
+            return
 
-                # place road behind intersection
-                for n in range(1, backDist - 1):
-                    ix, iy = self.setTile(ix if iroad else ix - n, 
-                                        (iy - n) if iroad else iy, 
-                                        color.blue if iroad else color.red, 
-                                        ix, iy)
+        xrd = xRoads[0]
+        print(xrd[0]['road'], 'x', xrd[1]['road'])
 
-                # place road ahead intersection
-                for n in range(1, frontDist - 1):
-                    ix, iy = self.setTile(ix if iroad else ix + n, 
-                                        (iy + n) if iroad else iy, 
-                                        color.blue if iroad else color.red, 
-                                        ix, iy)
-                
+        # get road lengths of crossroad
+        for r in self.roads:
+            if r['name'] == xrd[0]['road']:
+                len1 = r['length'] // self.SCALE
                 r['isPlaced'] = True
+            if r['name'] == xrd[1]['road']:
+                len2 = r['length'] // self.SCALE
+                r['isPlaced'] = True
+        lens = (len1, len2)
+
+        # get road cutoff position of crossroad
+        cut1 = xrd[0]['position'] // self.SCALE
+        cut2 = xrd[1]['position'] // self.SCALE
+        cuts = (cut1, cut2)
+
+        # find a clear are to place intersection including padding
+        isClear = False
+        road = rng.randint(0, 1)
+        tries = 0
+        expansion = 0
+        while not isClear:
+            startX = rng.randint(-expansion, self.xSize + expansion)
+            startY = rng.randint(-expansion, self.ySize + expansion)
+
+            checks = [False, False]
+            directions = [(0, 1), (1, 0)]
+            if rng.choice([True, False]):
+                directions = [directions[1], directions[0]]
+
+            for d in directions:
+                frontDist = lens[road] - cuts[road]
+                backDist = cuts[road]
+
+                for l in range(frontDist):  # check front of xrd
+                    if not self.paddingCheck(startX + (l * d[0]), 
+                                             startY + (l * d[1]), 
+                                             False):
+                        frontCheck = False
+                        break
+                else:
+                    frontCheck = True
+
+                d = (d[0] * -1, d[1] * -1)
+                for l in range(backDist):   # check back of xrd
+                    if not self.paddingCheck(startX + (l * d[0]),
+                                             startY + (l * d[1]),
+                                             False):
+                        backCheck = False
+                        break
+                else:
+                    backCheck = True
+
+                if not frontCheck or not backCheck:
+                    break
+
+                checks[road] = frontCheck and backCheck
+                road = (road * -1) + 1  # switch road
+            
+            # if all sign clear
+            if checks[0] and checks[1]:
+                isClear = True
+            
+            tries += 1
+            expansion = expansion + 1 if tries % 10 == 0 else expansion
+        
+
+        # place roads
+        self.setTile(startX, startY, color.black, startX, startY)   # place xrd
+        for d in directions:
+            frontDist = lens[road] - cuts[road]
+            backDist = cuts[road]
+
+            for l in range(1, frontDist):
+                startX, startY = self.setTile(startX + (l * d[0]),
+                                              startY + (l * d[1]),
+                                              color.blue if road else color.red,
+                                              startX, startY)
+
+            d = (d[0] * -1, d[1] * -1)
+            for l in range(1, backDist):
+                startX, startY = self.setTile(startX + (l * d[0]),
+                                              startY + (l * d[1]),
+                                              color.blue if road else color.red,
+                                              startX, startY)
+
+            road = (road * -1) + 1 # switch road
+                
+        
+        # recurse for next cross road
+        xRoads.pop(0)
         self.cutMap()
+        self.createCrossRoad(xRoads)
+
     
     
 
@@ -278,4 +344,28 @@ class GridMap:
                 tile = self.map[y][x]
                 tile = ' 0' if tile != '' else ' -'
                 print(tile, end='')
+            
+            if y % 5 == 0:
+                print(' <', end='')
+            if y % 10 == 0:
+                print('< {}'.format(y), end='')
             print()
+
+        for x in range(self.xSize):
+            if x % 5 == 0:
+                print(' ^', end='')
+            else:
+                print('  ', end='')
+        print()
+        for x in range(self.xSize):
+            if x % 10 == 0:
+                print(' ^', end='')
+            else:
+                print('  ', end='')
+        print()
+        for x in range(self.xSize):
+            if x % 10 == 0:
+                print('{0: >2}'.format(x), end='')
+            else:
+                print('  ', end='')
+        print()

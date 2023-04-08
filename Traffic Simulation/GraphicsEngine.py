@@ -60,7 +60,8 @@ class Camera(FirstPersonController):
 class GraphicsEngine(Ursina):
 
     # CLASS VARIABLES
-    SCALE = 50              # the size of tiles (ex. 100 = 100x100 units)
+    SCALE = 20              # the size of tiles (ex. 100 = 100x100 units)
+    ROAD_SCALE = 50         # block size of road (ex. 50 => road.len = 100 => 2 blocks)
     ZOOM_SENSITIVITY = 5    # sensitivity of zoooooom
     MIN_PADDING = 4         # minimum distance between roads \ These two can't equal
     MAX_PADDING = 10        # maximum distance between roads / or problems happen
@@ -86,7 +87,7 @@ class GraphicsEngine(Ursina):
         # create simulation data object
         self.simData = AutomaticSimulation()
         self.Map = GridMap(self.simData.road_list, self.simData.intersection_list)
-        GridMap.SCALE = self.SCALE
+        GridMap.SCALE = self.ROAD_SCALE
         GridMap.MIN_PADDING = self.MIN_PADDING
         GridMap.MAX_PADDING = self.MAX_PADDING
 
@@ -106,7 +107,7 @@ class GraphicsEngine(Ursina):
     # creates the road layout based on the input.
     # the worldMap field should hold the grid layout of the road.
     def createWorldMap(self):
-        self.Map.createIntersections()
+        self.Map.createCrossRoad(self.Map.crossRoads)
         self.Map.createRoads()
         self.worldMap = self.Map.map
 

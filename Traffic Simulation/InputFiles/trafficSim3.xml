@@ -1,0 +1,71 @@
+<!-- Stress test for Graphics Engine road placement -->
+<root>
+    <ROAD>
+        <name>Flamingo</name>
+        <length>2000</length>
+    </ROAD>
+    <ROAD>
+        <name>Tropicana</name>
+        <length>1500</length>
+    </ROAD>
+    <ROAD>
+        <name>Durango</name>
+        <length>900</length>
+    </ROAD>
+    <ROAD>
+        <name>Mango</name>
+        <length>300</length>
+    </ROAD>
+    <ROAD>
+        <name>Boardwalk</name>
+        <length>1500</length>
+    </ROAD>
+    <ROAD>
+        <name>Oriental Avenue</name>
+        <length>750</length>
+    </ROAD>
+    <ROAD>
+        <name>Vermont</name>
+        <length>430</length>
+    </ROAD>
+    <ROAD>
+        <name>Baltic Avenue</name>
+        <length>500</length>
+    </ROAD>
+    <ROAD>
+        <name>Park Place</name>
+        <length>880</length>
+    </ROAD>
+    <ROAD>
+        <name>Reading Railroad</name>
+        <length>1700</length>
+    </ROAD>
+    <ROAD>
+        <name>Pacific Avenue</name>
+        <length>1400</length>
+    </ROAD>
+    <ROAD>
+        <name>Illinois Avenue</name>
+        <length>1800</length>
+    </ROAD>
+    <ROAD>
+        <name>Indiana Avenue</name>
+        <length>200</length>
+    </ROAD>
+    <ROAD>
+        <name>Kentucky Avenue</name>
+        <length>2500</length>
+    </ROAD>
+    <CROSSROADS>
+        <road position="900">Durango</road>
+        <road position="1000">Boardwalk</road>
+    </CROSSROADS>
+    <CROSSROADS>
+		<road position="1000">Flamingo</road>
+		<road position="1000">Tropicana</road>
+	</CROSSROADS>
+    <CROSSROADS>
+		<road position="800">Park Place</road>
+		<road position="300">Pacific Avenue</road>
+	</CROSSROADS>
+</root>
