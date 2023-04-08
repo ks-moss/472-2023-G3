@@ -37,7 +37,7 @@ class AutomaticSimulation:
         # Get Road List
         self.road_list = self.trafficSystem.roadList
         # Get Crossroads
-        # self.intersection_list = self.trafficSystem.intersectionList
+        self.intersection_list = self.trafficSystem.intersectionList
         #Get Bus Stop list
         self.bust_stop_list = self.trafficSystem.busStopList
         # Store current state of vehicle
@@ -106,11 +106,11 @@ class AutomaticSimulation:
 simulation = AutomaticSimulation()
 
 
-t_end = time.time() + 60 * 15
-while time.time() < t_end:
-    print("====================================================")
-    simulation.update()
-    time.sleep(1)
+# t_end = time.time() + 60 * 15
+# while time.time() < t_end:
+#     print("====================================================")
+#     simulation.update()
+#     time.sleep(1)
 
 """
 print(simulation.vehicle_current_state)
