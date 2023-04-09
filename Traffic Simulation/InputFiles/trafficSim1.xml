@@ -3,19 +3,41 @@
 		<name>Rochelle</name>
 		<length>500</length>
 	</ROAD>
-	<CROSSROADS>
+	<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+	<!-- CROSSROADS = road A intersects to Road B -->
+	<!-- Keep them together -->
+    <CROSSROADS>
 		<road position="500">Rochelle</road>
 		<road position="500">Maryland</road>
 	</CROSSROADS>
-	<CROSSROADS>
+    <TRAFFICLIGHT>
+        <road>Rochelle</road>
+        <position>500</position>
+        <cycle>10</cycle>
+    </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+        <road>Maryland</road>
+        <position>500</position>
+        <cycle>15</cycle>
+    </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
+    <CROSSROADS>
 		<road position="225">Flamingo</road>
 		<road position="225">Tropicana</road>
 	</CROSSROADS>
-	<TRAFFICLIGHT>
-		<road>Rochelle</road>
-		<position>400</position>
-		<cycle>30</cycle>
-	</TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+        <road>Flamingo</road>
+        <position>225</position>
+        <cycle>10</cycle>
+    </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+        <road>Tropicana</road>
+        <position>225</position>
+        <cycle>15</cycle>
+    </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
 	<BUSSTOP>
 		<road>Rochelle</road>
 		<position>250</position>
@@ -29,7 +51,7 @@
 		<type>police van</type>
 	</VEHICLE>
 	<VEHICLE>
-		<road>Rochelle</road>
+		<road>Maryland</road>
 		<position>0</position>
 		<speed>15</speed>
         <acceleration>1.0</acceleration>
