@@ -55,11 +55,31 @@ def trafficLightInteraction (trafficLight, vehicles, light_index):
     if green_light[trafficLight_road] == True:
         # Invoke acceleration function for ALL vehicles in front of the current traffic light
         i = 0
+        j = 0
+        emergencyDeceleration = False
+
         while i < len(vehicles):
             # Make sure the current vehicle is on the current road
             if vehicles[i]["road"] == trafficLight_road:   
                 # Adjust acceleration of vehicle if the vehicle is behind the traffic light's position
                 if vehicles[i]["position"] < trafficLight_position:
+                    # 3.5 If the first vehicle is an emergency vehicle, the rest of the vehicles don't need to slow down
+                    # Checks if there is an emergency vehicle on the road
+                    if (vehicles[i]["position"] != 0) and (vehicles[i]["type"] == "fire truck" or vehicles[i]["type"] == "police van" or vehicles[i]["type"] == "ambulance"):
+                        if emergencyDeceleration == False:
+                            while j < len(vehicles):
+                                # Make sure the current vehicle is on the current road and being traffic light
+                                if vehicles[j]["road"] == trafficLight_road and vehicles[j]["position"] < trafficLight_position:
+                                    # Only apply deceleration factor if it's not the current emergency vehicle
+                                    if (vehicles[j]["type"] != "fire truck" or vehicles[j]["type"] != "police van" or vehicles[j]["type"] != "ambulance"): 
+                                        VehicleCalculations.applyDecelerationFactor(vehicles, j)
+                                j += 1
+                                
+                        # Reduces time complexity
+                        # Applies deceleration to every vehicle (that is not an emergency vehicle) on the road if there is an emergency vehicle present
+                        # Doesn't require deceleration for each emergency vehicle found on the road
+                        emergencyDeceleration == True
+                    
                     VehicleCalculations.calculateAcceleration(vehicles, i)
                     
             i += 1
@@ -69,16 +89,23 @@ def trafficLightInteraction (trafficLight, vehicles, light_index):
 
         # 3.1.1 THEN IF the first vehicle in front of the light is in the deceleration distance
         distance = trafficLight_position - vehicles[0]["position"] # Calculate distance between traffic light & first vehicle position
-        if distance > 0.0 and distance < VehicleCalculations.decelerationDistance:
-            # Apply the deceleration factor to the first vehicle and all vehicles behind it within the deceleration distance
-            first_vehicle_index = 0
-            while first_vehicle_index < len(vehicles) and vehicles[first_vehicle_index]["position"] >= trafficLight_position:
-                first_vehicle_index += 1
-
-            for i in range(first_vehicle_index):
+        closest_vehicle_index = 0
+        closest_vehicle_distance = abs(trafficLight_position - vehicles[0]["position"])
+        for i in range(1, len(vehicles)):
+            # Calculate the distance between the traffic light and the current vehicle
+            distance_to_traffic_light = abs(trafficLight_position - vehicles[i]["position"])
+            # If the current vehicle is closer to the traffic light than the previous closest vehicle, update the closest vehicle
+            if distance_to_traffic_light < closest_vehicle_distance:
+                closest_vehicle_index = i
+                closest_vehicle_distance = distance_to_traffic_light
+        if closest_vehicle_distance > 0.0 and closest_vehicle_distance < VehicleCalculations.decelerationDistance:
+            # Apply the deceleration factor to the closest vehicle and all vehicles behind it within the deceleration distance
+            for i in range(closest_vehicle_index, len(vehicles)):
                 distance_to_traffic_light = trafficLight_position - vehicles[i]["position"]
                 if distance_to_traffic_light <= VehicleCalculations.decelerationDistance:
                     VehicleCalculations.applyDecelerationFactor(vehicles, i)
+                    # Debug print
+                    # print("Applied Deceleration Factor to Vehicle: ", vehicles[i]["type"])
 
         # 3.1.2 ELSE IF the first vehicle in front of the light is in the first half of the stopping distance
         elif distance > (VehicleCalculations.stoppingDistance / 2) and distance < VehicleCalculations.stoppingDistance:

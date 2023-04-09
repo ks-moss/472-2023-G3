@@ -1,6 +1,7 @@
 #2.3
 from AutomaticSimulation import *
 import random as rng
+from src.GridMap import GridMap
 
 # importing Ursina Engine
 try:
@@ -60,8 +61,10 @@ class Camera(FirstPersonController):
 class GraphicsEngine(Ursina):
 
     # CLASS VARIABLES
-    SCALE = 50             # the size of tiles (ex. 100 = 100x100 units)
-    ZOOM_SENSITIVITY = 5
+    SCALE = 50              # the size of tiles (ex. 100 = 100x100 units)
+    ZOOM_SENSITIVITY = 5    # sensitivity of zoooooom
+    MIN_PADDING = 4         # minimum distance between roads
+    MAX_PADDING = 6         # maximum distance between roads
 
     # Called when the GraphicsEngine class is instantiated
     # this will be a child class of the Ursina game engine
@@ -84,6 +87,10 @@ class GraphicsEngine(Ursina):
 
         # create simulation data object
         self.simData = AutomaticSimulation()
+        self.Map = GridMap(self.simData.road_list, self.simData.intersection_list)
+        GridMap.SCALE = self.SCALE
+        GridMap.MIN_PADDING = self.MIN_PADDING
+        GridMap.MAX_PADDING = self.MAX_PADDING
 
         self.createScene()
 
@@ -101,89 +108,11 @@ class GraphicsEngine(Ursina):
     # creates the road layout based on the input.
     # the worldMap field should hold the grid layout of the road.
     def createWorldMap(self):
+        self.Map.createIntersections()
+        self.Map.createRoads()
+        self.worldMap = self.Map.map
 
-        # create 2D map with size of the road with maximum length
-        self.mapSizeX = ceil(max([r['length'] for r in self.simData.road_list]) / self.SCALE)
-        self.mapSizeY = self.mapSizeX
-        self.worldMap = [[color.green for _ in range(self.mapSizeX)] for _ in range(self.mapSizeY)]
-        self.worldMap[0][0] = ''
 
-        # place roads onto world map randomly
-        roads = self.simData.road_list
-        croads = self.simData.intersection_list
-
-        # only used in method @createWorldMap
-        # places a texture onto the map grid based on the x & y inputs
-        # will extend the grid if x | y falls out of bounds
-        # parameters:
-        #   x       - x position of tile
-        #   y       - y position of tile
-        #   texture - texture of tile
-        #   map     - grid map containing the textures used for the roads
-        #   startx  - starting x of a road (changes if map is extended to left)
-        #   starty  - starting y of a road (changes if map is extended to down)
-        # return:
-        #   startx  - same as startx | different if map is expanded
-        #   starty  - same as starty | different if map is expanded
-        #   map     - updated map with expansions & textures
-        def setTile(x, y, texture, map, startx, starty):
-            # if x or y out of bounds
-            if (x >= self.mapSizeX):                                        # extend right
-                for row in range(len(map)): 
-                    map[row].extend([color.white])
-            elif (x < 0):                                                   # extend left
-                for row in range(len(map)): 
-                    map[row] = [color.white, *map[row]]
-                startx += 1
-            if (y >= self.mapSizeY):                                        # extend up
-                map = [*map, [color.white for _ in range(self.mapSizeX)]]
-            elif (y < 0):                                                   # extend down
-                map = [[color.white for _ in range(self.mapSizeX)], *map]
-                starty += 1
-
-            self.mapSizeX = len(map[0])
-            self.mapSizeY = len(map)
-            x = clamp(x, 0, self.mapSizeX)
-            y = clamp(y, 0, self.mapSizeY)
-
-            map[y][x] = texture
-            return startx, starty, map
-
-        #TODO add method for shrinking map for empty rows or columns
-
-        # create intersections
-        for i in croads:
-            ix = rng.randint(0, self.mapSizeX)
-            iy = rng.randint(0, self.mapSizeY)
-            setTile(ix, iy, color.black, self.worldMap, ix, iy)
-
-            # create roads for those intersections
-            for iroad in [0, 1]:
-                # find road in road list
-                for r in roads:
-                    if r['name'] == i[iroad]['road']:
-                        road = r
-                        break
-                
-                # get the length of the road split by the intersection
-                frontDist = (road['length'] - i[iroad]['position']) // self.SCALE
-                backDist = i[iroad]['position'] // self.SCALE
-
-                # place road behind intersection
-                for n in range(1, backDist - 1):
-                        ix, iy, self.worldMap = setTile(ix if iroad else ix - n, 
-                                                        (iy - n) if iroad else iy, 
-                                                        color.blue if iroad else color.red, 
-                                                        self.worldMap, ix, iy)
-
-                # place road ahead intersection
-                for n in range(1, frontDist - 1):
-                        ix, iy, self.worldMap = setTile(ix if iroad else ix + n, 
-                                                        (iy + n) if iroad else iy, 
-                                                        color.blue if iroad else color.red, 
-                                                        self.worldMap, ix, iy)
-            
-            #TODO add remaining roads
 
     # Creates the environment of the scene (Sky, Fog, Terrain, Roads)
     # Uses the worldMap field to create the road layout
@@ -191,7 +120,7 @@ class GraphicsEngine(Ursina):
     def createEnvironment(self):
         # terrain
         self.terrain = Entity(model = 'quad', 
-                              scale = (self.mapSizeX*200, self.mapSizeX*200, 0), 
+                              scale = (self.Map.xSize*200, self.Map.ySize*200, 0), 
                               position = (0, -1, 0), 
                               texture = 'grass', 
                               rotation_x = 90)
@@ -199,14 +128,14 @@ class GraphicsEngine(Ursina):
 
 
         # create roads
-        for x in range(self.mapSizeX):
-            for y in range(self.mapSizeY):
+        for x in range(self.Map.xSize):
+            for y in range(self.Map.ySize):
                 if self.worldMap[y][x] != '':
                     Entity( model = 'quad', 
                             scale = self.SCALE, 
-                            x = (self.mapSizeX // 2 - x) * self.SCALE,
+                            x = (self.Map.xSize // 2 - x) * self.SCALE,
                             y = 0,
-                            z = (self.mapSizeY // 2 - y) * self.SCALE, 
+                            z = (self.Map.ySize // 2 - y) * self.SCALE, 
                             rotation_x = 90, 
                             color = self.worldMap[y][x],
                             # texture = self.worldMap[x][z], <-- we will use this in final implementation
