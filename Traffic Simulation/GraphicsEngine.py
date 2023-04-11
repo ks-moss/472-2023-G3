@@ -47,6 +47,12 @@ class Camera(FirstPersonController):
         camera.clip_plane_near = 0.1
         self.focusTimer = 100
     
+
+    # called when the left mouse button is clicked
+    # checks to see if the mouse is clicking on a road
+    # if there is a collision then the target x&z values are 
+    # updated to the entities position
+    # the focus timer is reset to 0
     def focus(self):
         mouse.find_collision()
         if len(mouse.collisions) == 0:
@@ -64,6 +70,9 @@ class Camera(FirstPersonController):
     # moves the camera rotation based on the mouse only when the mouse
     # is locked which is when the right mouse button is held down
     # mouse will be locked/unlocked in @GraphicsEngine.input
+    #
+    # if the focus timer is < 100 it will update the cameras position
+    # to the target position within 100 frame updates.
     def update(self):
         if mouse.locked:
             self.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
@@ -188,6 +197,7 @@ class GraphicsEngine(Ursina):
     # parameters:
     #   key -   the value that is inputted from the keyboard or mouse.
     #       keybinds:
+    #           'mouse1'    -   sets focus to a road tile
     #           'esc'       -   quits & closes the app
     #           'wheel_up'  -   zooms in
     #           'wheel_down'-   zooms out
