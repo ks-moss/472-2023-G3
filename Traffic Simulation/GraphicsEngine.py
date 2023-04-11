@@ -5,7 +5,6 @@ from src.GridMap import GridMap
 # importing Ursina Engine
 try:
     from ursina import *
-    # from ursina.camera import Camera
     from ursina.prefabs.first_person_controller import FirstPersonController
 except(e):
     print('Make sure to install Ursina Engine via "pip install ursina"')
@@ -13,7 +12,6 @@ except(e):
 
 
 # what to do next
-#TODO click on tile to focus
 #TODO refresh function (delete map & create new one)
 #TODO add cars
 #TODO data pipeline from vehicle generator
@@ -47,6 +45,20 @@ class Camera(FirstPersonController):
         camera.y = 100  # distance from origin
         camera.fov = 120
         camera.clip_plane_near = 0.1
+        self.focusTimer = 100
+    
+    def focus(self):
+        mouse.find_collision()
+        if len(mouse.collisions) == 0:
+            return
+        
+        self.targetx = mouse.collisions[0].entity.world_x
+        self.targetz = mouse.collisions[0].entity.world_z
+        self.focusTimer = 0
+        self.oldx = self.x
+        self.oldz = self.z
+
+
 
     # Update called every frame of the GraphicsEngine automatically
     # moves the camera rotation based on the mouse only when the mouse
@@ -57,6 +69,13 @@ class Camera(FirstPersonController):
             self.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
             self.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
             self.camera_pivot.rotation_x = clamp(self.camera_pivot.rotation_x, -90, 0)
+
+        if self.focusTimer < 100:
+            self.focusTimer += 1
+            t = self.focusTimer / 100
+            self.x = lerp(self.oldx, self.targetx, t)
+            self.z = lerp(self.oldz, self.targetz, t)
+        
 
 
 
@@ -86,13 +105,13 @@ class GraphicsEngine(Ursina):
         # window module settings
         window.title = "Traffic Simulation 3D"
         window.vsync = True
-        window.borderless = True
+        window.borderless = False
         window.fullscreen = False
         window.exit_button.visible = False
         window.fps_counter.enable = True
 
         # create custom camera class
-        Camera(gravity = 0)
+        self.cam = Camera(gravity = 0)
 
         # create simulation data object
         self.simData = AutomaticSimulation()
@@ -127,20 +146,24 @@ class GraphicsEngine(Ursina):
     # Uses the worldMap field to create the road layout
     # createWorldMap function must be called before this function
     def createEnvironment(self):
+        self.sceneObjs = []
+
         # terrain
         self.terrain = Entity(model = 'quad', 
                               scale = (self.Map.xSize*200, self.Map.ySize*200, 0), 
                               position = (0, -1, 0), 
                               texture = 'grass', 
-                              rotation_x = 90)
+                              rotation_x = 90,
+                              collider = None)
         self.terrain.texture_scale = Vec2(50, 50)
+        self.sceneObjs.append(self.terrain)
 
 
         # create roads
         for x in range(self.Map.xSize):
             for y in range(self.Map.ySize):
                 if self.worldMap[y][x] != '':
-                    Entity( model = 'quad', 
+                    obj = Entity( model = 'quad', 
                             scale = self.SCALE, 
                             x = (self.Map.xSize // 2 - x) * self.SCALE,
                             y = 0,
@@ -148,7 +171,11 @@ class GraphicsEngine(Ursina):
                             rotation_x = 90, 
                             color = self.worldMap[y][x],
                             # texture = self.worldMap[x][z], <-- we will use this in final implementation
-                            collider = None)
+                            collider = 'box')
+                    obj.on_mouse_enter = Func(setattr, obj, 'color', color.white)
+                    obj.on_mouse_exit = Func(setattr, obj, 'color', self.worldMap[y][x])
+
+                    self.sceneObjs.append(obj)
         
 
         # sky
@@ -168,7 +195,7 @@ class GraphicsEngine(Ursina):
     def input(self, key, is_raw=False):
         match key:
             case 'mouse1':
-                quit()
+                self.cam.focus()
             case Keys.escape:
                 quit()
             case 'wheel_up':
@@ -196,4 +223,5 @@ class GraphicsEngine(Ursina):
 # Start simulation by running this file
 if __name__ == "__main__":
     simulation = GraphicsEngine()
+    # simulation.wireframe_on()
     simulation.run()
