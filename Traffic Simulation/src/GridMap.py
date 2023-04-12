@@ -1,5 +1,6 @@
 from ursina import *
 import random as rng
+from copy import deepcopy
 
 # what to do next
 #TODO add textures
@@ -21,10 +22,13 @@ class GridMap:
     MIN_PADDING = 4     # minimum distance between roads
     MAX_PADDING = 10    # maximum distance between roads
 
-    def __init__(self, roads, intersections):
+    # constructor for GridMap
+    # parameters:
+    #   AutoSim - object of class AutomaticSimulation
+    def __init__(self, AutoSim):
         rng.seed(rng.random())
-        self.roads = roads
-        self.crossRoads = intersections
+        self.roads = deepcopy(AutoSim.road_list)
+        self.crossRoads = deepcopy(AutoSim.intersection_list)
         self.xSize = ceil(max([r['length'] for r in self.roads]) / self.SCALE)
         self.ySize = self.xSize
         self.map = [['' for _ in range(self.xSize)] for _ in range(self.ySize)]
@@ -176,9 +180,10 @@ class GridMap:
     #   xRoads  - the list of intersections
     # PostCondition:
     #   map will have all of the cross roads placed without any collisions
+    def createCrossRoad(self, xRoads = None):
+        if xRoads == None:
+            xRoads = self.crossRoads
 
-    firstCall = True
-    def createCrossRoad(self, xRoads):
         if not len(xRoads):
             return
 
@@ -260,14 +265,14 @@ class GridMap:
             for l in range(1, frontDist):
                 startX, startY = self.setTile(startX + (l * d[0]),
                                               startY + (l * d[1]),
-                                              color.blue if road else color.red,
+                                              color.dark_gray,
                                               startX, startY)
 
             d = (d[0] * -1, d[1] * -1)
             for l in range(1, backDist):
                 startX, startY = self.setTile(startX + (l * d[0]),
                                               startY + (l * d[1]),
-                                              color.blue if road else color.red,
+                                              color.dark_gray,
                                               startX, startY)
 
             road = (road * -1) + 1 # switch road
@@ -329,8 +334,8 @@ class GridMap:
             for l in range(1, length):
                 xi = startX + (l * d['x'])
                 yi = startY + (l * d['y'])
-                startX, startY = self.setTile(xi, yi, color.yellow, startX, startY)
-
+                startX, startY = self.setTile(xi, yi, color.dark_gray, startX, startY)
+            road['isPlaced'] = True
             self.cutMap()
 
 

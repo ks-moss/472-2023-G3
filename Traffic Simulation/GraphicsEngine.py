@@ -12,7 +12,6 @@ except(e):
 
 
 # what to do next
-#TODO refresh function (delete map & create new one)
 #TODO add cars
 #TODO data pipeline from vehicle generator
 #TODO add bus stops
@@ -124,10 +123,6 @@ class GraphicsEngine(Ursina):
 
         # create simulation data object
         self.simData = AutomaticSimulation()
-        self.Map = GridMap(self.simData.road_list, self.simData.intersection_list)
-        GridMap.SCALE = self.ROAD_SCALE
-        GridMap.MIN_PADDING = self.MIN_PADDING
-        GridMap.MAX_PADDING = self.MAX_PADDING
 
         self.createScene()
 
@@ -136,6 +131,12 @@ class GraphicsEngine(Ursina):
     # Called after the Ursina engine is setup and 
     # calls the functions that creates the scene up.
     def createScene(self):
+        self.Map = GridMap(self.simData)
+        GridMap.SCALE = self.ROAD_SCALE
+        GridMap.MIN_PADDING = self.MIN_PADDING
+        GridMap.MAX_PADDING = self.MAX_PADDING
+        self.sceneObjs = []
+
         self.createWorldMap()
         self.createEnvironment()
 
@@ -145,7 +146,7 @@ class GraphicsEngine(Ursina):
     # creates the road layout based on the input.
     # the worldMap field should hold the grid layout of the road.
     def createWorldMap(self):
-        self.Map.createCrossRoad(self.Map.crossRoads)
+        self.Map.createCrossRoad()
         self.Map.createRoads()
         self.worldMap = self.Map.map
 
@@ -155,8 +156,6 @@ class GraphicsEngine(Ursina):
     # Uses the worldMap field to create the road layout
     # createWorldMap function must be called before this function
     def createEnvironment(self):
-        self.sceneObjs = []
-
         # terrain
         self.terrain = Entity(model = 'quad', 
                               scale = (self.Map.xSize*200, self.Map.ySize*200, 0), 
@@ -165,7 +164,6 @@ class GraphicsEngine(Ursina):
                               rotation_x = 90,
                               collider = None)
         self.terrain.texture_scale = Vec2(50, 50)
-        self.sceneObjs.append(self.terrain)
 
 
         # create roads
@@ -183,7 +181,6 @@ class GraphicsEngine(Ursina):
                             collider = 'box')
                     obj.on_mouse_enter = Func(setattr, obj, 'color', color.white)
                     obj.on_mouse_exit = Func(setattr, obj, 'color', self.worldMap[y][x])
-
                     self.sceneObjs.append(obj)
         
 
@@ -191,6 +188,15 @@ class GraphicsEngine(Ursina):
         scene.fog_density = 0.001
         Sky()
 
+    def resetSimulation(self):
+        del self.Map
+        for obj in self.sceneObjs:
+            destroy(obj)
+        destroy(self.terrain)
+        self.cam.x, self.cam.z = 0, 0
+
+        print('scene cleared')
+        self.createScene()
 
 
     # Called when an input is given to the application on key down.
@@ -215,6 +221,8 @@ class GraphicsEngine(Ursina):
             case 'mouse3':
                 mouse.position = Vec3(0, 0, 0)
                 mouse.locked = True
+            case 'r':
+                self.resetSimulation()
 
 
 
