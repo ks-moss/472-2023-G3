@@ -3,6 +3,7 @@ from TrafficSimulation2 import *
 from VehicleCalculations import *
 from TrafficLightSimulation  import *
 from SimulationIntersection import *
+import os
 import time
 
 # Goal: Run simulation automatically
@@ -26,11 +27,14 @@ import time
 #       -prints all traffic lights' position and cycle
 #   update()
 #       -calls vehicle_on_road() and traffic_light_on_road()
+
+INPUT_FILE_PATCH = "./InputFiles/trafficSim2.xml"
 class AutomaticSimulation:
     def __init__(self):
         # create a TrafficSystem object from the input file
         self.trafficSystem = TrafficSystem()
-        self.trafficSystem.ReadElementsFromFile("./InputFiles/trafficSim2.xml")        
+        self.trafficSystem.ReadElementsFromFile(INPUT_FILE_PATCH) 
+        self.file_name = os.path.basename(INPUT_FILE_PATCH)       
         # Get Vehicle List
         self.vehicle_list = self.trafficSystem.vehicleList
         # Get Traffic Light List
@@ -95,43 +99,10 @@ class AutomaticSimulation:
         
 
 
-simulation = AutomaticSimulation()
+# simulation = AutomaticSimulation()
 
-t_end = time.time() + 60 * 15
-while time.time() < t_end:
-    simulation.update()
-    print("\n======================================================================================\n")
-    time.sleep(1)
-
-
-
-
-
-
-    
-
-"""
-print(simulation.vehicle_current_state)
-print(simulation.vehicle_current_state[0]["road"])
-print(simulation.trafficlight_current_state)
-print(simulation.trafficlight_current_state[0]["road"])
-
-                # Is on the current road?
-                if self.vehicle_state[i]["road"] == (self.trafficlight_state[j]["road"]
-                    # Is approaching the intersection?
-                    if self.vehicle_state[i]["position"] >= (self.trafficlight_state[j]["position"])-APPROACHING_DISTANCE: 
-                        # Choose a different road randomly
-                        selected_road_loop = True
-                        while(selected_road_loop):
-                            num = random.randint(0, len(self.trafficlight_state)-1)
-                            
-                                
-                            if(self.vehicle_state[i]["road"] != self.trafficlight_state[num]["road"]):
-                                    self.vehicle_state[num]["road"] = self.trafficlight_state[num]["road"]
-                                    selected_road_loop = False
-
-"""
-# for i in range(len(simulation.vehicle_current_state)):
-  # print( calculateVehicleSpeedAndPosition(simulation.vehicle_list, i)  )
-  # print( calculateAcceleration(simulation.vehicle_list, i) )
-  # print(adjustAccelerationToStop(16.6))
+# t_end = time.time() + 60 * 15
+# while time.time() < t_end:
+#     simulation.update()
+#     print("\n======================================================================================\n")
+#     time.sleep(1)

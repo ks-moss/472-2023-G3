@@ -1,27 +1,60 @@
 from ursina import *
 import random
+from  AutomaticSimulation import *
+import sys
 
 app = Ursina()
 vehicles = []
+
+trafficSystem = AutomaticSimulation()
 
 # Create a camera with a bird's eye view
 camera.orthographic = True
 camera.position = (35, 25, -35)
 camera.rotation = (25, -45, 45)
-camera.fov = 70
+camera.fov = 90
 
 # create base
-box = Entity(model='quad', scale=100, color=rgb(51,165,50))
+box = Entity(model='quad', scale=180, color=rgb(51,165,50))
 
 # create roads
-road1 = Entity(model='cube', scale=(100, 4, 0.1), color=color.gray)
-road1.y = -0.5
+roads_name = []
+for i in range(len(trafficSystem.intersection_list)):
+    for j in range(len(trafficSystem.intersection_list[i])):
+        # Create a TextEntity with the desired string
+        road_name = trafficSystem.intersection_list[i][j]["road"]
 
-road2 = Entity(model='cube', scale=(100, 4, 0.1), color=color.gray)
-road2.y = 20
+        check_duplicate = False
+        for k in range(len(roads_name)):
+             if(roads_name[k] == road_name):
+                 check_duplicate = True
 
-road3 = Entity(model='cube', scale=(4, 100, 0.1), color=color.gray)
-road3.y = 0
+        
+        if(check_duplicate == False):
+
+            roads_name.append(road_name)
+            road_position = trafficSystem.intersection_list[i][j]["position"]
+            
+            print(road_name)
+            print(road_position)
+
+            if (road_name[0] == "N" or road_name[0] == "S") and road_name[1] == " ":  # Verticle Roads
+                # Create the object_rec Entity and pass text_entity as a child
+                road_model = Entity(model='cube', scale=(4, 100, 0.1), color=color.gray)
+                road_model.y = road_position/2   
+                road_model.x = road_position*5
+
+
+            elif (road_name[0] == "E" or road_name[0] == "W") and road_name[1] == " ": # Horizontal Roads
+                # Create the object_rec Entity and pass text_entity as a child
+                road_model = Entity(model='cube', scale=(100, 4, 0.1), color=color.gray)
+                road_model.y = road_position/2
+
+            else:
+                print("Please Declair N|S|E|W in the", trafficSystem.file_name, "input file")
+                # Terminate the program without specifying an exit code
+                sys.exit()
+
 
 stopSign1 = Entity(model='sphere', scale=1, color=color.red)
 stopSign1.x = 3
@@ -56,6 +89,9 @@ car_positions = [car.position, car2.position, car3.position]
 # Define a function to move the cars
 def update():
     traffic_light_time = time.time() % 16 # repeat cycle every 16 seconds
+    
+   #  trafficSystem.update()
+
     if traffic_light_time < 7:
         traffic_light1.color = color.green
     elif traffic_light_time < 9:
