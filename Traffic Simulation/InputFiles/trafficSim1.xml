@@ -1,60 +1,132 @@
 <root>
-	<ROAD>
-		<name>Rochelle</name>
-		<length>500</length>
-	</ROAD>
-	<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
-	<!-- CROSSROADS = road A intersects to Road B -->
-	<!-- Keep them together -->
+<!-- List of all roads in the files -->
+<!-- Major Road -->
+    <ROAD>
+        <name>S Eastern Ave</name>
+        <length>100</length>
+    </ROAD>
+<!-- Minor Roads -->
+    <ROAD>
+        <name>E Windmall Pkwy</name>
+        <length>100</length>
+    </ROAD>
+     <ROAD>
+        <name>E Wigwam Ave</name>
+        <length>100</length>
+    </ROAD>
+    <ROAD>
+        <name>N Pecos Rd</name>
+        <length>100</length>
+    </ROAD>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
     <CROSSROADS>
-		<road position="500">Rochelle</road>
-		<road position="500">Maryland</road>
-	</CROSSROADS>
+        <road position="-5">S Eastern Ave</road>
+        <road position="50">E Windmall Pkwy</road>
+    </CROSSROADS>
     <TRAFFICLIGHT>
-        <road>Rochelle</road>
-        <position>500</position>
-        <cycle>10</cycle>
+    <!-- Major Road -->
+        <road>S Eastern Ave</road>
+        <position>-5</position>
+        <cycle>20</cycle>
     </TRAFFICLIGHT>
     <TRAFFICLIGHT>
-        <road>Maryland</road>
-        <position>500</position>
-        <cycle>15</cycle>
+    <!-- Minor Roads -->
+        <road>E Windmall Pkwy</road>
+        <position>50</position>
+        <cycle>20</cycle>
     </TRAFFICLIGHT>
 <!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
 <!-- CROSSROADS = road A intersects to Road B -->
 <!-- Keep them together -->
     <CROSSROADS>
-		<road position="225">Flamingo</road>
-		<road position="225">Tropicana</road>
-	</CROSSROADS>
+        <road position="-5">S Eastern Ave</road>
+        <road position="-50">E Wigwam Ave</road>
+    </CROSSROADS>
     <TRAFFICLIGHT>
-        <road>Flamingo</road>
-        <position>225</position>
+    <!-- Major Road -->
+        <road>S Eastern Ave</road>
+        <position>-5</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+    <!-- Minor Roads -->
+        <road>E Wigwam Ave</road>
+        <position>-30</position>
         <cycle>10</cycle>
     </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
+    <CROSSROADS>
+        <road position="5">N Pecos Rd</road>
+        <road position="50">E Windmall Pkwy</road>
+    </CROSSROADS>
     <TRAFFICLIGHT>
-        <road>Tropicana</road>
-        <position>225</position>
-        <cycle>15</cycle>
+    <!-- Major Road -->
+        <road>S Eastern Ave</road>
+        <position>5</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+    <!-- Minor Roads -->
+        <road>E Windmall Pkwy</road>
+        <position>50</position>
+        <cycle>20</cycle>
     </TRAFFICLIGHT>
 <!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
-	<BUSSTOP>
-		<road>Rochelle</road>
-		<position>250</position>
-		<waitingtime>20</waitingtime>
-	</BUSSTOP>
-	<VEHICLE>
-		<road>Rochelle</road>
-		<position>20</position>
-		<speed>10</speed>
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
+    <CROSSROADS>
+        <road position="5">N Pecos Rd</road>
+        <road position="-50">E Wigwam Ave</road>
+    </CROSSROADS>
+    <TRAFFICLIGHT>
+    <!-- Major Road -->
+        <road>S Eastern Ave</road>
+        <position>5</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+    <!-- Minor Roads -->
+        <road>E Wigwam Ave</road>
+        <position>-50</position>
+        <cycle>10</cycle>
+    </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+    <VEHICLE>
+        <road>Flamingo</road>
+        <position>220</position>
+        <speed>10</speed>
         <acceleration>1.2</acceleration>
-		<type>police van</type>
-	</VEHICLE>
-	<VEHICLE>
-		<road>Maryland</road>
-		<position>0</position>
-		<speed>15</speed>
-        <acceleration>1.0</acceleration>
-		<type>ambulance</type>
-	</VEHICLE>
+        <type>bus</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>Tropicana</road>
+        <position>224</position>
+        <speed>8</speed>
+        <acceleration>1.2</acceleration>
+        <type>police van</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>Durango</road>
+        <position>770</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>Tropicana</road>
+        <position>345</position>
+        <speed>12</speed>
+        <acceleration>1.2</acceleration>
+        <type>fire truck</type>
+    </VEHICLE>
+    <BUSSTOP>
+        <road>Tropicana</road>
+        <position>200</position>
+        <waitingtime>20</waitingtime>
+    </BUSSTOP>
+
 </root>
