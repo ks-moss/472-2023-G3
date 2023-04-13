@@ -3,6 +3,7 @@ from TrafficSimulation2 import *
 from VehicleCalculations import *
 from TrafficLightSimulation  import *
 from SimulationIntersection import *
+from BusStopSimulation import *
 import time
 
 # Goal: Run simulation automatically
@@ -57,6 +58,9 @@ class AutomaticSimulation:
         for i in range(len(self.vehicle_list)):
             # 3.1 GOES HERE
             # Execute use-case 3.1 out on the vehicle
+            if self.vehicle_list[i]["type"] == "bus":
+                busStopSimulation(self.bust_stop_list, self.vehicle_list, i)
+            
             print("\n==============")
             print("Vehicle:" , i)
             print("==============")
