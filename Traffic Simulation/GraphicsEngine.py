@@ -1,6 +1,9 @@
 #2.3
 from AutomaticSimulation import *
 from src.GridMap import GridMap
+from src.VehicleFactory import VehicleFactory
+
+from types import MethodType
 
 # importing Ursina Engine
 try:
@@ -12,7 +15,6 @@ except(e):
 
 
 # what to do next
-#TODO add cars
 #TODO data pipeline from vehicle generator
 #TODO add bus stops
 #TODO add traffic lights
@@ -76,7 +78,7 @@ class Camera(FirstPersonController):
         if mouse.locked:
             self.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
             self.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
-            self.camera_pivot.rotation_x = clamp(self.camera_pivot.rotation_x, -90, 0)
+            self.camera_pivot.rotation_x = clamp(self.camera_pivot.rotation_x, -70, 0)
 
         if self.focusTimer < 100:
             self.focusTimer += 1
@@ -101,7 +103,7 @@ class GraphicsEngine(Ursina):
     ROAD_SCALE = 50         # block size of road (ex. 50 => road.len = 100 => 2 blocks)
     ZOOM_SENSITIVITY = 5    # sensitivity of zoooooom
     MIN_PADDING = 4         # minimum distance between roads \ These two can't equal
-    MAX_PADDING = 10        # maximum distance between roads / or problems happen
+    MAX_PADDING = 6        # maximum distance between roads / or problems happen
 
     # Called when the GraphicsEngine class is instantiated
     # this will be a child class of the Ursina game engine
@@ -131,14 +133,16 @@ class GraphicsEngine(Ursina):
     # Called after the Ursina engine is setup and 
     # calls the functions that creates the scene up.
     def createScene(self):
-        self.Map = GridMap(self.simData)
         GridMap.SCALE = self.ROAD_SCALE
         GridMap.MIN_PADDING = self.MIN_PADDING
         GridMap.MAX_PADDING = self.MAX_PADDING
+        self.Map = GridMap(self.simData)
         self.sceneObjs = []
+        self.startPoints = {}
 
         self.createWorldMap()
         self.createEnvironment()
+        self.addDefaultVehicles()
 
 
 
@@ -149,6 +153,7 @@ class GraphicsEngine(Ursina):
         self.Map.createCrossRoad()
         self.Map.createRoads()
         self.worldMap = self.Map.map
+
 
 
 
@@ -169,17 +174,45 @@ class GraphicsEngine(Ursina):
         # create roads
         for x in range(self.Map.xSize):
             for y in range(self.Map.ySize):
-                if self.worldMap[y][x] != '':
+                data = self.worldMap[y][x]
+                if data != '':
+                    if len(data) == 2:
+                        c = data[0]
+                        name = data[1]['name']
+                        heading = data[1]['heading']
+                        temp = Entity(x = (self.Map.xSize // -2 + x + heading[0]) * self.SCALE,
+                                      y = 0,
+                                      z = (self.Map.ySize // -2 + y + heading[1]) * self.SCALE)
+                        
+                        start = Entity(x = (self.Map.xSize // -2 + x) * self.SCALE,
+                                       y = 0,
+                                       z = (self.Map.ySize // -2 + y) * self.SCALE,
+                                       model = 'sphere',
+                                       scale = 5)
+                        start.look_at(temp, axis='forward')
+                        destroy(temp)
+                        def _update(self):
+                            self.position += self.forward * 0.1
+                        
+                        # start.update = MethodType(_update, start)
+
+                        self.startPoints[name] = start
+                    else:
+                        c = data
+
+
                     obj = Entity( model = 'quad', 
                             scale = self.SCALE, 
-                            x = (self.Map.xSize // 2 - x) * self.SCALE,
+                            x = (self.Map.xSize // -2 + x) * self.SCALE,
                             y = 0,
-                            z = (self.Map.ySize // 2 - y) * self.SCALE, 
+                            z = (self.Map.ySize // -2 + y) * self.SCALE, 
                             rotation_x = 90, 
-                            color = self.worldMap[y][x],
-                            # texture = self.worldMap[x][z], <-- we will use this in final implementation
+                            color = c,
                             collider = 'box')
-                    obj.on_mouse_enter = Func(setattr, obj, 'color', color.white)
+                    def _on_mouse_enter(self):
+                        if not mouse.locked:
+                            self.color = color.white
+                    obj.on_mouse_enter = MethodType(_on_mouse_enter, obj)
                     obj.on_mouse_exit = Func(setattr, obj, 'color', self.worldMap[y][x])
                     self.sceneObjs.append(obj)
         
@@ -187,6 +220,11 @@ class GraphicsEngine(Ursina):
         # sky
         scene.fog_density = 0.001
         Sky()
+    
+    def addDefaultVehicles(self):
+        VehicleFactory.SCALE = self.SCALE
+        self.vFactory = VehicleFactory(self.simData, self.startPoints)
+
 
     def resetSimulation(self):
         del self.Map

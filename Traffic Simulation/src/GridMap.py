@@ -32,6 +32,7 @@ class GridMap:
         self.xSize = ceil(max([r['length'] for r in self.roads]) / self.SCALE)
         self.ySize = self.xSize
         self.map = [['' for _ in range(self.xSize)] for _ in range(self.ySize)]
+        self.startingPoints = {}
 
 
     # only used in method @createWorldMap
@@ -270,10 +271,14 @@ class GridMap:
 
             d = (d[0] * -1, d[1] * -1)
             for l in range(1, backDist):
+                if l == backDist-1:
+                    data = [color.dark_gray, {'name': xrd[road]['road'], 'heading': (d[0] * -1, d[1] * -1)}]
                 startX, startY = self.setTile(startX + (l * d[0]),
                                               startY + (l * d[1]),
-                                              color.dark_gray,
+                                              color.dark_gray if l != backDist-1 else data,
                                               startX, startY)
+                
+            self.startingPoints[xrd[road]['road']] = {'x': startX + (l * d[0]), 'y': startY + (l * d[1])}
 
             road = (road * -1) + 1 # switch road
                 
@@ -292,10 +297,10 @@ class GridMap:
     # no road should be colliding with another road.
     # spacing should be correct with the padding variables
     def createRoads(self):
-        cDir = [{'x' : 0, 'y' : 1},     # north
-                {'x' : 1, 'y' : 0},     # west
-                {'x' : 0, 'y' : -1},    # south
-                {'x' : -1, 'y' : 0}]    # east
+        cDir = [[0, 1],     # north
+                [1, 0],     # west
+                [0, -1],    # south
+                [-1, 0]]    # east
         
         for road in self.roads:
             if 'isPlaced' in road.keys():
@@ -317,8 +322,8 @@ class GridMap:
                 for d in cDir:
                     isFirst = True
                     for l in range(length):
-                        xi = startX + (l * d['x'])
-                        yi = startY + (l * d['y'])
+                        xi = startX + (l * d[0])
+                        yi = startY + (l * d[1])
                         if not self.paddingCheck(xi, yi, isFirst):
                             break
                         isFirst = False
@@ -330,10 +335,12 @@ class GridMap:
                 expansion = expansion + 1 if tries % 10 == 0 else expansion
 
             # place the road
-            startX, startY = self.setTile(startX, startY, color.brown, startX, startY)
+            startX, startY = self.setTile(startX, startY,
+                                          [color.brown, {'name': road['name'], 'heading': d}],
+                                          startX, startY)
             for l in range(1, length):
-                xi = startX + (l * d['x'])
-                yi = startY + (l * d['y'])
+                xi = startX + (l * d[0])
+                yi = startY + (l * d[1])
                 startX, startY = self.setTile(xi, yi, color.dark_gray, startX, startY)
             road['isPlaced'] = True
             self.cutMap()
