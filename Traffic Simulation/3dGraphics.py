@@ -2,6 +2,7 @@ from ursina import *
 import random
 from  AutomaticSimulation import *
 import sys
+from ursina import text
 
 app = Ursina()
 vehicles = []
@@ -12,7 +13,7 @@ trafficSystem = AutomaticSimulation()
 camera.orthographic = True
 camera.position = (35, 25, -35)
 camera.rotation = (25, -45, 45)
-camera.fov = 90
+camera.fov = 100
 
 # create base
 box = Entity(model='quad', scale=180, color=rgb(51,165,50))
@@ -43,18 +44,26 @@ for i in range(len(trafficSystem.intersection_list)):
                 road_model = Entity(model='cube', scale=(4, 100, 0.1), color=color.gray)
                 road_model.y = road_position/2   
                 road_model.x = road_position*5
-
-
+                roadText= Text(text=road_name, scale=(15,1))
+                roadText.parent = road_model
+                roadText.z = -.5
+                roadText.y = -.5
+                road_model.name = road_name
+                
+                
             elif (road_name[0] == "E" or road_name[0] == "W") and road_name[1] == " ": # Horizontal Roads
                 # Create the object_rec Entity and pass text_entity as a child
                 road_model = Entity(model='cube', scale=(100, 4, 0.1), color=color.gray)
                 road_model.y = road_position/2
+                roadText= Text(text=road_name, scale=(1,15))
+                roadText.parent = road_model
+                roadText.z = -2
+                roadText.y = -.5
 
             else:
                 print("Please Declair N|S|E|W in the", trafficSystem.file_name, "input file")
                 # Terminate the program without specifying an exit code
                 sys.exit()
-
 
 stopSign1 = Entity(model='sphere', scale=1, color=color.red)
 stopSign1.x = 3
@@ -66,26 +75,32 @@ busStop1.y = 23
 
 traffic_light1 = Entity(model='cube', scale=(1, 3, 1), color=color.green)
 traffic_light1.x = 0
-traffic_light1.y = 22
+traffic_light1.y = 25
+
+#Loop through vehicle list to spawn cars and set attributes 
+for i in range(len(trafficSystem.vehicle_list)):
+    # Get the vehicle properties from the list
+    vehicle_props = trafficSystem.vehicle_list[i]
+
+    # Create a new car entity with the properties
+    car = Entity(model='cube', scale=(2, 1, 1), color=color.red)
+    
+    car.speed = vehicle_props["speed"] / 100
+    #car.acceleration = vehicle_props["acceleration"] / 100
+    car.type = vehicle_props["type"]
+    car.road = vehicle_props["road"]
+    if (car.road[0] == "N" or car.road[0] == "S") and car.road[1] == " ":
+        car.is_on_y_axis = True
+    else:
+        car.is_on_y_axis = False
+    
+    #need to fix car position relative to road
+    car.position = (0,25)
+    
+    # Add the car to the list of vehicles
+    vehicles.append(car)
 
 
-
-# Create cars
-car = Entity(model='cube', scale=(2, 1, 1), color=color.red)
-car.x = -20
-car.collider = 'box'
-
-car2 = Entity(model='cube', scale=(2, 1, 1), color=color.blue)
-car2.y = 20
-car2.x = -20
-car2.collider = 'box'
-
-car3 = Entity(model='cube', scale=(1, 2, 1), color=color.yellow)
-car3.y = 30
-car3.x = 0
-car3.collider = 'box'
-
-car_positions = [car.position, car2.position, car3.position]
 # Define a function to move the cars
 def update():
     traffic_light_time = time.time() % 16 # repeat cycle every 16 seconds
@@ -98,15 +113,7 @@ def update():
         traffic_light1.color = color.yellow
     else:
         traffic_light1.color = color.red
-    car.x += 0.1 #car speed
-    if car.x > 49: #when car needs to reset
-        car.x = -49
-    car2.x += 0.2 
-    if car2.x > 48:  
-        car2.x = -48
-    car3.y += 0.1
-    if car3.y > 49:  
-        car3.y = -49
+    
     for vehicle in vehicles:
         if vehicle.is_on_y_axis:
             vehicle.y += vehicle.speed
