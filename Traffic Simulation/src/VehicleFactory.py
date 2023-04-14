@@ -1,5 +1,6 @@
-from ursina import Entity, color, destroy
+from ursina import Entity, color, destroy, raycast
 
+#TODO make vehicle models for each type
 
 # Vehicle class inherits the Entity class
 # for display a vehicle onto the window
@@ -20,8 +21,14 @@ class Vehicle(Entity):
         if pos > self.limit:
             return False
         
-        self.z = pos / 13 # <- supposedly the golden ratio
+        self.z = pos * VehicleFactory.ratio # <- supposedly the golden ratio
         return True
+    
+    def update(self):
+        hit_info = raycast(self.world_position, direction=(0,-1,0), distance=5, debug=False)
+        if not hit_info.hit:
+            print('deleted manually')
+            self.disable()
 
 
 # VehicleFactory class inherits Entity
@@ -34,9 +41,15 @@ class VehicleFactory(Entity):
 
     vehicleObjs = []
     SCALE = 20
+    ROAD_SCALE = 50
+    ppt = SCALE * 0.191
+    ratio = None
 
     def __init__(self, autoSim, startingPoints):
         super().__init__()
+        VehicleFactory.ppt = self.SCALE * 0.191
+        VehicleFactory.ratio = self.ppt / self.ROAD_SCALE
+
         self.limits = {}
         for road in autoSim.road_list:
             self.limits[road['name']] = road['length']
@@ -59,9 +72,9 @@ class VehicleFactory(Entity):
 
             vehicle = Vehicle(limit, 
                               parent = start,
-                              z = pos // self.SCALE,
-                              model = 'sphere',
-                              color = color.white)
+                              z = pos * self.ratio,
+                              model = 'cube',
+                              color = color.white,)
             self.vehicleObjs.append(vehicle)
     
     # called by the engine every frame

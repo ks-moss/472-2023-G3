@@ -27,6 +27,7 @@ import time
 #       -calls vehicle_on_road() and traffic_light_on_road()
 class AutomaticSimulation:
     def __init__(self):
+        self.green_light = green_light
         # create a TrafficSystem object from the input file
         self.trafficSystem = TrafficSystem()
         self.trafficSystem.ReadElementsFromFile("./InputFiles/trafficSim2.xml")        

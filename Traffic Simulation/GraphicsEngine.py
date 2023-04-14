@@ -2,6 +2,7 @@
 from AutomaticSimulation import *
 from src.GridMap import GridMap
 from src.VehicleFactory import VehicleFactory
+from src.TrafficLights import TrafficLights
 
 from types import MethodType
 
@@ -15,9 +16,8 @@ except(e):
 
 
 # what to do next
-#TODO data pipeline from vehicle generator
-#TODO add bus stops
-#TODO add traffic lights
+#TODO add vehicle generator
+#TODO clean and reset scene
 #TODO 4.1 GUI for simulation
 #TODO 4.2 GUI for traffic lights
 #TODO 4.3 GUI for vehicle generator
@@ -101,7 +101,7 @@ class GraphicsEngine(Ursina):
     # CLASS VARIABLES
     SCALE = 20              # the size of tiles (ex. 100 = 100x100 units)
     ROAD_SCALE = 50         # block size of road (ex. 50 => road.len = 100 => 2 blocks)
-    ZOOM_SENSITIVITY = 5    # sensitivity of zoooooom
+    ZOOM_SENSITIVITY = 10    # sensitivity of zoooooom
     MIN_PADDING = 4         # minimum distance between roads \ These two can't equal
     MAX_PADDING = 6        # maximum distance between roads / or problems happen
 
@@ -143,6 +143,7 @@ class GraphicsEngine(Ursina):
         self.createWorldMap()
         self.createEnvironment()
         self.addDefaultVehicles()
+        self.createTrafficLights()
 
 
 
@@ -191,11 +192,6 @@ class GraphicsEngine(Ursina):
                                        scale = 5)
                         start.look_at(temp, axis='forward')
                         destroy(temp)
-                        def _update(self):
-                            self.position += self.forward * 0.1
-                        
-                        # start.update = MethodType(_update, start)
-
                         self.startPoints[name] = start
                     else:
                         c = data
@@ -213,7 +209,7 @@ class GraphicsEngine(Ursina):
                         if not mouse.locked:
                             self.color = color.white
                     obj.on_mouse_enter = MethodType(_on_mouse_enter, obj)
-                    obj.on_mouse_exit = Func(setattr, obj, 'color', self.worldMap[y][x])
+                    obj.on_mouse_exit = Func(setattr, obj, 'color', c)
                     self.sceneObjs.append(obj)
         
 
@@ -221,11 +217,30 @@ class GraphicsEngine(Ursina):
         scene.fog_density = 0.001
         Sky()
     
+
+
+    
+    # addDefaultVehicles
+    # creates a VehicleFactory object and adjusts the 
+    # necessary static fields. The object
+    # should automatically create the starting vehicles
+    # from the AutomaticSimulation class
     def addDefaultVehicles(self):
         VehicleFactory.SCALE = self.SCALE
+        VehicleFactory.ROAD_SCALE = self.ROAD_SCALE
         self.vFactory = VehicleFactory(self.simData, self.startPoints)
 
 
+
+    def createTrafficLights(self):
+        TrafficLights.SCALE = self.SCALE
+        TrafficLights.ROAD_SCALE = self.ROAD_SCALE
+        self.trafficLights = TrafficLights(self.simData, self.startPoints)
+
+
+    # resetSimulation
+    # called when the user wants to reset the simulation and start over
+    # it resets the map and creates a new scene for the simulation
     def resetSimulation(self):
         del self.Map
         for obj in self.sceneObjs:
@@ -235,6 +250,7 @@ class GraphicsEngine(Ursina):
 
         print('scene cleared')
         self.createScene()
+
 
 
     # Called when an input is given to the application on key down.
