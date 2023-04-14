@@ -3,6 +3,7 @@ import random
 from  AutomaticSimulation import *
 import sys
 from ursina import text
+from VehicleGenerator import addVehicle
 
 app = Ursina()
 vehicles = []
@@ -13,16 +14,16 @@ trafficSystem = AutomaticSimulation()
 camera.orthographic = True
 camera.position = (35, 25, -35)
 camera.rotation = (25, -45, 45)
-camera.fov = 100
+camera.fov = 90
 
 # create base
-box = Entity(model='quad', scale=180, color=rgb(51,165,50))
+box = Entity(model='quad', scale=(120), color=rgb(51,165,50))
 
 # create roads
 roads_name = []
 for i in range(len(trafficSystem.intersection_list)):
     for j in range(len(trafficSystem.intersection_list[i])):
-        # Create a TextEntity with the desired string
+
         road_name = trafficSystem.intersection_list[i][j]["road"]
 
         check_duplicate = False
@@ -78,27 +79,31 @@ traffic_light1.x = 0
 traffic_light1.y = 25
 
 #Loop through vehicle list to spawn cars and set attributes 
-for i in range(len(trafficSystem.vehicle_list)):
-    # Get the vehicle properties from the list
-    vehicle_props = trafficSystem.vehicle_list[i]
+def createCars():
+    for i in range(len(trafficSystem.vehicle_list)):
+        # Get the vehicle properties from the list
+        vehicle_props = trafficSystem.vehicle_list[i]
 
-    # Create a new car entity with the properties
-    car = Entity(model='cube', scale=(2, 1, 1), color=color.red)
+        # Create a new car entity with the properties
+        car = Entity(model='cube', scale=(2, 1, 1), color=color.red)
     
-    car.speed = vehicle_props["speed"] / 100
-    #car.acceleration = vehicle_props["acceleration"] / 100
-    car.type = vehicle_props["type"]
-    car.road = vehicle_props["road"]
-    if (car.road[0] == "N" or car.road[0] == "S") and car.road[1] == " ":
-        car.is_on_y_axis = True
-    else:
-        car.is_on_y_axis = False
+        car.speed = vehicle_props["speed"] / 100
+        #car.acceleration = vehicle_props["acceleration"] / 100
+        car.type = vehicle_props["type"]
+        car.road = vehicle_props["road"]
+        if (car.road[0] == "N" or car.road[0] == "S") and car.road[1] == " ":
+            car.is_on_y_axis = True
+        else:
+            car.is_on_y_axis = False
     
-    #need to fix car position relative to road
-    car.position = (0,25)
+        #need to fix car position relative to road
+        car.position = (0,25)
     
-    # Add the car to the list of vehicles
-    vehicles.append(car)
+        # Add the car to the list of vehicles
+        vehicles.append(car)
+
+
+createCars()
 
 
 # Define a function to move the cars
@@ -129,27 +134,26 @@ def add_vehicle():
     # Define code to add a vehicle here
     pass
 
-def on_button_click():
-    # Choose a random car position
+def on_restart_button_click():
+    reset_program()
+    createCars()
     
-    car_position = random.choice(car_positions)
-
-    # Create a new vehicle entity
+def on_button_click():
+    # access addvehicle from vehiclegenerator and assign vehicle properties
+    newVehicle = addVehicle()
+    vehicleType = newVehicle["type"]
+    vehicleRoad = newVehicle["name"]
+    #vehicleSpeed = newVehicle["speed"]
+    #vehiclePosition = newVehicle["position"]
+    # Create a new vehicle entity based on vehicle properties
     available_colors = [color.red, color.green, color.blue, color.yellow, color.orange, color.cyan] # list of available colors
     vehicle = Entity(model='cube', scale=(2, 1, 1), color=random.choice(available_colors)) # choose a random color from the list
-    
-    
-    if car_position == car_positions[2]:
-        vehicle.rotation = (0, 0, 90)
+    if (vehicleRoad[0] == "N" or vehicleRoad[0] == "S") and vehicleRoad[1] == " ":
         vehicle.is_on_y_axis = True
     else:
         vehicle.is_on_y_axis = False
-        
-    # Set the position of the new vehicle to the chosen car position
-    vehicle.position = car_position
-    
-    vehicle.speed = random.uniform(0.05, 0.2) # set a random speed between 0.05 and 0.2
-    
+    vehicle.speed = .5
+   
     vehicles.append(vehicle)
     # Make the new vehicle visible
     vehicle.visible = True
@@ -162,6 +166,6 @@ def reset_program():
     vehicles = [] 
     
 button = Button(text='Add\nVehicle', color=color.azure, highlight_color=color.cyan, position=(0.65, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_button_click)
-startButton = Button(text='Restart\nSimulation', color=rgb(128, 128, 0), highlight_color=color.cyan, position=(0.40, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_button_click)
+restartButton = Button(text='Restart\nSimulation', color=rgb(128, 128, 0), highlight_color=color.cyan, position=(0.40, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_restart_button_click)
 
 app.run()
