@@ -53,7 +53,7 @@
     <TRAFFICLIGHT>
     <!-- Minor Roads -->
         <road>E Wigwam Ave</road>
-        <position>-30</position>
+        <position>-50</position>
         <cycle>10</cycle>
     </TRAFFICLIGHT>
 <!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
@@ -65,7 +65,7 @@
     </CROSSROADS>
     <TRAFFICLIGHT>
     <!-- Major Road -->
-        <road>S Eastern Ave</road>
+        <road>N Pecos Rd</road>
         <position>5</position>
         <cycle>20</cycle>
     </TRAFFICLIGHT>
@@ -84,7 +84,7 @@
     </CROSSROADS>
     <TRAFFICLIGHT>
     <!-- Major Road -->
-        <road>S Eastern Ave</road>
+        <road>N Pecos Rd</road>
         <position>5</position>
         <cycle>20</cycle>
     </TRAFFICLIGHT>
@@ -96,37 +96,36 @@
     </TRAFFICLIGHT>
 <!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
     <VEHICLE>
-        <road>Flamingo</road>
-        <position>220</position>
+        <road>S Eastern Ave</road>
+        <position>-30</position>
         <speed>10</speed>
         <acceleration>1.2</acceleration>
         <type>bus</type>
     </VEHICLE>
     <VEHICLE>
-        <road>Tropicana</road>
-        <position>224</position>
+        <road>E Wigwam Ave</road>
+        <position>-25</position>
         <speed>8</speed>
         <acceleration>1.2</acceleration>
         <type>police van</type>
     </VEHICLE>
     <VEHICLE>
-        <road>Durango</road>
-        <position>770</position>
+        <road>N Pecos Rd</road>
+        <position>20</position>
         <speed>15</speed>
         <acceleration>1.2</acceleration>
         <type>car</type>
     </VEHICLE>
     <VEHICLE>
-        <road>Tropicana</road>
-        <position>345</position>
+        <road>E Windmall Pkwy</road>
+        <position>25</position>
         <speed>12</speed>
         <acceleration>1.2</acceleration>
         <type>fire truck</type>
     </VEHICLE>
     <BUSSTOP>
-        <road>Tropicana</road>
+        <road>S Eastern Ave</road>
         <position>200</position>
         <waitingtime>20</waitingtime>
     </BUSSTOP>
-
 </root>
