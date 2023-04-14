@@ -258,7 +258,7 @@ class GridMap:
         
 
         # place roads
-        self.setTile(startX, startY, color.black, startX, startY)   # place xrd
+        self.setTile(startX, startY, color.dark_gray, startX, startY)   # place xrd
         for d in directions:
             frontDist = lens[road] - cuts[road]
             backDist = cuts[road]
@@ -336,7 +336,7 @@ class GridMap:
 
             # place the road
             startX, startY = self.setTile(startX, startY,
-                                          [color.brown, {'name': road['name'], 'heading': d}],
+                                          [color.dark_gray, {'name': road['name'], 'heading': d}],
                                           startX, startY)
             for l in range(1, length):
                 xi = startX + (l * d[0])

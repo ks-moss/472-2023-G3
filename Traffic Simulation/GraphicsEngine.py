@@ -188,7 +188,6 @@ class GraphicsEngine(Ursina):
                         start = Entity(x = (self.Map.xSize // -2 + x) * self.SCALE,
                                        y = 0,
                                        z = (self.Map.ySize // -2 + y) * self.SCALE,
-                                       model = 'sphere',
                                        scale = 5)
                         start.look_at(temp, axis='forward')
                         destroy(temp)
