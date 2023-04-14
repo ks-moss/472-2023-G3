@@ -66,17 +66,50 @@ for i in range(len(trafficSystem.intersection_list)):
                 # Terminate the program without specifying an exit code
                 sys.exit()
 
-stopSign1 = Entity(model='sphere', scale=1, color=color.red)
+stopSign1 = Entity(model='sphere', scale=0, color=color.red)
 stopSign1.x = 3
 stopSign1.y = -3
 
-busStop1 = Entity(model='cube', scale=1, color=color.blue)
+busStop1 = Entity(model='cube', scale=0, color=color.blue)
 busStop1.x = -25
 busStop1.y = 23
 
-traffic_light1 = Entity(model='cube', scale=(1, 3, 1), color=color.green)
+traffic_light1 = Entity(model='cube', scale=(0, 0, 0), color=color.green)
 traffic_light1.x = 0
 traffic_light1.y = 25
+
+# PLACE THE TRAFFIC LIGHTS ONTO THE ROADS
+lights = trafficSystem.traffic_light_list
+
+for i in range(len(trafficSystem.traffic_light_list)):
+# Because we are looking at crossroads/intersections,
+# we look at both current index and index+1 of the traffic light list for each iteration    
+    # Set the characteristics of the traffic lights
+    # We will use green for N/S traffic lights for now and red for E/W
+    NS_lightPoles = Entity(model='cube', scale=(3.5, 0.5, 1), color= color.green)
+    EW_lightPoles = Entity(model='cube', scale=(0.5, 3.5, 1), color= color.red)
+
+    # Lets take a look at the N/S light of the intersection
+    if lights[i]["road"][0] == "N" or lights[i]["road"][0] == "S":
+            NSlightpos_x = lights[i]["position"] * 5
+            NSlightpos_y = lights[i + 1]["position"] / 2.2
+            if NSlightpos_y < 0:
+                NSlightpos_y = NSlightpos_y - 5
+            NS_lightPoles.position = (NSlightpos_x, NSlightpos_y)
+    # Now lets take a look at the E/W light of the intersection
+    if lights[i+1]["road"][0] == "W" or lights[i+1]["road"][0] == "E":
+        EWlightpos_x = lights[i + 1]["position"] / 1.8
+        EWlightpos_y = lights[i]["position"] * 5
+        if EWlightpos_x > 0:
+            EWlightpos_x -= 5
+        EW_lightPoles.position = (EWlightpos_x, EWlightpos_y)
+
+    i += 1 # increment to get to the next intersection
+
+    # We need this so we don't go out of bounds
+    if i == len(lights) - 1:
+        break
+    
 
 #Loop through vehicle list to spawn cars and set attributes 
 def createCars():
@@ -85,19 +118,20 @@ def createCars():
         vehicle_props = trafficSystem.vehicle_list[i]
 
         # Create a new car entity with the properties
-        car = Entity(model='cube', scale=(2, 1, 1), color=color.red)
+        available_colors = [color.brown, color.blue, color.magenta, color.yellow, color.white, color.black, color.orange]
+        car = Entity(model='cube', scale=(2, 1, 1), color=available_colors[i])
     
         car.speed = vehicle_props["speed"] / 100
         #car.acceleration = vehicle_props["acceleration"] / 100
         car.type = vehicle_props["type"]
         car.road = vehicle_props["road"]
+        car.pos = vehicle_props["position"]
         if (car.road[0] == "N" or car.road[0] == "S") and car.road[1] == " ":
             car.is_on_y_axis = True
+            car.position = (road_model.x, car.pos)
         else:
             car.is_on_y_axis = False
-    
-        #need to fix car position relative to road
-        car.position = (0,25)
+            car.position = (road_model.y, car.pos)
     
         # Add the car to the list of vehicles
         vehicles.append(car)
