@@ -140,7 +140,7 @@ class TrafficSystem:
                 name = elem.find("name").text
                 frequency = int(elem.find("frequency").text)
                 self.vehicleGeneratorList.append({"name": name, "frequency": frequency, "type": type})
-            if elem.tag == "CROSSROADS":
+            elif elem.tag == "CROSSROADS":
                 temp_list = []
                 # iterate through the child elements of the CROSSROADS element
                 for subelem in elem:
@@ -164,3 +164,26 @@ class TrafficSystem:
             #checking for unacceptable element input
             else:
                 self.errorList.append("- \"" + elem.tag + "\" is not an acceptable element")
+        
+        #checking if simulation is consistent
+        #rule 1 - each vehicle must be on existing road
+        vehicles = self.vehicleList
+        roads = self.roadList
+        deleteIndexList = []
+        for i in range(len(vehicles)):             #iterating through all the vehicles    
+            thisRoad = vehicles[i]["road"]         #finding name of road vehicle is on
+            onRoad = False                         #this is our flag for if we find the road it's on
+            for x in range(len(roads)):            #iterating through our list of roads 
+                if thisRoad == roads[x]["name"]:   #found the road car is on
+                    onRoad = True
+            if onRoad == False:                    #if the vehicle is not on road, remove it from list
+                deleteIndexList.append(i)          #cannot remove vehicles now or will damage outer loop - keeping track of index instead
+                self.errorList.append("- A vehicle was found on the road \"" + thisRoad + "\" which does not exist")       #error message    
+        #now delete all the vehicles not on a road referring to our deleteIndexList
+        for ele in sorted(deleteIndexList, reverse = True):   #deleting larger numbers first so it does not reassign indexes
+            del self.vehicleList[ele]
+
+            
+
+            
+
