@@ -49,14 +49,14 @@ class IntersectionSim:
                      
                  # Check if vehicle is on the same road as the intersection
                 if (vehicle_road == self.intersection_list[i][j]["road"] and vehicle_position < trafficlight_position + 0.18):
-                    print("______________________________________________________")
-                    print("| VEHICLE IS APPROACHING THE INTERSECTION(S)")
-                    print("______________________________________________________")
-                    print("| Vehicle on Road:", vehicle_road)
-                    print("| Vehicle Position: ",  get_position)
-                    print("| Traffic Light on Road:", self.intersection_list[i][j]["road"])
-                    print("| Intersection Position: ", trafficlight_position)
-                    print("______________________________________________________\n")
+                    # print("______________________________________________________")
+                    # print("| VEHICLE IS APPROACHING THE INTERSECTION(S)")
+                    # print("______________________________________________________")
+                    # print("| Vehicle on Road:", vehicle_road)
+                    # print("| Vehicle Position: ",  get_position)
+                    # print("| Traffic Light on Road:", self.intersection_list[i][j]["road"])
+                    # print("| Intersection Position: ", trafficlight_position)
+                    # print("______________________________________________________\n")
                           
                     if (vehicle_position > trafficlight_position): 
 
@@ -70,9 +70,9 @@ class IntersectionSim:
                             if(selected_road == self.road_list[k]["name"]):
                                 get_position = self.road_list[k]["length"] - vehicle_position
 
-                        print("------------------------| Vehivle make a TURN to: ", selected_road)
-                        print("------------------------| Current Position: ", get_position)
-                        print("______________________________________________________\n")
+                        # print("------------------------| Vehivle make a TURN to: ", selected_road)
+                        # print("------------------------| Current Position: ", get_position)
+                        # print("______________________________________________________\n")
     
         return selected_road, get_position
 
