@@ -30,6 +30,7 @@ import time
 #       -calls vehicle_on_road() and traffic_light_on_road()
 
 INPUT_FILE_PATCH = "./InputFiles/trafficSim2.xml"
+
 class AutomaticSimulation:
     def __init__(self):
         # create a TrafficSystem object from the input file
@@ -65,14 +66,14 @@ class AutomaticSimulation:
             if self.vehicle_list[i]["type"] == "bus":
                 busStopSimulation(self.bust_stop_list, self.vehicle_list, i)
             
-            print("\n==============")
-            print("Vehicle:" , i)
-            print("==============")
+            # print("\n==============")
+            # print("Vehicle:" , i)
+            # print("==============")
             print("    -> road: ", self.vehicle_list[i]["road"])
-            print("    -> position: ", self.vehicle_list[i]["position"])
-            print("    -> speed: ", self.vehicle_list[i]["speed"])
-            print("    -> acceleration: ", self.vehicle_list[i]["acceleration"])
-            print("    -> type: ", self.vehicle_list[i]["type"])
+            # print("    -> position: ", self.vehicle_list[i]["position"])
+            # print("    -> speed: ", self.vehicle_list[i]["speed"])
+            # print("    -> acceleration: ", self.vehicle_list[i]["acceleration"])
+            # print("    -> type: ", self.vehicle_list[i]["type"])
             
             # If vehivle is at the intersection, then make a selection and update new position on the road
             self.vehicle_list[i]["road"], self.vehicle_list[i]["position"] = self.intersection_sim.is_approaching_N_selected_road(self.vehicle_list[i]["road"], self.vehicle_list[i]["position"])
@@ -83,15 +84,15 @@ class AutomaticSimulation:
 
     def traffic_light_on_road(self):
 
-        print("\n============================")
-        print("TRAFFICLIGHTS DISPLAY")
-        print("============================")
+        # print("\n============================")
+        # print("TRAFFICLIGHTS DISPLAY")
+        # print("============================")
 
         # 2. FOR any traffic light in the road networkz
         for i in range(len(self.traffic_light_list)):
-            print("Road: ", self.traffic_light_list[i]["road"])
-            print("    -> position: ", self.traffic_light_list[i]["position"])
-            print("    -> cycle: ", self.traffic_light_list[i]["cycle"])
+            # print("Road: ", self.traffic_light_list[i]["road"])
+            # print("    -> position: ", self.traffic_light_list[i]["position"])
+            # print("    -> cycle: ", self.traffic_light_list[i]["cycle"])
             self.trafficlight_current_state[i]["road"] = self.traffic_light_list[i]["road"]
             self.trafficlight_current_state[i]["position"] = self.traffic_light_list[i]["position"]
             self.trafficlight_current_state[i]["cycle"] = self.traffic_light_list[i]["cycle"]

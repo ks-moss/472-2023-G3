@@ -3,12 +3,13 @@ import random
 from  AutomaticSimulation import *
 import sys
 from ursina import text
-from VehicleGenerator import addVehicle
+from VehicleGenerator import *
 
 app = Ursina()
 vehicles = []
 
 trafficSystem = AutomaticSimulation()
+newVehicleGen = VehicleGenerator()
 
 # Create a camera with a bird's eye view
 camera.orthographic = True
@@ -19,7 +20,7 @@ camera.fov = 90
 # create base
 box = Entity(model='quad', scale=(120), color=rgb(51,165,50))
 
-# create roads
+# CREATE ROADS
 roads_name = []
 for i in range(len(trafficSystem.intersection_list)):
     for j in range(len(trafficSystem.intersection_list[i])):
@@ -41,7 +42,7 @@ for i in range(len(trafficSystem.intersection_list)):
             print(road_position)
 
             if (road_name[0] == "N" or road_name[0] == "S") and road_name[1] == " ":  # Verticle Roads
-                # Create the object_rec Entity and pass text_entity as a child
+                # Create the road_model Entity and pass roadText as a parent
                 road_model = Entity(model='cube', scale=(4, 100, 0.1), color=color.gray)
                 road_model.y = road_position/2   
                 road_model.x = road_position*5
@@ -53,7 +54,7 @@ for i in range(len(trafficSystem.intersection_list)):
                 
                 
             elif (road_name[0] == "E" or road_name[0] == "W") and road_name[1] == " ": # Horizontal Roads
-                # Create the object_rec Entity and pass text_entity as a child
+                # Create the road_model Entity and pass roadText as a parent
                 road_model = Entity(model='cube', scale=(100, 4, 0.1), color=color.gray)
                 road_model.y = road_position/2
                 roadText= Text(text=road_name, scale=(1,15))
@@ -66,92 +67,117 @@ for i in range(len(trafficSystem.intersection_list)):
                 # Terminate the program without specifying an exit code
                 sys.exit()
 
-stopSign1 = Entity(model='sphere', scale=0, color=color.red)
-stopSign1.x = 3
-stopSign1.y = -3
 
-busStop1 = Entity(model='cube', scale=0, color=color.blue)
-busStop1.x = -25
-busStop1.y = 23
 
-traffic_light1 = Entity(model='cube', scale=(0, 0, 0), color=color.green)
-traffic_light1.x = 0
-traffic_light1.y = 25
+# # CREATE TRAFFICLIGHTS
+traffic_light_NS_objects = []
+cycle_light_NS_objects = []
+traffic_light_EW_objects = []
+cycle_light_EW_objects = []
 
-# PLACE THE TRAFFIC LIGHTS ONTO THE ROADS
-lights = trafficSystem.traffic_light_list
 
 for i in range(len(trafficSystem.traffic_light_list)):
 # Because we are looking at crossroads/intersections,
 # we look at both current index and index+1 of the traffic light list for each iteration    
     # Set the characteristics of the traffic lights
     # We will use green for N/S traffic lights for now and red for E/W
-    NS_lightPoles = Entity(model='cube', scale=(3.5, 0.5, 1), color= color.green)
-    EW_lightPoles = Entity(model='cube', scale=(0.5, 3.5, 1), color= color.red)
+
+    current_light = trafficSystem.traffic_light_list[i]
+    next_light = trafficSystem.traffic_light_list[i+1]
+
 
     # Lets take a look at the N/S light of the intersection
-    if lights[i]["road"][0] == "N" or lights[i]["road"][0] == "S":
-            NSlightpos_x = lights[i]["position"] * 5
-            NSlightpos_y = lights[i + 1]["position"] / 2.2
-            if NSlightpos_y < 0:
-                NSlightpos_y = NSlightpos_y - 5
-            NS_lightPoles.position = (NSlightpos_x, NSlightpos_y)
+    if (current_light["road"][0] == "N" or current_light["road"][0] == "S") and current_light["road"][1] == " ":
+
+        temp_current = []
+
+        NS_lightPoles = Entity(model='cube', scale=(3.5, 0.5, 1), color= color.green)
+        NSlightpos_x = current_light["position"] * 5
+        NSlightpos_y = next_light["position"] / 2.2
+        if NSlightpos_y < 0:
+            NSlightpos_y = NSlightpos_y - 5
+        NS_lightPoles.position = (NSlightpos_x, NSlightpos_y)
+
+        traffic_light_NS_objects.append(NS_lightPoles)
+        cycle_light_NS_objects.append(current_light["cycle"])
+
     # Now lets take a look at the E/W light of the intersection
-    if lights[i+1]["road"][0] == "W" or lights[i+1]["road"][0] == "E":
-        EWlightpos_x = lights[i + 1]["position"] / 1.8
-        EWlightpos_y = lights[i]["position"] * 5
+    if (next_light["road"][0] == "E" or next_light["road"][0] == "W") and next_light["road"][1] == " ":
+
+        EW_lightPoles = Entity(model='cube', scale=(0.5, 3.5, 1), color= color.red)
+        EWlightpos_x = next_light["position"] / 1.8
+        EWlightpos_y = current_light["position"] * 5
         if EWlightpos_x > 0:
             EWlightpos_x -= 5
         EW_lightPoles.position = (EWlightpos_x, EWlightpos_y)
 
+        traffic_light_EW_objects.append(EW_lightPoles)
+        cycle_light_EW_objects.append(next_light["cycle"])
+        
+
     i += 1 # increment to get to the next intersection
 
     # We need this so we don't go out of bounds
-    if i == len(lights) - 1:
+    if (i) == len(trafficSystem.traffic_light_list) - 1:
         break
-    
+
+
+
+def signal_light_color_change(index, trafficlightDirection, color_indicator):
+
+    print("-----COLOR---->", color_indicator)
+
+    if(color_indicator == "red"):
+        trafficlightDirection[index] = color.red
+
+    elif(color_indicator == "yellow"):
+        trafficlightDirection[index].color = color.yellow
+
+    elif(color_indicator == "green"):
+        trafficlightDirection[index] = color.green
+
 
 #Loop through vehicle list to spawn cars and set attributes 
-def createCars():
-    for i in range(len(trafficSystem.vehicle_list)):
-        # Get the vehicle properties from the list
-        vehicle_props = trafficSystem.vehicle_list[i]
 
-        # Create a new car entity with the properties
-        available_colors = [color.brown, color.blue, color.magenta, color.yellow, color.white, color.black, color.orange]
-        car = Entity(model='cube', scale=(2, 1, 1), color=available_colors[i])
+for i in range(len(trafficSystem.vehicle_list)):
+    # Get the vehicle properties from the list
+    vehicle_props = trafficSystem.vehicle_list[i]
+
+    # Create a new car entity with the properties
+    available_colors = [color.brown, color.blue, color.magenta, color.yellow, color.white, color.black, color.orange]
+    car = Entity(model='cube', scale=(2, 1, 1), color=available_colors[i])
+    car.speed = vehicle_props["speed"] / 100
+
+    #car.acceleration = vehicle_props["acceleration"] / 100
+    car.type = vehicle_props["type"]
+    car.road = vehicle_props["road"]
+    car.pos = vehicle_props["position"]
+    if (car.road[0] == "N" or car.road[0] == "S") and car.road[1] == " ":
+        car.is_on_y_axis = True
+        car.position = (road_model.x, car.pos)
+    else:
+        car.is_on_y_axis = False
+        car.position = (road_model.y, car.pos)
     
-        car.speed = vehicle_props["speed"] / 100
-        #car.acceleration = vehicle_props["acceleration"] / 100
-        car.type = vehicle_props["type"]
-        car.road = vehicle_props["road"]
-        car.pos = vehicle_props["position"]
-        if (car.road[0] == "N" or car.road[0] == "S") and car.road[1] == " ":
-            car.is_on_y_axis = True
-            car.position = (road_model.x, car.pos)
-        else:
-            car.is_on_y_axis = False
-            car.position = (road_model.y, car.pos)
-    
-        # Add the car to the list of vehicles
-        vehicles.append(car)
-
-
-createCars()
-
+    # Add the car to the list of vehicles
+    vehicles.append(car)
 
 # Define a function to move the cars
 def update():
     traffic_light_time = time.time() % 16 # repeat cycle every 16 seconds
-    
-   #  trafficSystem.update()
 
-    if traffic_light_time < 7:
-        traffic_light1.color = color.green
-    elif traffic_light_time < 9:
-        traffic_light1.color = color.yellow
-    else:
-        traffic_light1.color = color.red
+
+    # if traffic_light_time < 7:
+    #     traffic_light1.color = color.green
+    # elif traffic_light_time < 9:
+    #     traffic_light1.color = color.yellow
+    # else:
+    #     traffic_light1.color = color.red
+
+    print(cycle_light_NS_objects)
+    print(cycle_light_EW_objects)
+    signal_light_color_change(2, traffic_light_NS_objects, "yellow")
+    signal_light_color_change(2, traffic_light_EW_objects, "yellow")
     
     for vehicle in vehicles:
         if vehicle.is_on_y_axis:
@@ -170,15 +196,12 @@ def add_vehicle():
 
 def on_restart_button_click():
     reset_program()
-    createCars()
     
 def on_button_click():
     # access addvehicle from vehiclegenerator and assign vehicle properties
-    newVehicle = addVehicle()
-    vehicleType = newVehicle["type"]
-    vehicleRoad = newVehicle["name"]
-    #vehicleSpeed = newVehicle["speed"]
-    #vehiclePosition = newVehicle["position"]
+    newVehicleGen.getVehicle()
+    vehicleRoad = newVehicleGen.vehicles
+    
     # Create a new vehicle entity based on vehicle properties
     available_colors = [color.red, color.green, color.blue, color.yellow, color.orange, color.cyan] # list of available colors
     vehicle = Entity(model='cube', scale=(2, 1, 1), color=random.choice(available_colors)) # choose a random color from the list
