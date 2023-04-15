@@ -238,6 +238,7 @@ def on_button_click():
     available_colors = [color.red, color.green, color.blue, color.yellow, color.orange, color.cyan] # list of available colors
     # Create a new vehicle entity based on vehicle properties
     vehicleThis = Entity(model='cube', scale=(2, 1, 1), color=random.choice(available_colors))
+    vehicleThis.collider = 'box'
     vehicleThis.road = newVehicle["name"]
     #check if N/S, then check if road matches a current road in system
     if (vehicleRoad[0] == "N" or vehicleRoad[0] == "S") and vehicleRoad[1] == " ":
