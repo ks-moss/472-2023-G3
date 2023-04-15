@@ -103,7 +103,7 @@ for i in range(0, len(lights)-1, 2):
                 NSlightpos_y = NSlightpos_y - 5
             NS_lightPoles.position = (NSlightpos_x, NSlightpos_y)
             #create trigger box based on location of light for stopping vehicles
-            trigger_box1 = Entity(model='wireframe_cube', color=color.white, scale=5, collider='box', position=NS_lightPoles.position, origin_y=.5)
+            trigger_box1 = Entity(model='wireframe_cube', color=color.clear, scale=5, collider='box', position=NS_lightPoles.position, origin_y=.5)
             triggerboxes.append(trigger_box1)
             trafficLightsNS.append(NS_lightPoles)
     # Now lets take a look at the E/W light of the intersection
@@ -114,7 +114,7 @@ for i in range(0, len(lights)-1, 2):
             EWlightpos_x -= 5
         EW_lightPoles.position = (EWlightpos_x, EWlightpos_y)
         #create trigger box based on location of light for stopping vehicles
-        trigger_box2 = Entity(model='wireframe_cube', color=color.white, scale=5, collider='box', position=EW_lightPoles.position, origin_y=-.5)
+        trigger_box2 = Entity(model='wireframe_cube', color=color.clear, scale=5, collider='box', position=EW_lightPoles.position, origin_y=-.5)
         triggerboxes.append(trigger_box2)
         #add light to list of lights
         trafficLightsEW.append(EW_lightPoles)
