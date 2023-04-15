@@ -1,6 +1,10 @@
 #2.3
 from AutomaticSimulation import *
 from src.GridMap import GridMap
+from src.VehicleFactory import VehicleFactory
+from src.TrafficLights import TrafficLights
+
+from types import MethodType
 
 # importing Ursina Engine
 try:
@@ -12,11 +16,8 @@ except(e):
 
 
 # what to do next
-#TODO refresh function (delete map & create new one)
-#TODO add cars
-#TODO data pipeline from vehicle generator
-#TODO add bus stops
-#TODO add traffic lights
+#TODO add vehicle generator
+#TODO clean and reset scene
 #TODO 4.1 GUI for simulation
 #TODO 4.2 GUI for traffic lights
 #TODO 4.3 GUI for vehicle generator
@@ -47,6 +48,12 @@ class Camera(FirstPersonController):
         camera.clip_plane_near = 0.1
         self.focusTimer = 100
     
+
+    # called when the left mouse button is clicked
+    # checks to see if the mouse is clicking on a road
+    # if there is a collision then the target x&z values are 
+    # updated to the entities position
+    # the focus timer is reset to 0
     def focus(self):
         mouse.find_collision()
         if len(mouse.collisions) == 0:
@@ -64,11 +71,14 @@ class Camera(FirstPersonController):
     # moves the camera rotation based on the mouse only when the mouse
     # is locked which is when the right mouse button is held down
     # mouse will be locked/unlocked in @GraphicsEngine.input
+    #
+    # if the focus timer is < 100 it will update the cameras position
+    # to the target position within 100 frame updates.
     def update(self):
         if mouse.locked:
             self.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
             self.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
-            self.camera_pivot.rotation_x = clamp(self.camera_pivot.rotation_x, -90, 0)
+            self.camera_pivot.rotation_x = clamp(self.camera_pivot.rotation_x, -70, 0)
 
         if self.focusTimer < 100:
             self.focusTimer += 1
@@ -91,9 +101,9 @@ class GraphicsEngine(Ursina):
     # CLASS VARIABLES
     SCALE = 20              # the size of tiles (ex. 100 = 100x100 units)
     ROAD_SCALE = 50         # block size of road (ex. 50 => road.len = 100 => 2 blocks)
-    ZOOM_SENSITIVITY = 5    # sensitivity of zoooooom
+    ZOOM_SENSITIVITY = 10    # sensitivity of zoooooom
     MIN_PADDING = 4         # minimum distance between roads \ These two can't equal
-    MAX_PADDING = 10        # maximum distance between roads / or problems happen
+    MAX_PADDING = 6        # maximum distance between roads / or problems happen
 
     # Called when the GraphicsEngine class is instantiated
     # this will be a child class of the Ursina game engine
@@ -115,10 +125,6 @@ class GraphicsEngine(Ursina):
 
         # create simulation data object
         self.simData = AutomaticSimulation()
-        self.Map = GridMap(self.simData.road_list, self.simData.intersection_list)
-        GridMap.SCALE = self.ROAD_SCALE
-        GridMap.MIN_PADDING = self.MIN_PADDING
-        GridMap.MAX_PADDING = self.MAX_PADDING
 
         self.createScene()
 
@@ -127,8 +133,17 @@ class GraphicsEngine(Ursina):
     # Called after the Ursina engine is setup and 
     # calls the functions that creates the scene up.
     def createScene(self):
+        GridMap.SCALE = self.ROAD_SCALE
+        GridMap.MIN_PADDING = self.MIN_PADDING
+        GridMap.MAX_PADDING = self.MAX_PADDING
+        self.Map = GridMap(self.simData)
+        self.sceneObjs = []
+        self.startPoints = {}
+
         self.createWorldMap()
         self.createEnvironment()
+        self.addDefaultVehicles()
+        self.createTrafficLights()
 
 
 
@@ -136,9 +151,10 @@ class GraphicsEngine(Ursina):
     # creates the road layout based on the input.
     # the worldMap field should hold the grid layout of the road.
     def createWorldMap(self):
-        self.Map.createCrossRoad(self.Map.crossRoads)
+        self.Map.createCrossRoad()
         self.Map.createRoads()
         self.worldMap = self.Map.map
+
 
 
 
@@ -146,8 +162,6 @@ class GraphicsEngine(Ursina):
     # Uses the worldMap field to create the road layout
     # createWorldMap function must be called before this function
     def createEnvironment(self):
-        self.sceneObjs = []
-
         # terrain
         self.terrain = Entity(model = 'quad', 
                               scale = (self.Map.xSize*200, self.Map.ySize*200, 0), 
@@ -156,31 +170,85 @@ class GraphicsEngine(Ursina):
                               rotation_x = 90,
                               collider = None)
         self.terrain.texture_scale = Vec2(50, 50)
-        self.sceneObjs.append(self.terrain)
 
 
         # create roads
         for x in range(self.Map.xSize):
             for y in range(self.Map.ySize):
-                if self.worldMap[y][x] != '':
+                data = self.worldMap[y][x]
+                if data != '':
+                    if len(data) == 2:
+                        c = data[0]
+                        name = data[1]['name']
+                        heading = data[1]['heading']
+                        temp = Entity(x = (self.Map.xSize // -2 + x + heading[0]) * self.SCALE,
+                                      y = 0,
+                                      z = (self.Map.ySize // -2 + y + heading[1]) * self.SCALE)
+                        
+                        start = Entity(x = (self.Map.xSize // -2 + x) * self.SCALE,
+                                       y = 0,
+                                       z = (self.Map.ySize // -2 + y) * self.SCALE,
+                                       scale = 5)
+                        start.look_at(temp, axis='forward')
+                        destroy(temp)
+                        self.startPoints[name] = start
+                    else:
+                        c = data
+
+
                     obj = Entity( model = 'quad', 
                             scale = self.SCALE, 
-                            x = (self.Map.xSize // 2 - x) * self.SCALE,
+                            x = (self.Map.xSize // -2 + x) * self.SCALE,
                             y = 0,
-                            z = (self.Map.ySize // 2 - y) * self.SCALE, 
+                            z = (self.Map.ySize // -2 + y) * self.SCALE, 
                             rotation_x = 90, 
-                            color = self.worldMap[y][x],
-                            # texture = self.worldMap[x][z], <-- we will use this in final implementation
+                            color = c,
                             collider = 'box')
-                    obj.on_mouse_enter = Func(setattr, obj, 'color', color.white)
-                    obj.on_mouse_exit = Func(setattr, obj, 'color', self.worldMap[y][x])
-
+                    def _on_mouse_enter(self):
+                        if not mouse.locked:
+                            self.color = color.white
+                    obj.on_mouse_enter = MethodType(_on_mouse_enter, obj)
+                    obj.on_mouse_exit = Func(setattr, obj, 'color', c)
                     self.sceneObjs.append(obj)
         
 
         # sky
         scene.fog_density = 0.001
         Sky()
+    
+
+
+    
+    # addDefaultVehicles
+    # creates a VehicleFactory object and adjusts the 
+    # necessary static fields. The object
+    # should automatically create the starting vehicles
+    # from the AutomaticSimulation class
+    def addDefaultVehicles(self):
+        VehicleFactory.SCALE = self.SCALE
+        VehicleFactory.ROAD_SCALE = self.ROAD_SCALE
+        self.vFactory = VehicleFactory(self.simData, self.startPoints)
+
+
+
+    def createTrafficLights(self):
+        TrafficLights.SCALE = self.SCALE
+        TrafficLights.ROAD_SCALE = self.ROAD_SCALE
+        self.trafficLights = TrafficLights(self.simData, self.startPoints)
+
+
+    # resetSimulation
+    # called when the user wants to reset the simulation and start over
+    # it resets the map and creates a new scene for the simulation
+    def resetSimulation(self):
+        del self.Map
+        for obj in self.sceneObjs:
+            destroy(obj)
+        destroy(self.terrain)
+        self.cam.x, self.cam.z = 0, 0
+
+        print('scene cleared')
+        self.createScene()
 
 
 
@@ -188,6 +256,7 @@ class GraphicsEngine(Ursina):
     # parameters:
     #   key -   the value that is inputted from the keyboard or mouse.
     #       keybinds:
+    #           'mouse1'    -   sets focus to a road tile
     #           'esc'       -   quits & closes the app
     #           'wheel_up'  -   zooms in
     #           'wheel_down'-   zooms out
@@ -205,6 +274,8 @@ class GraphicsEngine(Ursina):
             case 'mouse3':
                 mouse.position = Vec3(0, 0, 0)
                 mouse.locked = True
+            case 'r':
+                self.resetSimulation()
 
 
 
