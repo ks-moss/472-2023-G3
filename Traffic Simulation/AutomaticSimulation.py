@@ -2,6 +2,9 @@
 from TrafficSimulation2 import *
 from VehicleCalculations import *
 from TrafficLightSimulation  import *
+from SimulationIntersection import *
+from BusStopSimulation import *
+import os
 import time
 
 # Goal: Run simulation automatically
@@ -25,11 +28,14 @@ import time
 #       -prints all traffic lights' position and cycle
 #   update()
 #       -calls vehicle_on_road() and traffic_light_on_road()
+
+INPUT_FILE_PATCH = "./InputFiles/trafficSim2.xml"
 class AutomaticSimulation:
     def __init__(self):
         # create a TrafficSystem object from the input file
         self.trafficSystem = TrafficSystem()
-        self.trafficSystem.ReadElementsFromFile("./InputFiles/trafficSim2.xml")        
+        self.trafficSystem.ReadElementsFromFile(INPUT_FILE_PATCH) 
+        self.file_name = os.path.basename(INPUT_FILE_PATCH)       
         # Get Vehicle List
         self.vehicle_list = self.trafficSystem.vehicleList
         # Get Traffic Light List
@@ -38,12 +44,11 @@ class AutomaticSimulation:
         self.road_list = self.trafficSystem.roadList
         # Get Crossroads
         self.intersection_list = self.trafficSystem.intersectionList
+        # Simulate Intersection
+        self.intersection_sim = IntersectionSim(self.intersection_list, self.road_list)
         #Get Bus Stop list
         self.bust_stop_list = self.trafficSystem.busStopList
-        # Store current state of vehicle
-        self.vehicle_current_state = []
-        for i in range(len(self.vehicle_list)):
-            self.vehicle_current_state.append({"road": '', "position": 0, "speed" : 0, "acceleration" : 0, "type" : ''})
+
         
         # Store current state of trafficlight
         self.trafficlight_current_state = []
@@ -57,37 +62,32 @@ class AutomaticSimulation:
         for i in range(len(self.vehicle_list)):
             # 3.1 GOES HERE
             # Execute use-case 3.1 out on the vehicle
+            if self.vehicle_list[i]["type"] == "bus":
+                busStopSimulation(self.bust_stop_list, self.vehicle_list, i)
             
+            print("\n==============")
             print("Vehicle:" , i)
+            print("==============")
             print("    -> road: ", self.vehicle_list[i]["road"])
             print("    -> position: ", self.vehicle_list[i]["position"])
             print("    -> speed: ", self.vehicle_list[i]["speed"])
             print("    -> acceleration: ", self.vehicle_list[i]["acceleration"])
             print("    -> type: ", self.vehicle_list[i]["type"])
             
-
-
-            self.vehicle_current_state[i]["road"] = self.vehicle_list[i]["road"]
-            self.vehicle_current_state[i]["position"] = self.vehicle_list[i]["position"]
-            self.vehicle_current_state[i]["speed"] = self.vehicle_list[i]["speed"]
-            self.vehicle_current_state[i]["acceleration"] = self.vehicle_list[i]["acceleration"]
-            self.vehicle_current_state[i]["type"] = self.vehicle_list[i]["type"]
+            # If vehivle is at the intersection, then make a selection and update new position on the road
+            self.vehicle_list[i]["road"], self.vehicle_list[i]["position"] = self.intersection_sim.is_approaching_N_selected_road(self.vehicle_list[i]["road"], self.vehicle_list[i]["position"])
+            # Get new speed and position
             VehicleCalculations.calculateVehicleSpeedAndPosition(self.vehicle_list, i)
-            #VehicleCalculations.vehicleOutOfBounds(self.vehicle_list, i, self.road_list)
-           
-        """
-        for i in range(len(self.bust_stop_list)):
-            #for j in range(len(self.intersection_list[i])):
-            print("Road: ", self.bust_stop_list[i]["road"])
-            print("Position: ", self.bust_stop_list[i]["position"])
-            print("Waitingtime: ", self.bust_stop_list[i]["waitingtime"])
-            print("\n")
-        """
+
 
 
     def traffic_light_on_road(self):
 
-        # 2. FOR any traffic light in the road network
+        print("\n============================")
+        print("TRAFFICLIGHTS DISPLAY")
+        print("============================")
+
+        # 2. FOR any traffic light in the road networkz
         for i in range(len(self.traffic_light_list)):
             print("Road: ", self.traffic_light_list[i]["road"])
             print("    -> position: ", self.traffic_light_list[i]["position"])
@@ -103,37 +103,10 @@ class AutomaticSimulation:
         
 
 
-simulation = AutomaticSimulation()
-
+# simulation = AutomaticSimulation()
 
 # t_end = time.time() + 60 * 15
 # while time.time() < t_end:
-#     print("====================================================")
 #     simulation.update()
+#     print("\n======================================================================================\n")
 #     time.sleep(1)
-
-"""
-print(simulation.vehicle_current_state)
-print(simulation.vehicle_current_state[0]["road"])
-print(simulation.trafficlight_current_state)
-print(simulation.trafficlight_current_state[0]["road"])
-
-                # Is on the current road?
-                if self.vehicle_state[i]["road"] == (self.trafficlight_state[j]["road"]
-                    # Is approaching the intersection?
-                    if self.vehicle_state[i]["position"] >= (self.trafficlight_state[j]["position"])-APPROACHING_DISTANCE: 
-                        # Choose a different road randomly
-                        selected_road_loop = True
-                        while(selected_road_loop):
-                            num = random.randint(0, len(self.trafficlight_state)-1)
-                            
-                                
-                            if(self.vehicle_state[i]["road"] != self.trafficlight_state[num]["road"]):
-                                    self.vehicle_state[num]["road"] = self.trafficlight_state[num]["road"]
-                                    selected_road_loop = False
-
-"""
-# for i in range(len(simulation.vehicle_current_state)):
-  # print( calculateVehicleSpeedAndPosition(simulation.vehicle_list, i)  )
-  # print( calculateAcceleration(simulation.vehicle_list, i) )
-  # print(adjustAccelerationToStop(16.6))

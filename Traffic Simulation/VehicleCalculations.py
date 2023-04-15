@@ -6,7 +6,8 @@ import json
 # trafficSystem.ReadElementsFromFile("./InputFiles/trafficSim2.xml")
 
 # Parse the JSON data from the vehicle configuration file (json)
-with open('InputFiles/vehicles.json') as f:
+
+with open('./InputFiles/vehicles.json') as f:
     data = json.load(f)
 
 # Gather each vehicle's specs as a list
@@ -147,17 +148,15 @@ def adjustDesiredMaxSpeed(isSlowingDown):
 # current speed of the vehicle. This function should be called for 
 # each simulation step when stopping a vehicle
 # parameters:
-#   currentSpeed - the speed of the current vehicle being calculated
+#   vehicles - vehicle list
+#   vehicleIndex - index of current vehicle
 # return:
-#   acceleration - the new acceleration of the vehicle
-def adjustAccelerationToStop(currentSpeed):
+#   none
+def adjustAccelerationToStop(vehicles, vehicleIndex):
     # Eq:  a = -(b_max*v / v_max)
-    acceleration = -1 * ((maximumBrakingFactor * currentSpeed) / maximumSpeed)
+    currentSpeed = vehicles[vehicleIndex]["speed"]
+    vehicles[vehicleIndex]["acceleration"] = -1 * ((maximumBrakingFactor * currentSpeed) / maximumSpeed)
 
-    #DEBUG
-    # print("Acceleration Set to: ", acceleration)
-
-    return acceleration
 
 # Checks to see if a vehicle is out of bounds by 
 # comparing the length of the street and the position

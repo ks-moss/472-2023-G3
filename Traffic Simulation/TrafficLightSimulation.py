@@ -55,11 +55,31 @@ def trafficLightInteraction (trafficLight, vehicles, light_index):
     if green_light[trafficLight_road] == True:
         # Invoke acceleration function for ALL vehicles in front of the current traffic light
         i = 0
+        j = 0
+        emergencyDeceleration = False
+
         while i < len(vehicles):
             # Make sure the current vehicle is on the current road
             if vehicles[i]["road"] == trafficLight_road:   
                 # Adjust acceleration of vehicle if the vehicle is behind the traffic light's position
                 if vehicles[i]["position"] < trafficLight_position:
+                    # 3.5 If the first vehicle is an emergency vehicle, the rest of the vehicles don't need to slow down
+                    # Checks if there is an emergency vehicle on the road
+                    if (vehicles[i]["position"] != 0) and (vehicles[i]["type"] == "fire truck" or vehicles[i]["type"] == "police van" or vehicles[i]["type"] == "ambulance"):
+                        if emergencyDeceleration == False:
+                            while j < len(vehicles):
+                                # Make sure the current vehicle is on the current road and being traffic light
+                                if vehicles[j]["road"] == trafficLight_road and vehicles[j]["position"] < trafficLight_position:
+                                    # Only apply deceleration factor if it's not the current emergency vehicle
+                                    if (vehicles[j]["type"] != "fire truck" or vehicles[j]["type"] != "police van" or vehicles[j]["type"] != "ambulance"): 
+                                        VehicleCalculations.applyDecelerationFactor(vehicles, j)
+                                j += 1
+                                
+                        # Reduces time complexity
+                        # Applies deceleration to every vehicle (that is not an emergency vehicle) on the road if there is an emergency vehicle present
+                        # Doesn't require deceleration for each emergency vehicle found on the road
+                        emergencyDeceleration == True
+                    
                     VehicleCalculations.calculateAcceleration(vehicles, i)
                     
             i += 1
