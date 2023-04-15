@@ -70,7 +70,6 @@ for i in range(len(trafficSystem.intersection_list)):
 
 
 # # CREATE TRAFFICLIGHTS
-
 traffic_light_NS_objects = []
 cycle_light_NS_objects = []
 traffic_light_EW_objects = []
@@ -124,9 +123,8 @@ for i in range(len(trafficSystem.traffic_light_list)):
 
 
 
-def signal_light_color_change(index, trafficlightDirection, color_indicator, cycle):
+def signal_light_color_change(index, trafficlightDirection, color_indicator):
 
-    print("-----CYCLE---->", cycle[index])
     print("-----COLOR---->", color_indicator)
 
     if(color_indicator == "red"):
@@ -176,8 +174,10 @@ def update():
     # else:
     #     traffic_light1.color = color.red
 
-    signal_light_color_change(2, traffic_light_NS_objects, "yellow", cycle_light_NS_objects)
-    signal_light_color_change(2, traffic_light_EW_objects, "yellow", cycle_light_EW_objects)
+    print(cycle_light_NS_objects)
+    print(cycle_light_EW_objects)
+    signal_light_color_change(2, traffic_light_NS_objects, "yellow")
+    signal_light_color_change(2, traffic_light_EW_objects, "yellow")
     
     for vehicle in vehicles:
         if vehicle.is_on_y_axis:
