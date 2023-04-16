@@ -48,7 +48,7 @@
     <!-- Major Road -->
         <road>S Eastern Ave</road>
         <position>-5</position>
-        <cycle>15</cycle>
+        <cycle>20</cycle>
     </TRAFFICLIGHT>
     <TRAFFICLIGHT>
     <!-- Minor Roads -->
@@ -65,9 +65,9 @@
     </CROSSROADS>
     <TRAFFICLIGHT>
     <!-- Major Road -->
-        <road>S Eastern Ave</road>
+        <road>N Pecos Rd</road>
         <position>5</position>
-        <cycle>15</cycle>
+        <cycle>20</cycle>
     </TRAFFICLIGHT>
     <TRAFFICLIGHT>
     <!-- Minor Roads -->
@@ -84,9 +84,9 @@
     </CROSSROADS>
     <TRAFFICLIGHT>
     <!-- Major Road -->
-        <road>S Eastern Ave</road>
+        <road>N Pecos Rd</road>
         <position>5</position>
-        <cycle>15</cycle>
+        <cycle>20</cycle>
     </TRAFFICLIGHT>
     <TRAFFICLIGHT>
     <!-- Minor Roads -->
@@ -97,36 +97,35 @@
 <!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
     <VEHICLE>
         <road>S Eastern Ave</road>
-        <position>0</position>
+        <position>-30</position>
         <speed>10</speed>
         <acceleration>1.2</acceleration>
         <type>bus</type>
     </VEHICLE>
     <VEHICLE>
         <road>E Wigwam Ave</road>
-        <position>1</position>
+        <position>-25</position>
         <speed>8</speed>
         <acceleration>1.2</acceleration>
         <type>police van</type>
     </VEHICLE>
     <VEHICLE>
         <road>N Pecos Rd</road>
-        <position>2</position>
+        <position>20</position>
         <speed>15</speed>
         <acceleration>1.2</acceleration>
         <type>car</type>
     </VEHICLE>
     <VEHICLE>
         <road>E Windmall Pkwy</road>
-        <position>3</position>
+        <position>25</position>
         <speed>12</speed>
         <acceleration>1.2</acceleration>
         <type>fire truck</type>
     </VEHICLE>
     <BUSSTOP>
         <road>S Eastern Ave</road>
-        <position>50</position>
+        <position>200</position>
         <waitingtime>20</waitingtime>
     </BUSSTOP>
-
 </root>
