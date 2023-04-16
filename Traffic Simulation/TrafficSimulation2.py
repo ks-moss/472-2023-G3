@@ -139,7 +139,11 @@ class TrafficSystem:
                         type = elem.find("type").text
                 name = elem.find("name").text
                 frequency = int(elem.find("frequency").text)
-                self.vehicleGeneratorList.append({"name": name, "frequency": frequency, "type": type})
+                position = int(elem.find("position").text)
+                speed = int(elem.find("speed").text)
+                acceleration = float(elem.find("acceleration").text)
+                type = elem.find("type").text
+                self.vehicleGeneratorList.append({"name": name, "frequency": frequency, "position": position, "speed": speed, "acceleration": acceleration, "type": type})
             elif elem.tag == "CROSSROADS":
                 temp_list = []
                 # iterate through the child elements of the CROSSROADS element
@@ -186,4 +190,3 @@ class TrafficSystem:
             
 
             
-
