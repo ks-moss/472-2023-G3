@@ -156,9 +156,6 @@ def create_vehicle_entity(speed, car_type, road, position):
 def createCars(type):
     if "default" == type:
 
-        vehicles.clear
-        triggerboxes.clear
-
         for i in range(len(trafficSystem.vehicle_list)):
             # Get the vehicle properties from the list
             vehicle_props = trafficSystem.vehicle_list[i]
@@ -167,7 +164,7 @@ def createCars(type):
 
     elif "add" == type:
         newVehicle = addVehicle()
-        print(newVehicle)
+        # print(newVehicle)
         create_vehicle_entity(newVehicle[0]["speed"], newVehicle[0]["type"], newVehicle[0]["name"], newVehicle[0]["position"])
 
 
