@@ -1,6 +1,12 @@
+#2.3
+from AutomaticSimulation import *
+import random as rng
+from src.GridMap import GridMap
+
+# importing Ursina Engine
 try:
     from ursina import *
-    from ursina.camera import Camera
+    # from ursina.camera import Camera
     from ursina.prefabs.first_person_controller import FirstPersonController
 except(e):
     print('Make sure to install Ursina Engine via "pip install ursina"')
@@ -54,10 +60,11 @@ class Camera(FirstPersonController):
 # This class creates the window and displays the simulation to the screen.
 class GraphicsEngine(Ursina):
 
-    # FIELD VARIABLES
-    MAP_SIZE = 20           # should automatically be set to longest road
-    SCALE = 100             # the size of tiles (ex. 100 = 100x100 units)
-    ZOOM_SENSITIVITY = 5
+    # CLASS VARIABLES
+    SCALE = 50              # the size of tiles (ex. 100 = 100x100 units)
+    ZOOM_SENSITIVITY = 5    # sensitivity of zoooooom
+    MIN_PADDING = 4         # minimum distance between roads
+    MAX_PADDING = 6         # maximum distance between roads
 
     # Called when the GraphicsEngine class is instantiated
     # this will be a child class of the Ursina game engine
@@ -65,6 +72,7 @@ class GraphicsEngine(Ursina):
     # then it will start the loading process of the game 'self.start()'
     def __init__(self):
         super().__init__(development_mode=True)
+        rng.seed(rng.random())
 
         # window module settings
         window.title = "Traffic Simulation 3D"
@@ -77,7 +85,16 @@ class GraphicsEngine(Ursina):
         # create custom camera class
         Camera(gravity = 0)
 
+        # create simulation data object
+        self.simData = AutomaticSimulation()
+        self.Map = GridMap(self.simData.road_list, self.simData.intersection_list)
+        GridMap.SCALE = self.SCALE
+        GridMap.MIN_PADDING = self.MIN_PADDING
+        GridMap.MAX_PADDING = self.MAX_PADDING
+
         self.createScene()
+
+
 
     # Called after the Ursina engine is setup and 
     # calls the functions that creates the scene up.
@@ -85,48 +102,64 @@ class GraphicsEngine(Ursina):
         self.createWorldMap()
         self.createEnvironment()
 
+
+
     # Gathers the data from the input file and
     # creates the road layout based on the input.
     # the worldMap field should hold the grid layout of the road.
     def createWorldMap(self):
-        self.worldMap = [['' for _ in range(self.MAP_SIZE)] for _ in range(self.MAP_SIZE)]
-        #TODO read from input file and create road and set to the worldMap grid
+        self.Map.createIntersections()
+        self.Map.createRoads()
+        self.worldMap = self.Map.map
 
-    # Creates the environment of the scene (Sky, Fog, Terrain)
+
+
+    # Creates the environment of the scene (Sky, Fog, Terrain, Roads)
     # Uses the worldMap field to create the road layout
     # createWorldMap function must be called before this function
     def createEnvironment(self):
-        # create roads
-        for x in range(self.MAP_SIZE):
-            for z in range(self.MAP_SIZE):
-                self.worldMap[x][z] != '' and Entity(model = 'quad', 
-                                                     scale = self.SCALE, 
-                                                     position = (x - (self.MAP_SIZE//2), 0, z - (self.MAP_SIZE//2)), 
-                                                     rotation_x = 90, 
-                                                     texture = self.worldMap[x][z])
-        
         # terrain
         self.terrain = Entity(model = 'quad', 
-                              scale = (self.MAP_SIZE*200, self.MAP_SIZE*200, 0), 
-                              position = (0, -0.05, 0), 
+                              scale = (self.Map.xSize*200, self.Map.ySize*200, 0), 
+                              position = (0, -1, 0), 
                               texture = 'grass', 
                               rotation_x = 90)
         self.terrain.texture_scale = Vec2(50, 50)
 
+
+        # create roads
+        for x in range(self.Map.xSize):
+            for y in range(self.Map.ySize):
+                if self.worldMap[y][x] != '':
+                    Entity( model = 'quad', 
+                            scale = self.SCALE, 
+                            x = (self.Map.xSize // 2 - x) * self.SCALE,
+                            y = 0,
+                            z = (self.Map.ySize // 2 - y) * self.SCALE, 
+                            rotation_x = 90, 
+                            color = self.worldMap[y][x],
+                            # texture = self.worldMap[x][z], <-- we will use this in final implementation
+                            collider = None)
+        
+
         # sky
-        scene.fog_density = 0.005
+        scene.fog_density = 0.001
         Sky()
+
+
 
     # Called when an input is given to the application on key down.
     # parameters:
     #   key -   the value that is inputted from the keyboard or mouse.
     #       keybinds:
-    #           'esc'       -   quits & closes the game
+    #           'esc'       -   quits & closes the app
     #           'wheel_up'  -   zooms in
     #           'wheel_down'-   zooms out
     #           'mouse3'    -   rmb : locks mouse
     def input(self, key, is_raw=False):
         match key:
+            case 'mouse1':
+                quit()
             case Keys.escape:
                 quit()
             case 'wheel_up':
@@ -136,6 +169,8 @@ class GraphicsEngine(Ursina):
             case 'mouse3':
                 mouse.position = Vec3(0, 0, 0)
                 mouse.locked = True
+
+
 
     # Called when an input is given to the application on key up
     # parameters:

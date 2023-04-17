@@ -1,62 +1,159 @@
 <root>
+<!-- List of all roads in the files -->
+<!-- Major Road -->
     <ROAD>
-        <name>Flamingo</name>
-        <length>2000</length>
+        <name>S Eastern Ave</name>
+        <length>100</length>
+    </ROAD>
+<!-- Minor Roads -->
+    <ROAD>
+        <name>E Windmall Pkwy</name>
+        <length>100</length>
+    </ROAD>
+     <ROAD>
+        <name>E Wigwam Ave</name>
+        <length>100</length>
     </ROAD>
     <ROAD>
-        <name>Tropicana</name>
-        <length>1500</length>
+        <name>N Pecos Rd</name>
+        <length>100</length>
     </ROAD>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
     <CROSSROADS>
-		<road position="1000">Rochelle</road>
-		<road position="1000">Tropicana</road>
-	</CROSSROADS>
+        <road position="-5">S Eastern Ave</road>
+        <road position="50">E Windmall Pkwy</road>
+    </CROSSROADS>
     <TRAFFICLIGHT>
-        <road>Flamingo</road>
-        <position>700</position>
-        <cycle>30</cycle>
+    <!-- Major Road -->
+        <road>S Eastern Ave</road>
+        <position>-5</position>
+        <cycle>20</cycle>
     </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+    <!-- Minor Roads -->
+        <road>E Windmall Pkwy</road>
+        <position>50</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
+    <CROSSROADS>
+        <road position="-5">S Eastern Ave</road>
+        <road position="-50">E Wigwam Ave</road>
+    </CROSSROADS>
+    <TRAFFICLIGHT>
+    <!-- Major Road -->
+        <road>S Eastern Ave</road>
+        <position>-5</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+    <!-- Minor Roads -->
+        <road>E Wigwam Ave</road>
+        <position>-50</position>
+        <cycle>10</cycle>
+    </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
+    <CROSSROADS>
+        <road position="5">N Pecos Rd</road>
+        <road position="50">E Windmall Pkwy</road>
+    </CROSSROADS>
+    <TRAFFICLIGHT>
+    <!-- Major Road -->
+        <road>N Pecos Rd</road>
+        <position>5</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+    <!-- Minor Roads -->
+        <road>E Windmall Pkwy</road>
+        <position>50</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
+    <CROSSROADS>
+        <road position="5">N Pecos Rd</road>
+        <road position="-50">E Wigwam Ave</road>
+    </CROSSROADS>
+    <TRAFFICLIGHT>
+    <!-- Major Road -->
+        <road>N Pecos Rd</road>
+        <position>5</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+    <!-- Minor Roads -->
+        <road>E Wigwam Ave</road>
+        <position>-50</position>
+        <cycle>10</cycle>
+    </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
     <VEHICLE>
-        <road>Flamingo</road>
-        <position>220</position>
-        <speed>10</speed>
+        <road>S Eastern Ave</road>
+        <position>-30</position>
+        <speed>15</speed>
         <acceleration>1.2</acceleration>
         <type>bus</type>
     </VEHICLE>
     <VEHICLE>
-        <road>Tropicana</road>
-        <position>0</position>
-        <speed>8</speed>
-        <acceleration>1.2</acceleration>
-        <type>police van</type>
-    </VEHICLE>
-    <ROAD>
-        <name>Durango</name>
-        <length>900</length>
-    </ROAD>
-    <TRAFFICLIGHT>
-        <road>Durango</road>
-        <position>800</position>
-        <cycle>20</cycle>
-    </TRAFFICLIGHT>
-    <VEHICLE>
-        <road>Durango</road>
-        <position>770</position>
+        <road>S Eastern Ave</road>
+        <position>-50</position>
         <speed>15</speed>
         <acceleration>1.2</acceleration>
         <type>car</type>
     </VEHICLE>
     <VEHICLE>
-        <road>Tropicana</road>
-        <position>345</position>
-        <speed>12</speed>
+        <road>E Wigwam Ave</road>
+        <position>-25</position>
+        <speed>20</speed>
+        <acceleration>1.2</acceleration>
+        <type>police van</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>E Wigwam Ave</road>
+        <position>-15</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>N Pecos Rd</road>
+        <position>20</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>N Pecos Rd</road>
+        <position>20</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>E Windmall Pkwy</road>
+        <position>25</position>
+        <speed>20</speed>
         <acceleration>1.2</acceleration>
         <type>fire truck</type>
     </VEHICLE>
+    <VEHICLE>
+        <road>E Windmall Pkwy</road>
+        <position>10</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
+    </VEHICLE>
     <BUSSTOP>
-		<road>Tropicana</road>
-		<position>200</position>
-		<waitingtime>20</waitingtime>
-	</BUSSTOP>
-
+        <road>S Eastern Ave</road>
+        <position>200</position>
+        <waitingtime>20</waitingtime>
+    </BUSSTOP>
 </root>

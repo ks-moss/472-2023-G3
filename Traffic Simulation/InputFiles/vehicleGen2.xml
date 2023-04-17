@@ -1,7 +1,10 @@
 <root>
 	<VEHICLEGENERATOR>
-		<name>Tropicana</name>
+		<name>E Wigwam Ave</name>
 		<frequency>10</frequency>
+		<position>120</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
 		<type>auto</type>
 	</VEHICLEGENERATOR>
 </root>

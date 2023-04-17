@@ -185,14 +185,18 @@ class TrafficSystem:
             elif elem.tag == "VEHICLEGENERATOR":
                 type = None 
                 for subelem in elem:
-                    if subelem.tag != "name" and subelem.tag != "frequency" and subelem.tag != "type":
+                    if subelem.tag != "name" and subelem.tag != "frequency" and subelem.tag != "speed" and subelem.tag != "acceleration" and subelem.tag != "type":
                         self.errorList.append("- \"" + subelem.tag + "\" is not an acceptable attribute of \"" + elem.tag + "\"")
                     if subelem.tag == "type":
                         type = elem.find("type").text
                 name = elem.find("name").text
                 frequency = int(elem.find("frequency").text)
-                self.vehicleGeneratorList.append({"name": name, "frequency": frequency, "type": type})
-            if elem.tag == "CROSSROADS":
+                speed = int(elem.find("speed").text)
+                acceleration = float(elem.find("acceleration").text)
+                type = elem.find("type").text
+                position = int(elem.find("position").text)
+                self.vehicleGeneratorList.append({"name": name, "frequency": frequency, "speed": speed, "acceleration": acceleration, "type": type, "position" : position})
+            elif elem.tag == "CROSSROADS":
                 temp_list = []
                 # iterate through the child elements of the CROSSROADS element
                 for subelem in elem:
@@ -216,3 +220,58 @@ class TrafficSystem:
             #checking for unacceptable element input
             else:
                 self.errorList.append("- \"" + elem.tag + "\" is not an acceptable element")
+        
+        #checking if simulation is consistent
+        #rule 1 - each vehicle must be on existing road
+        vehicles = self.vehicleList
+        roads = self.roadList
+        deleteIndexList = []
+        for i in range(len(vehicles)):             #iterating through all the vehicles    
+            thisRoad = vehicles[i]["road"]         #finding name of road vehicle is on
+            onRoad = False                         #this is our flag for if we find the road it's on
+            for x in range(len(roads)):            #iterating through our list of roads 
+                if thisRoad == roads[x]["name"]:   #found the road car is on
+                    onRoad = True
+            if onRoad == False:                    #if the vehicle is not on road, remove it from list
+                deleteIndexList.append(i)          #cannot remove vehicles now or will damage outer loop - keeping track of index instead
+                self.errorList.append("- A vehicle was found on the road \"" + thisRoad + "\" which does not exist")       #error message    
+        #now delete all the vehicles not on a road referring to our deleteIndexList
+        for i in sorted(deleteIndexList, reverse = True):   #deleting larger numbers first so it does not reassign indexes
+            del self.vehicleList[i]
+        
+        #rule 2 - each traffic light must be on existing road
+        #follows the same logic as above - will probably create an onExistingRoad function to make it more readable and efficient 
+        trafficLights = self.trafficLightList
+        roads = self.roadList
+        deleteIndexList = []
+        for i in range(len(trafficLights)):                
+            thisRoad = trafficLights[i]["road"]         
+            onRoad = False                         
+            for x in range(len(roads)):            
+                if thisRoad == roads[x]["name"]:  
+                    onRoad = True
+            if onRoad == False:                    
+                deleteIndexList.append(i)          
+                self.errorList.append("- A traffic light was found on the road \"" + thisRoad + "\" which does not exist")         
+        for i in sorted(deleteIndexList, reverse = True):  
+            del self.trafficLightList[i]
+
+        #rule 3 - each vehicle generator must be on existing road
+        # vehicleGenerators = self.vehicleGeneratorList
+        # roads = self.roadList
+        # deleteIndexList = []
+        # for i in range(len(vehicleGenerators)):                
+        #     thisRoad = vehicleGenerators[i]["name"]         
+        #     onRoad = False                         
+        #     for x in range(len(roads)):            
+        #         if thisRoad == roads[x]["name"]:  
+        #             onRoad = True
+        #     if onRoad == False:                    
+        #         deleteIndexList.append(i)          
+        #         self.errorList.append("- A vehicle generator was found on the road \"" + thisRoad + "\" which does not exist")         
+        # for i in sorted(deleteIndexList, reverse = True):  
+        #     del self.vehicleGeneratorList[i]
+
+            
+
+            
