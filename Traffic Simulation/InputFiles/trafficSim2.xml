@@ -98,16 +98,37 @@
     <VEHICLE>
         <road>S Eastern Ave</road>
         <position>-30</position>
-        <speed>10</speed>
+        <speed>15</speed>
         <acceleration>1.2</acceleration>
         <type>bus</type>
     </VEHICLE>
     <VEHICLE>
+        <road>S Eastern Ave</road>
+        <position>-50</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
+    </VEHICLE>
+    <VEHICLE>
         <road>E Wigwam Ave</road>
         <position>-25</position>
-        <speed>8</speed>
+        <speed>20</speed>
         <acceleration>1.2</acceleration>
         <type>police van</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>E Wigwam Ave</road>
+        <position>-15</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>N Pecos Rd</road>
+        <position>20</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
     </VEHICLE>
     <VEHICLE>
         <road>N Pecos Rd</road>
@@ -119,9 +140,16 @@
     <VEHICLE>
         <road>E Windmall Pkwy</road>
         <position>25</position>
-        <speed>12</speed>
+        <speed>20</speed>
         <acceleration>1.2</acceleration>
         <type>fire truck</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>E Windmall Pkwy</road>
+        <position>10</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
     </VEHICLE>
     <BUSSTOP>
         <road>S Eastern Ave</road>
