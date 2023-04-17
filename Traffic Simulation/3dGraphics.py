@@ -234,6 +234,7 @@ def add_vehicle():
     pass
 
 def on_restart_button_click():
+    reset_program()
     createCars("default")
     
 def on_end_button_click():
@@ -241,6 +242,17 @@ def on_end_button_click():
     
 def on_button_click():
     createCars("add")
+    
+def reset_program():
+    # Reset the initial state of the program
+    global vehicles
+    global triggerboxes
+    for vehicle in vehicles:
+        destroy(vehicle)
+    for triggerbox in triggerboxes:
+        destroy(triggerbox)
+    vehicles = [] 
+    triggerboxes = []
     
 
 button = Button(text='Add\nVehicle', color=color.azure, highlight_color=color.cyan, position=(0.50, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_button_click)
