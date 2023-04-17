@@ -123,6 +123,7 @@ for i in range(0, len(lights)-1, 2):
         break
     
 
+
 def create_vehicle_entity(speed, car_type, road, position):
     available_colors = [color.brown, color.blue, color.magenta, color.yellow, color.white, color.black, color.orange]
     color_random_index = random.randint(0, len(available_colors)-1)
