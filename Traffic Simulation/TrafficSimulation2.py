@@ -85,6 +85,58 @@ class TrafficSystem:
         self.errorList = []   
         self.intersectionList = []  # This is 2D array      
 
+    def __str__(self):
+        output = ""
+        for road in self.roadList:
+            # Initialize Output Strings
+            roadString = "|"
+            trafficLightString = "|"
+            busStopString = "|"
+            for i in range(0, road["length"]):
+                roadString = roadString + '='
+                trafficLightString = trafficLightString + " "
+                busStopString = busStopString + " "
+            roadString = roadString + "|"
+            trafficLightString = trafficLightString + "|"
+            busStopString = busStopString + "|"
+            # Fetch vehicles
+            for vehicle in self.vehicleList:
+                if (vehicle["road"] == road["name"]):
+                    if (vehicle["type"] == "car"):
+                        roadString = roadString[:vehicle["position"] + 1] + 'C' + roadString[vehicle["position"] + 2:]
+                    elif (vehicle["type"] == "bus"):
+                        roadString = roadString[:vehicle["position"] + 1] + 'B' + roadString[vehicle["position"] + 2:]
+                    elif (vehicle["type"] == "fire truck"):
+                        roadString = roadString[:vehicle["position"] + 1] + 'F' + roadString[vehicle["position"] + 2:]
+                    elif (vehicle["type"] == "ambulance"):
+                        roadString = roadString[:vehicle["position"] + 1] + 'A' + roadString[vehicle["position"] + 2:]
+                    elif (vehicle["type"] == "police van"):
+                        roadString = roadString[:vehicle["position"] + 1] + 'P' + roadString[vehicle["position"] + 2:]
+                    else:
+                        roadString = roadString[:vehicle["position"] + 1] + '?' + roadString[vehicle["position"] + 2:]
+            # Fetch traffic lights
+            for trafficLight in self.trafficLightList:
+                if (trafficLight["road"] == road["name"]):
+                    # Insert variable 'state' equal to current state of light
+                    trafficLightString = trafficLightString[:trafficLight["position"] + 1] + "L" + trafficLightString[trafficLight["position"] + 2:]     # Stand-in until light-state added
+            # Fetch bus stops
+            for busStop in self.busStopList:
+                 if (busStop["road"] == road["name"]):
+                      if (trafficLightString[busStop["position"] == ' '):
+                           trafficLightString = trafficLightString[:busStop["position"] + 1] + "|" + trafficLightString[busStop["position"] + 2:]
+                 busStopString = busStopString[:busStop["position"] + 1] + "B" + busStopString[busStopLight["position"] + 2:]
+                      
+            output = output + "\n" + road["name"] + "\n"
+            output = output + " > road          " + roadString + "\n"
+            output = output + " > trafficLights " + trafficLightString + "\n"
+            output = output + " > bus stops     " + busStopString + "\n"
+        return output
+
+    def RenderSimpleGraphicsToFile(self, fileName):
+        f = open(fileName, "w")
+        f.write(self.__str__())
+        f.close()
+
     def ReadElementsFromFile(self, fileName):
         tree = ET.parse(fileName)
         root = tree.getroot()
