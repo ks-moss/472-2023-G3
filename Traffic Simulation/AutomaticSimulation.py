@@ -69,7 +69,7 @@ class AutomaticSimulation:
             # print("\n==============")
             # print("Vehicle:" , i)
             # print("==============")
-            print("    -> road: ", self.vehicle_list[i]["road"])
+            # print("    -> road: ", self.vehicle_list[i]["road"])
             # print("    -> position: ", self.vehicle_list[i]["position"])
             # print("    -> speed: ", self.vehicle_list[i]["speed"])
             # print("    -> acceleration: ", self.vehicle_list[i]["acceleration"])

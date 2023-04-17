@@ -21,9 +21,9 @@ maxBrakingFactors = []
 minFollowingDists = []
 
 # Loop through the JSON data and process each object
-for obj in data:
+# for obj in data:
     # Now you can work with the individual object
-    print(obj)
+    # print(obj)
 
 # Add specs to list
 for obj in list_of_objects:
