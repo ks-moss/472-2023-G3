@@ -155,7 +155,10 @@ def create_vehicle_entity(speed, car_type, road, position):
 # Loop through vehicle list to spawn cars and set attributes 
 def createCars(type):
     if "default" == type:
-       
+
+        vehicles.clear
+        triggerboxes.clear
+
         for i in range(len(trafficSystem.vehicle_list)):
             # Get the vehicle properties from the list
             vehicle_props = trafficSystem.vehicle_list[i]
@@ -230,8 +233,6 @@ def add_vehicle():
     pass
 
 def on_restart_button_click():
-    vehicles.clear
-    triggerboxes.clear
     createCars("default")
     
 def on_end_button_click():
