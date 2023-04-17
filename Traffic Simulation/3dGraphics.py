@@ -97,15 +97,14 @@ for i in range(0, len(lights)-1, 2):
    
     # Lets take a look at the N/S light of the intersection
     if lights[i]["road"][0] == "N" or lights[i]["road"][0] == "S":
-            NSlightpos_x = lights[i]["position"] * 5
-            NSlightpos_y = lights[i + 1]["position"] / 2.2
-            if NSlightpos_y < 0:
-                NSlightpos_y = NSlightpos_y - 5
-            NS_lightPoles.position = (NSlightpos_x, NSlightpos_y)
-            #create trigger box based on location of light for stopping vehicles
-            trigger_box1 = Entity(model='wireframe_cube', color=color.clear, scale=5, collider='box', position=NS_lightPoles.position, origin_y=.5)
-            triggerboxes.append(trigger_box1)
-            trafficLightsNS.append(NS_lightPoles)
+        NSlightpos_x = lights[i]["position"] * 5
+        NSlightpos_y = lights[i + 1]["position"] / 2.2
+        if NSlightpos_y < 0:
+            NSlightpos_y = NSlightpos_y - 5
+        NS_lightPoles.position = (NSlightpos_x, NSlightpos_y)
+            
+            #triggerboxes.append(trigger_box1)
+        trafficLightsNS.append(NS_lightPoles)
     # Now lets take a look at the E/W light of the intersection
     if lights[i+1]["road"][0] == "W" or lights[i+1]["road"][0] == "E":
         EWlightpos_x = lights[i + 1]["position"] / 1.8
@@ -113,9 +112,6 @@ for i in range(0, len(lights)-1, 2):
         if EWlightpos_x > 0:
             EWlightpos_x -= 5
         EW_lightPoles.position = (EWlightpos_x, EWlightpos_y)
-        #create trigger box based on location of light for stopping vehicles
-        trigger_box2 = Entity(model='wireframe_cube', color=color.clear, scale=5, collider='box', position=EW_lightPoles.position, origin_y=-.5)
-        triggerboxes.append(trigger_box2)
         #add light to list of lights
         trafficLightsEW.append(EW_lightPoles)
     i += 1 # increment to get to the next intersection
@@ -135,8 +131,9 @@ def createCars():
         available_colors = [color.brown, color.blue, color.magenta, color.yellow, color.white, color.black, color.orange]
         car = Entity(model='cube', scale=(2, 1, 1), color=available_colors[i])
         car.collider = 'box'
-        #trigger_box2 = Entity(model='wireframe_cube', color=color.gray, scale=2, collider='box', position=Vec3(1,0,2), origin_y=-.5)
+        
         car.speed = vehicle_props["speed"] / 100
+        car.originalSpeed = car.speed
         #car.acceleration = vehicle_props["acceleration"] / 100
         car.type = vehicle_props["type"]
         car.road = vehicle_props["road"]
@@ -148,7 +145,9 @@ def createCars():
         else:
             car.is_on_y_axis = False
             car.position = (road_model.y, car.pos)
-    
+        trigger_box3 = Entity(model='wireframe_cube', color=color.white, scale=(4,1,1), collider='box', origin_y=0)
+        trigger_box3.parent = car
+        triggerboxes.append(trigger_box3)
         # Add the car to the list of vehicles
         vehicles.append(car)
 
@@ -162,50 +161,46 @@ def update():
     
     #change light colors for North/South roads
     for NS_lightPoles in trafficLightsNS:
-        if traffic_light_time < 7:
+        if traffic_light_time < 8:
             NS_lightPoles.color = color.green
-            for vehicle in vehicles:
-                if vehicle.is_on_y_axis == True:
-                    vehicle.speed = .1
-        elif traffic_light_time < 9:
+        elif traffic_light_time < 10:
             NS_lightPoles.color = color.yellow
-            #for vehicle in vehicles:
-                #if vehicle.intersects(trigger_box1).hit:
-                    #vehicle.speed = 0
-                #if vehicle.intersects(trigger_box2).hit:
-                    #vehicle.speed = 0
-            for triggerbox in triggerboxes:
-                for vehicle in vehicles:
-                    if (vehicle.intersects(triggerbox)):
-                        vehicle.speed = 0  
+             
         else:
             NS_lightPoles.color = color.red
-            #for vehicle in vehicles:
-                #if vehicle.intersects(trigger_box1).hit:
-                    #vehicle.speed = 0
-                #if vehicle.intersects(trigger_box2).hit:
-                    #vehicle.speed = 0
-            for triggerbox in triggerboxes:
-                for vehicle in vehicles:
-                    if (vehicle.intersects(triggerbox)):
-                        vehicle.speed = 0    
-                         
+            
     #change light colors for East/West roads
     #these should oppose the lights on N/W roads    
-    if traffic_light_time < 8:
+    if traffic_light_time < 10:
         for EW_lightPoles in trafficLightsEW:
             EW_lightPoles.color = color.red
     elif traffic_light_time < 13:
         for EW_lightPoles in trafficLightsEW:
             EW_lightPoles.color = color.green
-            for vehicle in vehicles:
-                if vehicle.is_on_y_axis == False:
-                    vehicle.speed = .1
+            #for vehicle in vehicles:
+                #if vehicle.is_on_y_axis == False:
+                    #vehicle.speed = .1
     elif traffic_light_time < 15:
         for EW_lightPoles in trafficLightsEW:
             EW_lightPoles.color = color.yellow
             
     for vehicle in vehicles:
+        #loop through the car's trigger boxes and check if they are colliding with a light that is red or yellow, then adjust speed
+        for triggerbox in triggerboxes:
+            for lightNS in trafficLightsNS:
+                if (lightNS.intersects(triggerbox) and vehicle.intersects(triggerbox) and lightNS.color == color.green):
+                    vehicle.speed = vehicle.originalSpeed
+                if lightNS.intersects(triggerbox) and vehicle.intersects(triggerbox) and lightNS.color == color.red:
+                    vehicle.speed = max(0,vehicle.speed - .008)
+                if lightNS.intersects(triggerbox) and vehicle.intersects(triggerbox) and lightNS.color == color.yellow:
+                    vehicle.speed = max(0, vehicle.speed - .008)
+            for lightEW in trafficLightsEW:
+                if (lightEW.intersects(triggerbox) and vehicle.intersects(triggerbox) and lightEW.color == color.green):
+                    vehicle.speed = vehicle.originalSpeed
+                if lightEW.intersects(triggerbox) and vehicle.intersects(triggerbox) and lightEW.color == color.red:
+                    vehicle.speed = max(0, vehicle.speed - .008)
+                if lightEW.intersects(triggerbox) and vehicle.intersects(triggerbox) and lightEW.color == color.yellow:
+                    vehicle.speed = max(0, vehicle.speed - .008)
         if vehicle.is_on_y_axis:
             vehicle.y += vehicle.speed
             if vehicle.y > 49:
@@ -238,7 +233,7 @@ def on_button_click():
     available_colors = [color.red, color.green, color.blue, color.yellow, color.orange, color.cyan] # list of available colors
     # Create a new vehicle entity based on vehicle properties
     vehicleThis = Entity(model='cube', scale=(2, 1, 1), color=random.choice(available_colors))
-    vehicleThis.collider = 'box'
+    
     vehicleThis.road = newVehicle["name"]
     #check if N/S, then check if road matches a current road in system
     if (vehicleRoad[0] == "N" or vehicleRoad[0] == "S") and vehicleRoad[1] == " ":
@@ -248,6 +243,7 @@ def on_button_click():
             if vehicle.road == vehicleRoad:
                 vehicleThis.position = (vehicle.position)-(0,13,0)
                 vehicleThis.type = vehicleType
+                vehicleThis.originalSpeed = vehicleSpeed
     else:
         vehicleThis.is_on_y_axis = False
         #check list of vehicles to see if road matches, then place in position
@@ -255,7 +251,10 @@ def on_button_click():
             if vehicle.road == vehicleRoad:
                 vehicleThis.position = (vehicle.position)-(13,0,0)
                 vehicleThis.type = vehicleType
-                
+                vehicleThis.originalSpeed = vehicleSpeed
+    trigger_box3 = Entity(model='wireframe_cube', color=color.white, scale=(4,1,1), collider='box', origin_y=0)
+    trigger_box3.parent = vehicleThis
+    triggerboxes.append(trigger_box3)            
     vehicleThis.speed = vehicleSpeed
     vehicles.append(vehicleThis)
     # Make the new vehicle visible
@@ -264,9 +263,13 @@ def on_button_click():
 def reset_program():
     # Reset the initial state of the program
     global vehicles
+    global triggerboxes
     for vehicle in vehicles:
         destroy(vehicle)
+    for triggerbox in triggerboxes:
+        destroy(triggerbox)
     vehicles = [] 
+    triggerboxes = []
     
 button = Button(text='Add\nVehicle', color=color.azure, highlight_color=color.cyan, position=(0.50, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_button_click)
 restartButton = Button(text='Restart\nSimulation', color=rgb(128, 128, 0), highlight_color=color.cyan, position=(0.38, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_restart_button_click)
