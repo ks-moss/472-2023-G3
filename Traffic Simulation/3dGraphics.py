@@ -123,6 +123,7 @@ for i in range(0, len(lights)-1, 2):
         break
     
 
+
 def create_vehicle_entity(speed, car_type, road, position):
     available_colors = [color.brown, color.blue, color.magenta, color.yellow, color.white, color.black, color.orange]
     color_random_index = random.randint(0, len(available_colors)-1)
@@ -154,6 +155,7 @@ def create_vehicle_entity(speed, car_type, road, position):
 # Loop through vehicle list to spawn cars and set attributes 
 def createCars(type):
     if "default" == type:
+
         for i in range(len(trafficSystem.vehicle_list)):
             # Get the vehicle properties from the list
             vehicle_props = trafficSystem.vehicle_list[i]
@@ -162,7 +164,8 @@ def createCars(type):
 
     elif "add" == type:
         newVehicle = addVehicle()
-        create_vehicle_entity(newVehicle["speed"], newVehicle["type"], newVehicle["name"], newVehicle["position"])
+        # print(newVehicle)
+        create_vehicle_entity(newVehicle[0]["speed"], newVehicle[0]["type"], newVehicle[0]["name"], newVehicle[0]["position"])
 
 
 
@@ -248,6 +251,7 @@ def reset_program():
     vehicles = [] 
     triggerboxes = []
     
+
 button = Button(text='Add\nVehicle', color=color.azure, highlight_color=color.cyan, position=(0.50, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_button_click)
 restartButton = Button(text='Restart\nSimulation', color=rgb(128, 128, 0), highlight_color=color.cyan, position=(0.38, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_restart_button_click)
 endButton = Button(text='End\nSimulation', color=rgb(128, 0, 0), highlight_color=color.red, position=(0.62, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_end_button_click)

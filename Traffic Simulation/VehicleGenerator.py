@@ -7,6 +7,7 @@ traffic_system.ReadElementsFromFile("./InputFiles/vehicleGen2.xml")
 #add list of generated vehicles to local variable
 vehicles = traffic_system.vehicleGeneratorList
 
+
 # addVehicle
 # parameters:
 #   none
@@ -18,8 +19,5 @@ vehicles = traffic_system.vehicleGeneratorList
 #   none
 def addVehicle():
     for i in range(len(vehicles)):
-        road = vehicles[i]["name"]
-        #print("Vehicle of type", vehicles[i]["type"], "with frequency ", vehicles[i]["frequency"], " added to ", vehicles[i]["name"], " road")
-        traffic_system.vehicleList.append({"road": road, "position": 0})
+        traffic_system.vehicleList.append({"speed" : vehicles[i]["speed"], "type" : vehicles[i]["type"] ,"name" : vehicles[i]["name"], "position" : vehicles[i]["position"]})
     return vehicles
-addVehicle()
