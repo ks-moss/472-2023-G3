@@ -175,7 +175,7 @@ def createCars(type):
 
     elif "add" == type:
         newVehicle = addVehicle()
-        create_vehicle_entity(newVehicle["speed"], newVehicle["type"], newVehicle["name"], newVehicle["position"])
+        create_vehicle_entity(newVehicle[0]["speed"], newVehicle[0]["type"], newVehicle[0]["name"], newVehicle[0]["position"])
 
 
 
