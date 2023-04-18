@@ -152,7 +152,7 @@ def create_vehicle_entity(speed, car_type, road, position):
                 car.position = (car.pos, roads_Entity_objects[i].y)
                 car.rotation = (0, 0, 180)
 
-            trigger_box3 = Entity(model='wireframe_cube', color=color.white, scale=(2, 1, 1), collider='box', origin_x=.3)
+            trigger_box3 = Entity(model='wireframe_cube', color=color.white, scale=(2.75, 1, 1), collider='box', origin_x=.3)
             trigger_box3.parent = car
             triggerboxes.append(trigger_box3)
             # Add the car to the list of vehicles
