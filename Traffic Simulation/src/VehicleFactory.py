@@ -1,6 +1,46 @@
-from ursina import Entity, color, destroy, raycast
+from ursina import *
+from ursina.shaders import lit_with_shadows_shader
 
 #TODO make vehicle models for each type
+
+class Sedan(Entity):
+    def __init__(self, parent):
+        super().__init__(parent = parent)
+        self.model = 'sedan.glb'
+        self.rotation_y = 180
+        self.scale = 4
+        self.color = color.rgba(255, 255, 255, 255)
+        self.y = 0.15
+        self.z = -5
+    
+class Bus(Entity):
+    def __init__(self, parent):
+        super().__init__(parent = parent)
+        self.model = 'bus.glb'
+        self.rotation_y = 180
+        self.scale = 6
+        self.y = 1
+        self.z = -10
+
+class FireTruck(Entity):
+    def __init__(self, parent):
+        super().__init__(parent = parent)
+        self.model = 'firetruck.glb'
+        self.rotation_y = 180
+        self.scale = 6
+        self.y = 1
+        self.z = -8
+
+class PoliceCar(Entity):
+    def __init__(self, parent):
+        super().__init__(parent = parent)
+        self.model = 'policecar.glb'
+        self.rotation_y = 180
+        self.scale = 4
+        self.y = 0.15
+        self.z = -4
+        
+
 
 # Vehicle class inherits the Entity class
 # for display a vehicle onto the window
@@ -8,27 +48,35 @@ from ursina import Entity, color, destroy, raycast
 # only created from the VehicleFactory class
 class Vehicle(Entity):
 
-    def __init__(self, limit, **kwargs):
+    def __init__(self, limit, startingPoints, type, **kwargs):
         super().__init__(**kwargs)
         self.limit = limit
+        self.roads = startingPoints
+
+        if type == 'car':
+            vehicle = Sedan(self)
+        elif type == 'bus':
+            vehicle = Bus(self)
+        elif type == 'fire truck':
+            vehicle = FireTruck(self)
+        elif type == 'police van':
+            vehicle = PoliceCar(self)
 
     # used when moving the vehicle
     # called from @VehicleFactory.update
     # returns:
     #   False   - vehicle is out of bounds
     #   True    - vehicle is on road
-    def move(self, pos):
+    def move(self, simVehicle):
+        pos = simVehicle['position']
+        road = simVehicle['road']
+        self.parent = self.roads[road]
+
         if pos > self.limit:
             return False
         
-        self.z = pos * VehicleFactory.ratio # <- supposedly the golden ratio
+        self.z = pos
         return True
-    
-    def update(self):
-        hit_info = raycast(self.world_position, direction=(0,-1,0), distance=5, debug=False)
-        if not hit_info.hit:
-            print('deleted manually')
-            self.disable()
 
 
 # VehicleFactory class inherits Entity
@@ -40,24 +88,16 @@ class Vehicle(Entity):
 class VehicleFactory(Entity):
 
     vehicleObjs = []
-    SCALE = 20
-    ROAD_SCALE = 50
-    ppt = SCALE * 0.191
-    ratio = None
 
     def __init__(self, autoSim, startingPoints):
         super().__init__()
-        VehicleFactory.ppt = self.SCALE * 0.191
-        VehicleFactory.ratio = self.ppt / self.ROAD_SCALE
 
         self.limits = {}
         for road in autoSim.road_list:
             self.limits[road['name']] = road['length']
         self.startPoints = startingPoints
         self.vehicles = autoSim.vehicle_list
-        self.vStates = autoSim.vehicle_current_state
         self.autoSim = autoSim
-        self.createInitVehicles()
 
     # creates the vehicles that are listed on the xml file
     # initially and creates a Vehicle object based on the 
@@ -71,10 +111,10 @@ class VehicleFactory(Entity):
             limit = self.limits[road]
 
             vehicle = Vehicle(limit, 
+                              self.startPoints,
                               parent = start,
-                              z = pos * self.ratio,
-                              model = 'cube',
-                              color = color.white,)
+                              type = vtype,
+                              z = pos)
             self.vehicleObjs.append(vehicle)
     
     # called by the engine every frame
@@ -84,11 +124,10 @@ class VehicleFactory(Entity):
     # to each of the vehicles respectivelly
     def update(self):
         self.autoSim.vehicle_on_road()
-        for e, s, v in zip(self.vehicleObjs, self.vStates, self.vehicles):
-            if not e.move(s['position']):
+        for e, v in zip(self.vehicleObjs, self.vehicles):
+            if not e.move(v):
                 destroy(e)
                 self.vehicleObjs.remove(e)
-                self.vStates.remove(s)
                 self.vehicles.remove(v)
 
 

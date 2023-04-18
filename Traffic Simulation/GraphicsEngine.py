@@ -1,15 +1,20 @@
 #2.3
-from AutomaticSimulation import *
-from src.GridMap import GridMap
+from AutomaticSimulation import AutomaticSimulation
+from src.RoadGen import RoadGen
 from src.VehicleFactory import VehicleFactory
 from src.TrafficLights import TrafficLights
+from src.SunLight import SunLight
 
 from types import MethodType
+from panda3d.core import DirectionalLight as pandaDirectionalLight
+from direct.stdpy import thread
 
 # importing Ursina Engine
 try:
     from ursina import *
+    from ursina.shaders import lit_with_shadows_shader
     from ursina.prefabs.first_person_controller import FirstPersonController
+    
 except(e):
     print('Make sure to install Ursina Engine via "pip install ursina"')
     exit()
@@ -45,7 +50,6 @@ class Camera(FirstPersonController):
         camera.rotation_x = 90
         camera.y = 100  # distance from origin
         camera.fov = 120
-        camera.clip_plane_near = 0.1
         self.focusTimer = 100
     
 
@@ -78,7 +82,7 @@ class Camera(FirstPersonController):
         if mouse.locked:
             self.rotation_y += mouse.velocity[0] * self.mouse_sensitivity[1]
             self.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
-            self.camera_pivot.rotation_x = clamp(self.camera_pivot.rotation_x, -70, 0)
+            self.camera_pivot.rotation_x = clamp(self.camera_pivot.rotation_x, -90, 0)
 
         if self.focusTimer < 100:
             self.focusTimer += 1
@@ -86,9 +90,6 @@ class Camera(FirstPersonController):
             self.x = lerp(self.oldx, self.targetx, t)
             self.z = lerp(self.oldz, self.targetz, t)
         
-
-
-
 
 
 # Graphics Engine for 2.3 implementation with graphics.
@@ -99,11 +100,8 @@ class Camera(FirstPersonController):
 class GraphicsEngine(Ursina):
 
     # CLASS VARIABLES
-    SCALE = 20              # the size of tiles (ex. 100 = 100x100 units)
-    ROAD_SCALE = 50         # block size of road (ex. 50 => road.len = 100 => 2 blocks)
+    ROAD_WIDTH = 5         # block size of road (ex. 50 => road.len = 100 => 2 blocks)
     ZOOM_SENSITIVITY = 10    # sensitivity of zoooooom
-    MIN_PADDING = 4         # minimum distance between roads \ These two can't equal
-    MAX_PADDING = 6        # maximum distance between roads / or problems happen
 
     # Called when the GraphicsEngine class is instantiated
     # this will be a child class of the Ursina game engine
@@ -117,8 +115,9 @@ class GraphicsEngine(Ursina):
         window.vsync = True
         window.borderless = False
         window.fullscreen = False
-        window.exit_button.visible = False
-        window.fps_counter.enable = True
+        window.exit_button.disable()
+        window.fps_counter.disable()
+        window.cog_button.disable()
 
         # create custom camera class
         self.cam = Camera(gravity = 0)
@@ -133,17 +132,21 @@ class GraphicsEngine(Ursina):
     # Called after the Ursina engine is setup and 
     # calls the functions that creates the scene up.
     def createScene(self):
-        GridMap.SCALE = self.ROAD_SCALE
-        GridMap.MIN_PADDING = self.MIN_PADDING
-        GridMap.MAX_PADDING = self.MAX_PADDING
-        self.Map = GridMap(self.simData)
-        self.sceneObjs = []
-        self.startPoints = {}
-
-        self.createWorldMap()
+        Entity.default_shader = lit_with_shadows_shader
+        try:
+            thread.start_new_thread(function= self.load_assets, args='')
+        except Exception as e:
+            print("error starting thread", e)
         self.createEnvironment()
+        self.createWorldMap()
         self.addDefaultVehicles()
         self.createTrafficLights()
+
+    
+    def load_assets(self):
+        models = ['bus.glb', 'firetruck.glb', 'policecar.glb', 'sedan.glb', 'trafficlight.glb']
+        for m in models:
+            load_model(m)
 
 
 
@@ -151,9 +154,10 @@ class GraphicsEngine(Ursina):
     # creates the road layout based on the input.
     # the worldMap field should hold the grid layout of the road.
     def createWorldMap(self):
-        self.Map.createCrossRoad()
-        self.Map.createRoads()
-        self.worldMap = self.Map.map
+        RoadGen.roadWidth = self.ROAD_WIDTH
+        self.Map = RoadGen(self.simData)
+        self.Map.placeRoads()
+        self.startingPoints = self.Map.startingPoints
 
 
 
@@ -164,60 +168,20 @@ class GraphicsEngine(Ursina):
     def createEnvironment(self):
         # terrain
         self.terrain = Entity(model = 'quad', 
-                              scale = (self.Map.xSize*200, self.Map.ySize*200, 0), 
-                              position = (0, -1, 0), 
+                              scale = (10000, 10000, 0), 
+                              position = (0, 0, 0), 
                               texture = 'grass', 
                               rotation_x = 90,
                               collider = None)
-        self.terrain.texture_scale = Vec2(50, 50)
-
-
-        # create roads
-        for x in range(self.Map.xSize):
-            for y in range(self.Map.ySize):
-                data = self.worldMap[y][x]
-                if data != '':
-                    if len(data) == 2:
-                        c = data[0]
-                        name = data[1]['name']
-                        heading = data[1]['heading']
-                        temp = Entity(x = (self.Map.xSize // -2 + x + heading[0]) * self.SCALE,
-                                      y = 0,
-                                      z = (self.Map.ySize // -2 + y + heading[1]) * self.SCALE)
-                        
-                        start = Entity(x = (self.Map.xSize // -2 + x) * self.SCALE,
-                                       y = 0,
-                                       z = (self.Map.ySize // -2 + y) * self.SCALE,
-                                       scale = 5)
-                        start.look_at(temp, axis='forward')
-                        destroy(temp)
-                        self.startPoints[name] = start
-                    else:
-                        c = data
-
-
-                    obj = Entity( model = 'quad', 
-                            scale = self.SCALE, 
-                            x = (self.Map.xSize // -2 + x) * self.SCALE,
-                            y = 0,
-                            z = (self.Map.ySize // -2 + y) * self.SCALE, 
-                            rotation_x = 90, 
-                            color = c,
-                            collider = 'box')
-                    def _on_mouse_enter(self):
-                        if not mouse.locked:
-                            self.color = color.white
-                    obj.on_mouse_enter = MethodType(_on_mouse_enter, obj)
-                    obj.on_mouse_exit = Func(setattr, obj, 'color', c)
-                    self.sceneObjs.append(obj)
-        
+        self.terrain.texture_scale = Vec2(100, 100)
 
         # sky
-        scene.fog_density = 0.001
+        sun = SunLight(direction = (-0.7, -0.9, 0.5),
+                       resolution= 3072,
+                       focus = self.terrain)
+        scene.fog_density = 0.002
         Sky()
     
-
-
     
     # addDefaultVehicles
     # creates a VehicleFactory object and adjusts the 
@@ -225,16 +189,14 @@ class GraphicsEngine(Ursina):
     # should automatically create the starting vehicles
     # from the AutomaticSimulation class
     def addDefaultVehicles(self):
-        VehicleFactory.SCALE = self.SCALE
-        VehicleFactory.ROAD_SCALE = self.ROAD_SCALE
-        self.vFactory = VehicleFactory(self.simData, self.startPoints)
+        self.vFactory = VehicleFactory(self.simData, self.startingPoints)
+        self.vFactory.createInitVehicles()
 
 
 
     def createTrafficLights(self):
-        TrafficLights.SCALE = self.SCALE
-        TrafficLights.ROAD_SCALE = self.ROAD_SCALE
-        self.trafficLights = TrafficLights(self.simData, self.startPoints)
+        self.trafficLights = TrafficLights(self.simData, self.startingPoints)
+        self.trafficLights.createTrafficLights()
 
 
     # resetSimulation
@@ -268,7 +230,8 @@ class GraphicsEngine(Ursina):
             case Keys.escape:
                 quit()
             case 'wheel_up':
-                camera.y -= self.ZOOM_SENSITIVITY
+                if camera.y > 1:
+                    camera.y -= self.ZOOM_SENSITIVITY
             case 'wheel_down':
                 camera.y += self.ZOOM_SENSITIVITY
             case 'mouse3':
