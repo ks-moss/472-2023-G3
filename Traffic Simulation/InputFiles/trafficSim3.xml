@@ -1,0 +1,138 @@
+<!-- Used by GraphicsEngine.py -->
+
+<root>
+<!-- List of all roads in the files -->
+<!-- Major Road -->
+    <ROAD>
+        <name>S Eastern Ave</name>
+        <length>200</length>
+    </ROAD>
+<!-- Minor Roads -->
+    <ROAD>
+        <name>E Windmall Pkwy</name>
+        <length>200</length>
+    </ROAD>
+     <ROAD>
+        <name>E Wigwam Ave</name>
+        <length>200</length>
+    </ROAD>
+    <ROAD>
+        <name>N Pecos Rd</name>
+        <length>200</length>
+    </ROAD>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
+    <CROSSROADS>
+        <road position="-50">S Eastern Ave</road>
+        <road position="50">E Windmall Pkwy</road>
+    </CROSSROADS>
+    <TRAFFICLIGHT>
+    <!-- Major Road -->
+        <road>S Eastern Ave</road>
+        <position>50</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+    <!-- Minor Roads -->
+        <road>E Windmall Pkwy</road>
+        <position>50</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
+    <CROSSROADS>
+        <road position="-50">S Eastern Ave</road>
+        <road position="-50">E Wigwam Ave</road>
+    </CROSSROADS>
+    <TRAFFICLIGHT>
+    <!-- Major Road -->
+        <road>S Eastern Ave</road>
+        <position>150</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+    <!-- Minor Roads -->
+        <road>E Wigwam Ave</road>
+        <position>50</position>
+        <cycle>10</cycle>
+    </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
+    <CROSSROADS>
+        <road position="50">N Pecos Rd</road>
+        <road position="50">E Windmall Pkwy</road>
+    </CROSSROADS>
+    <TRAFFICLIGHT>
+    <!-- Major Road -->
+        <road>N Pecos Rd</road>
+        <position>50</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+    <!-- Minor Roads -->
+        <road>E Windmall Pkwy</road>
+        <position>150</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+<!-- CROSSROADS = road A intersects to Road B -->
+<!-- Keep them together -->
+    <CROSSROADS>
+        <road position="50">N Pecos Rd</road>
+        <road position="-50">E Wigwam Ave</road>
+    </CROSSROADS>
+    <TRAFFICLIGHT>
+    <!-- Major Road -->
+        <road>N Pecos Rd</road>
+        <position>150</position>
+        <cycle>20</cycle>
+    </TRAFFICLIGHT>
+    <TRAFFICLIGHT>
+    <!-- Minor Roads -->
+        <road>E Wigwam Ave</road>
+        <position>150</position>
+        <cycle>10</cycle>
+    </TRAFFICLIGHT>
+<!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
+
+<!-- VEHICLES -->
+    <VEHICLE>
+        <road>N Pecos Rd</road>
+        <position>10</position>
+        <speed>10</speed>
+        <acceleration>1.2</acceleration>
+        <type>bus</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>S Eastern Ave</road>
+        <position>0</position>
+        <speed>8</speed>
+        <acceleration>1.2</acceleration>
+        <type>police van</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>E Windmall Pkwy</road>
+        <position>100</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>E Wigwam Ave</road>
+        <position>20</position>
+        <speed>12</speed>
+        <acceleration>1.2</acceleration>
+        <type>fire truck</type>
+    </VEHICLE>
+
+<!-- BUSSTOPS -->
+    <BUSSTOP>
+        <road>N Pecos Rd</road>
+        <position>50</position>
+        <waitingtime>20</waitingtime>
+    </BUSSTOP>
+
+</root>
