@@ -33,6 +33,7 @@ INPUT_FILE_PATCH = "./InputFiles/trafficSim2.xml"
 
 class AutomaticSimulation:
     def __init__(self):
+        self.green_light = green_light
         # create a TrafficSystem object from the input file
         self.trafficSystem = TrafficSystem()
         self.trafficSystem.ReadElementsFromFile(INPUT_FILE_PATCH) 
