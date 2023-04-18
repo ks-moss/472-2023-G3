@@ -12,7 +12,8 @@ trafficLightsNS = []
 trafficLightsEW = []
 trafficSystem = AutomaticSimulation()
 triggerboxes = []
-
+triggerboxesRoadsNS = []
+triggerboxesRoadsEW = []
 # Create a camera with a bird's eye view
 camera.orthographic = True
 camera.position = (35, 25, -35)
@@ -45,6 +46,10 @@ for i in range(len(trafficSystem.intersection_list)):
             if (road_name[0] == "N" or road_name[0] == "S") and road_name[1] == " ":  # Verticle Roads
                 # Create the object_rec Entity and pass text_entity as a child
                 road_model = Entity(model='cube', scale=(4, 100, 0.1), color=color.gray)
+                trigger_box_road1 = Entity(model='wireframe_cube', color=color.white, scale=(.05, 1, 1), collider='box', origin_x=8)
+                trigger_box_road1.parent = road_model
+                #add trigger box to list of NS roads triggers
+                triggerboxesRoadsNS.append(trigger_box_road1)
                 road_model.y = road_position/2   
                 road_model.x = road_position*5
                 roadText= Text(text=road_name, scale=(15,1))
@@ -58,6 +63,9 @@ for i in range(len(trafficSystem.intersection_list)):
             elif (road_name[0] == "E" or road_name[0] == "W") and road_name[1] == " ": # Horizontal Roads
                 # Create the object_rec Entity and pass text_entity as a child
                 road_model = Entity(model='cube', scale=(100, 4, 0.1), color=color.gray)
+                trigger_box_road2 = Entity(model='wireframe_cube', color=color.white, scale=(1, .05, 1), collider='box', origin_y=8)
+                trigger_box_road2.parent = road_model
+                triggerboxesRoadsEW.append(trigger_box_road2)
                 road_model.y = road_position/2
                 roadText= Text(text=road_name, scale=(1,15))
                 roadText.parent = road_model
@@ -70,20 +78,10 @@ for i in range(len(trafficSystem.intersection_list)):
                 # Terminate the program without specifying an exit code
                 sys.exit()
 
-# stopSign1 = Entity(model='sphere', scale=0, color=color.red)
-# stopSign1.x = 3
-# stopSign1.y = -3
-
-# busStop1 = Entity(model='cube', scale=0, color=color.blue)
-# busStop1.x = -25
-# busStop1.y = 23
-
-# traffic_light1 = Entity(model='cube', scale=(0, 0, 0), color=color.green)
-# traffic_light1.x = 0
-# traffic_light1.y = 25
 
 # PLACE THE TRAFFIC LIGHTS ONTO THE ROADS
 lights = trafficSystem.traffic_light_list
+busStops = trafficSystem.bust_stop_list
 
 for i in range(0, len(lights)-1, 2):
 # Because we are looking at crossroads/intersections,
@@ -122,8 +120,14 @@ for i in range(0, len(lights)-1, 2):
     if i == len(lights) - 1:
         break
     
-
-
+#PLACE BUS STOPS
+for i in range(0, len(busStops)):
+    print("BUSSSTOPS", busStops)
+    busStop1 = Entity(model='cube', scale=(3.5, 0.5, 1), color= color.blue)
+    busStop1.collider = 'box'
+    busStop1.position = 2
+    #INCOMPLETE
+    
 def create_vehicle_entity(speed, car_type, road, position):
     available_colors = [color.brown, color.blue, color.magenta, color.yellow, color.white, color.black, color.orange]
     color_random_index = random.randint(0, len(available_colors)-1)
@@ -131,10 +135,11 @@ def create_vehicle_entity(speed, car_type, road, position):
     car.collider = 'box'
     car.speed = speed / 100
     car.originalSpeed = car.speed
-    car.type = car_type
+    car.car_type = car_type
     car.road = road
     car.pos = position
-
+    car.collided = False
+    
     # This iteration implementation will make sure that the vehicle is on the assigned road (When there are more than 2 vehicles on the assigned road)
     for i in range(len(roads_Entity_objects)):
         if(car.road == roads_name_check_duplicate[i]):
@@ -145,16 +150,22 @@ def create_vehicle_entity(speed, car_type, road, position):
             else:
                 car.is_on_y_axis = False
                 car.position = (car.pos, roads_Entity_objects[i].y)
+                car.rotation = (0, 0, 180)
 
-            trigger_box3 = Entity(model='wireframe_cube', color=color.white, scale=(4, 1, 1), collider='box', origin_y=0)
+            trigger_box3 = Entity(model='wireframe_cube', color=color.white, scale=(2.75, 1, 1), collider='box', origin_x=.3)
             trigger_box3.parent = car
             triggerboxes.append(trigger_box3)
             # Add the car to the list of vehicles
             vehicles.append(car)
-
+        if (car.car_type == 'bus'):
+            car.scale = (2,2,1)
+            car.color = color.blue
 # Loop through vehicle list to spawn cars and set attributes 
 def createCars(type):
     if "default" == type:
+
+        vehicles.clear
+        triggerboxes.clear
 
         for i in range(len(trafficSystem.vehicle_list)):
             # Get the vehicle properties from the list
@@ -164,7 +175,6 @@ def createCars(type):
 
     elif "add" == type:
         newVehicle = addVehicle()
-        # print(newVehicle)
         create_vehicle_entity(newVehicle[0]["speed"], newVehicle[0]["type"], newVehicle[0]["name"], newVehicle[0]["position"])
 
 
@@ -192,14 +202,52 @@ def update():
     elif traffic_light_time < 13:
         for EW_lightPoles in trafficLightsEW:
             EW_lightPoles.color = color.green
-            #for vehicle in vehicles:
-                #if vehicle.is_on_y_axis == False:
-                    #vehicle.speed = .1
     elif traffic_light_time < 15:
         for EW_lightPoles in trafficLightsEW:
             EW_lightPoles.color = color.yellow
             
     for vehicle in vehicles:
+        
+        #Check if vehicle intersects beginning of crossroads
+        #if statement to account for constant vehicle checks at collision
+        if random.choice(range(8)) == 1:
+            vehicle.collided = False
+        #check triggerboxes on NS roads        
+        for triggerboxesNS in triggerboxesRoadsNS:
+            if vehicle.intersects(triggerboxesNS) and vehicle.collided == False:
+                vehicle.collided = True
+                #randomly choose to turn or not turn
+                if random.choice(range(2)) == 1 and vehicle.collided == True:
+                
+                    for i in range(20):
+                        if vehicle.rotation == (0,0,90):
+                            vehicle.is_on_y_axis = True
+                            vehicle.collided = False
+                            break
+                        vehicle.rotation = vehicle.rotation-(0, 0, 5)
+                        vehicle.position = vehicle.position + (.15,0,0)
+                else: 
+                    pass
+                
+        for triggerboxesEW in triggerboxesRoadsEW:
+            if vehicle.intersects(triggerboxesEW) and vehicle.collided == False:
+                
+                vehicle.collided = True
+                #randomly choose to turn or not turn
+                if random.choice(range(2)) == 1 and vehicle.collided == True:
+                
+                    for i in range(20):
+                        if vehicle.rotation == (0,0,-90):
+                            vehicle.is_on_y_axis = False
+                            vehicle.collided = False
+                            vehicle.rotation = (0, 0, 180)
+                            break
+                        vehicle.rotation = vehicle.rotation+(0, 0, -10)
+                        vehicle.position = vehicle.position + (0,.15,0)
+                else: 
+                    pass
+                   
+              
         #loop through the car's trigger boxes and check if they are colliding with a light that is red or yellow, then adjust speed
         for triggerbox in triggerboxes:
             for lightNS in trafficLightsNS:
@@ -227,21 +275,9 @@ def update():
 
 # Create the button
 def add_vehicle():
-    # Define code to add a vehicle here
     pass
 
 def on_restart_button_click():
-    reset_program()
-    createCars("default")
-    
-def on_end_button_click():
-    app.quit()
-    
-def on_button_click():
-    createCars("add")
-    
-def reset_program():
-    # Reset the initial state of the program
     global vehicles
     global triggerboxes
     for vehicle in vehicles:
@@ -250,6 +286,13 @@ def reset_program():
         destroy(triggerbox)
     vehicles = [] 
     triggerboxes = []
+    createCars("default")
+    
+def on_end_button_click():
+    app.quit()
+    
+def on_button_click():
+    createCars("add")
     
 
 button = Button(text='Add\nVehicle', color=color.azure, highlight_color=color.cyan, position=(0.50, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_button_click)
