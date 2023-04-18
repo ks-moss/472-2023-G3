@@ -104,10 +104,10 @@ class AutomaticSimulation:
         
 
 
-# simulation = AutomaticSimulation()
+simulation = AutomaticSimulation()
 
-# t_end = time.time() + 60 * 15
-# while time.time() < t_end:
-#     simulation.update()
-#     print("\n======================================================================================\n")
-#     time.sleep(1)
+t_end = time.time() + 60 * 15
+while time.time() < t_end:
+    simulation.update()
+    print("\n======================================================================================\n")
+    time.sleep(1)
