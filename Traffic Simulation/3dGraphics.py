@@ -8,7 +8,6 @@ from VehicleGenerator import addVehicle
 app = Ursina()
 
 trafficSystem = AutomaticSimulation()
-timePassed = 0
 busStopsEntityModels = []
 # Create a camera with a bird's eye view
 camera.orthographic = True
@@ -57,7 +56,7 @@ def createCars(type):
 
 createCars("default")
 
-
+timePassed = 0
 
 # Define a function to move the cars
 def update():

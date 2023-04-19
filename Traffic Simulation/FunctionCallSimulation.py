@@ -283,7 +283,7 @@ def direction_control(vehicle_object, triggerboxes_NS_object, triggerboxes_EW_ob
 
 
 def adjust_vehicle_speed_at_light(vehicle_object, light_signal, triggerbox_object):
-    global timePassed
+    
     if light_signal.intersects(triggerbox_object) and vehicle_object.intersects(triggerbox_object) and light_signal.color == color.green:
         vehicle_object.speed = vehicle_object.originalSpeed
     elif light_signal.intersects(triggerbox_object) and vehicle_object.intersects(triggerbox_object) and (light_signal.color == color.yellow):
