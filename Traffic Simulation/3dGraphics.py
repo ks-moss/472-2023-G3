@@ -1,11 +1,9 @@
+import time 
 from ursina import *
-import random
 from  AutomaticSimulation import *
-import sys
 from ursina import text
 from FunctionCallSimulation import *
-import random
-import time 
+from VehicleGenerator import addVehicle
 
 app = Ursina()
 
