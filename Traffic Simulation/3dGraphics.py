@@ -118,7 +118,7 @@ def on_restart_button_click():
     createCars("default")
     
 def on_end_button_click():
-    app.quit()
+    application.quit()
     
 def on_button_click():
     createCars("add")
