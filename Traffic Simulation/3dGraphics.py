@@ -60,6 +60,7 @@ def createCars(type):
 createCars("default")
 
 timePassed = 0
+
 # Define a function to move the cars
 def update():
 
@@ -71,21 +72,27 @@ def update():
     for vehicle in vehicles:
  
         direction_control(vehicle, triggerboxesRoadsNS, triggerboxesRoadsEW)
+
          #loop through the car's trigger boxes and check if they are colliding with a light that is red or yellow, then adjust speed
         for triggerbox in triggerboxes:
             
             #check for bus stop trigger
             for busStopEntity in busStopsEntity:
                 global timePassed
-                if (busStopEntity.intersects(triggerbox) and vehicle.intersects(triggerbox) and vehicle.isBus == True):
+
+                if(busStopEntity.intersects(vehicle)) and vehicle.isBus == True:
+
                     vehicle.speed = 0
-                    
                     #simulate time with timepassing
                     timePassed += .02
+                        
                     #check to see if waitingTime has been reached and set speed back
                     if timePassed > busStopEntity.waitingTime:
                         vehicle.speed = vehicle.originalSpeed
-                    
+
+                elif not (busStopEntity.intersects(vehicle)) and vehicle.isBus == True:
+                    timePassed = 0
+
             #check for lights trigger         
             for lightNS in trafficLightsNS:
                 adjust_vehicle_speed_at_light(vehicle, lightNS, triggerbox)
