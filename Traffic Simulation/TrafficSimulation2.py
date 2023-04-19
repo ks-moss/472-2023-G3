@@ -83,9 +83,9 @@ class TrafficSystem:
         self.vehicleList = []
         self.vehicleGeneratorList = []
         self.errorList = []   
-        self.intersectionList = []  # This is 2D array      
+        self.intersectionList = []  # This is 2D array
 
-    def __str__(self):
+    def generateSimpleOutputString(self, time):
         output = ""
         for road in self.roadList:
             # Initialize Output Strings
@@ -118,7 +118,11 @@ class TrafficSystem:
             for trafficLight in self.trafficLightList:
                 if (trafficLight["road"] == road["name"]):
                     # Insert variable 'state' equal to current state of light
-                    trafficLightString = trafficLightString[:trafficLight["position"] + 1] + "L" + trafficLightString[trafficLight["position"] + 2:]     # Stand-in until light-state added
+                    trafficLightIsGreen = checkLightState(trafficLight, time)
+                    if (trafficLightIsGreen):
+                         trafficLightString = trafficLightString[:trafficLight["position"] + 1] + "G" + trafficLightString[trafficLight["position"] + 2:]
+                    else:
+                         trafficLightString = trafficLightString[:trafficLight["position"] + 1] + "R" + trafficLightString[trafficLight["position"] + 2:]
             # Fetch bus stops
             for busStop in self.busStopList:
                  if (busStop["road"] == road["name"]):
@@ -132,9 +136,9 @@ class TrafficSystem:
             output = output + " > bus stops     " + busStopString + "\n"
         return output
 
-    def RenderSimpleGraphicsToFile(self, fileName):
+    def RenderSimpleGraphicsToFile(self, time, fileName):
         f = open(fileName, "w")
-        f.write(self.__str__())
+        f.write(self.generateSimpleOutputString(time))
         f.close()
 
     def ReadElementsFromFile(self, fileName):
@@ -271,7 +275,3 @@ class TrafficSystem:
         #         self.errorList.append("- A vehicle generator was found on the road \"" + thisRoad + "\" which does not exist")         
         # for i in sorted(deleteIndexList, reverse = True):  
         #     del self.vehicleGeneratorList[i]
-
-            
-
-            
