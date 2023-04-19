@@ -153,7 +153,7 @@
     </VEHICLE>
     <BUSSTOP>
         <road>S Eastern Ave</road>
-        <position>-20</position>
-        <waitingtime>20</waitingtime>
+        <position>-10</position>
+        <waitingtime>10</waitingtime>
     </BUSSTOP>
 </root>
