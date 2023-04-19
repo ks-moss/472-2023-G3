@@ -114,8 +114,8 @@ def on_restart_button_click():
         destroy(triggerbox)
     vehicles = [] 
     triggerboxes = []
-    createCars("default")
     timePassed = 0
+    createCars("default")
     
 def on_end_button_click():
     app.quit()
