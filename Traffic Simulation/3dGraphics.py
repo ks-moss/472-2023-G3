@@ -41,7 +41,6 @@ for i in range(len(trafficSystem.intersection_list)):
              if(roads_name_check_duplicate[k] == road_name):
                  check_duplicate = True
 
-        
         if(check_duplicate == False):
 
             roads_name_check_duplicate.append(road_name)
@@ -202,8 +201,14 @@ def createCars(type):
             create_vehicle_entity(vehicle_props["speed"], vehicle_props["type"], vehicle_props["road"], vehicle_props["position"])
 
     elif "add" == type:
+
         newVehicle = addVehicle()
-        create_vehicle_entity(newVehicle[0]["speed"], newVehicle[0]["type"], newVehicle[0]["name"], newVehicle[0]["position"])
+        
+        for i in range(len(newVehicle)):
+            # Get the vehicle properties from the list
+            new_vehicle_props = newVehicle[i]
+            # Create a new car entity with the properties
+            create_vehicle_entity(new_vehicle_props["speed"], new_vehicle_props["type"], new_vehicle_props["name"], new_vehicle_props["position"])
     
 
 

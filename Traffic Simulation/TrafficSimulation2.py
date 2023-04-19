@@ -126,7 +126,7 @@ class TrafficSystem:
             # Fetch bus stops
             for busStop in self.busStopList:
                  if (busStop["road"] == road["name"]):
-                      if (trafficLightString[busStop["position"] == ' '):
+                      if (trafficLightString[busStop["position"]] == ' '):
                            trafficLightString = trafficLightString[:busStop["position"] + 1] + "|" + trafficLightString[busStop["position"] + 2:]
                  busStopString = busStopString[:busStop["position"] + 1] + "B" + busStopString[busStopLight["position"] + 2:]
                       
