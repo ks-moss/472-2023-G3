@@ -8,7 +8,7 @@ from VehicleGenerator import addVehicle
 app = Ursina()
 
 trafficSystem = AutomaticSimulation()
-
+timePassed = 0
 busStopsEntityModels = []
 # Create a camera with a bird's eye view
 camera.orthographic = True
@@ -57,7 +57,7 @@ def createCars(type):
 
 createCars("default")
 
-timePassed = 0
+
 
 # Define a function to move the cars
 def update():
@@ -73,30 +73,29 @@ def update():
 
          #loop through the car's trigger boxes and check if they are colliding with a light that is red or yellow, then adjust speed
         for triggerbox in triggerboxes:
-            
+            global timePassed
             #check for bus stop trigger
             for busStopEntity in busStopsEntity:
-                global timePassed
-
+                
+                if timePassed > busStopEntity.waitingTime + 5:
+                    timePassed = 0
                 if(busStopEntity.intersects(vehicle)) and vehicle.isBus == True:
-
+                    
                     vehicle.speed = 0
                     #simulate time with timepassing
-                    timePassed += .02
-                        
+                    timePassed += .01
+                    
                     #check to see if waitingTime has been reached and set speed back
                     if timePassed > busStopEntity.waitingTime:
                         vehicle.speed = vehicle.originalSpeed
-
-                elif not (busStopEntity.intersects(vehicle)) and vehicle.isBus == True:
-                    timePassed = 0
-
+                        
             #check for lights trigger         
             for lightNS in trafficLightsNS:
                 adjust_vehicle_speed_at_light(vehicle, lightNS, triggerbox)
             for lightEW in trafficLightsEW:
                 adjust_vehicle_speed_at_light(vehicle, lightEW, triggerbox)
-
+        #needed for timePass issue for bus... 
+        timePassed += .001
         activate_moving_speed(vehicle)
 
 
@@ -104,16 +103,41 @@ def update():
 def add_vehicle():
     pass
 
+def on_add_busStop_button_click():
+    
+    #randomly create a bus stop based on roads in list
+    randomRoad = random.choice(roads_Entity_objects)
+    
+    if randomRoad.name[0] in ['N','S']:
+        busStop = Entity(model='cube', scale=(3.5, 0.5, 1), color= color.blue)
+        busStop.position = randomRoad.position
+        busStop.y += random.choice(range(-20,20))
+    elif randomRoad.name[0] in ['E','W']:
+        busStop = Entity(model='cube', scale=(0.5, 3.5, 1), color= color.blue)
+        busStop.position = randomRoad.position
+        busStop.x += random.choice(range(-20,20))
+    else:
+        return    
+    busStop.collider = 'box'    
+    busStop.waitingTime = 20
+    busStopsEntity.append(busStop)
+    
 def on_restart_button_click():
     global vehicles
     global triggerboxes
+    global busStopsEntity
     global timePassed
+    
     for vehicle in vehicles:
         destroy(vehicle)
     for triggerbox in triggerboxes:
         destroy(triggerbox)
+    for busStop in busStopsEntity:
+        destroy(busStop)
+        
     vehicles = [] 
     triggerboxes = []
+    busStopsEntity = []
     timePassed = 0
     createCars("default")
     
@@ -127,4 +151,5 @@ def on_button_click():
 button = Button(text='Add\nVehicle', color=color.azure, highlight_color=color.cyan, position=(0.50, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_button_click)
 restartButton = Button(text='Restart\nSimulation', color=rgb(128, 128, 0), highlight_color=color.cyan, position=(0.38, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_restart_button_click)
 endButton = Button(text='End\nSimulation', color=rgb(128, 0, 0), highlight_color=color.red, position=(0.62, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_end_button_click)
+addBusStop = Button(text='Add\nBus\nStop', color=color.blue, highlight_color=color.cyan, position=(.50, 0.34), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_add_busStop_button_click)
 app.run()
