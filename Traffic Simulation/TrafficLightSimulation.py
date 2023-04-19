@@ -116,7 +116,7 @@ def trafficLightInteraction (trafficLight, vehicles, light_index):
                 while i < len(vehicles):
                     vehicles[i]["position"] = "position"
                     i += 1
-            1 # Function unavailable (Pending 3.1 team)
+            VehicleCalculations.adjustAccelerationToStop(vehicles, i)
     
     # Return the list of vehicles that have interacted with the traffic light with updated attributes
     return vehicles
