@@ -1,6 +1,5 @@
 import sys
 from ursina import *
-from VehicleGenerator import addVehicle
 
 
 
