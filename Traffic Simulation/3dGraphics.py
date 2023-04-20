@@ -120,6 +120,7 @@ def on_add_busStop_button_click():
     busStop.isTriggered = False
     busStop.waitingTime = 30
     busStopsEntity.append(busStop)
+        
     
 # Create the button
 def add_vehicle():
@@ -135,12 +136,14 @@ def on_restart_button_click():
         destroy(vehicle)
     for triggerbox in triggerboxes:
         destroy(triggerbox)
+
+    print(len(busStopsEntity))
     for busStop in busStopsEntity:
         destroy(busStop)
         
     vehicles = [] 
     triggerboxes = []
-    busStopsEntity = []
+    busStopsEntity = place_bus_stops(trafficSystem, roads_Entity_objects) 
     timePassed = 0
     createCars("default")
     
