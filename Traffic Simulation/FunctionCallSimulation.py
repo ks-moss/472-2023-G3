@@ -84,14 +84,12 @@ def create_roads(traffic_system):
 
 
 
-def place_traffic_lights_and_bus_stops(traffic_system, EntityModels):
+def place_traffic_lights(traffic_system):
     # PLACE THE TRAFFIC LIGHTS ONTO THE ROADS
     lights = traffic_system.traffic_light_list
-    busStops = traffic_system.bust_stop_list
 
     LightsNS = []
     LightsEW = []
-    busStopsEntityModels = []
     
 
     for i in range(0, len(lights)-1, 2):
@@ -130,11 +128,26 @@ def place_traffic_lights_and_bus_stops(traffic_system, EntityModels):
         # We need this so we don't go out of bounds
         if i == len(lights) - 1:
             break
+
+    return LightsNS, LightsEW
         
+
+
+
+
+
+
+
+
+def place_bus_stops(traffic_system, EntityModels):
+    
+    busStopsEntityModels = []
+
+    busStops = traffic_system.bust_stop_list
     #PLACE BUS STOPS
     for i in range(0, len(busStops)):
         print("BUSSSTOPS", busStops)
-        busStop1 = Entity(model='cube', scale=(3.5, 0.5, 1), color= color.blue)
+        busStop1 = Entity(model='cube', scale=(3.5, 0.5, 1), color= color.white)
         busStop1.collider = 'box'
         busStop1.waitingTime = busStops[i]['waitingtime'] 
         busStop1.isTriggered = False
@@ -143,7 +156,8 @@ def place_traffic_lights_and_bus_stops(traffic_system, EntityModels):
                 busStop1.position = roads.position
                 busStopsEntityModels.append(busStop1)
 
-    return LightsNS, LightsEW, busStopsEntityModels
+    return busStopsEntityModels 
+
 
 
 
@@ -156,7 +170,7 @@ def place_traffic_lights_and_bus_stops(traffic_system, EntityModels):
 
 
 def create_vehicle_entity(current_speed, current_car_type, current_road, current_position, roadEntityModels, roadsDuplicateList, vehiclesList, triggerboxesList):
-    available_colors = [color.brown, color.blue, color.magenta, color.yellow, color.white, color.gray, color.orange]
+    available_colors = [color.gold, color.white, color.magenta, color.yellow, color.white, color.gray, color.orange]
     color_random_index = random.randint(0, len(available_colors)-1)
     car = Entity(model='cube', scale=(2, 1, 1), color=available_colors[color_random_index])
     car.collider = 'box'
@@ -171,17 +185,17 @@ def create_vehicle_entity(current_speed, current_car_type, current_road, current
 
     if (car.car_type == 'bus'):
         car.scale = (2,2,1)
-        car.color = color.blue
+        car.color = color.white
         car.isBus = True
         car.texture=load_texture(f'textures/bus.png')
     if (car.car_type == 'fire truck'):
         car.scale = (2,2,1)
         car.color = color.red
-        car.texture=load_texture(f'textures/fireTruck.png')
-        
+        car.texture=load_texture(f'textures/fireTruck.png')   
     if (car.car_type == 'police van'):
         car.color = color.white
         car.texture=load_texture(f'textures/police.png')
+        
     # This iteration implementation will make sure that the vehicle is on the assigned road (When there are more than 2 vehicles on the assigned road)
     for i in range(len(roadEntityModels)):
         if(car.road == roadsDuplicateList[i]):
@@ -304,3 +318,6 @@ def activate_moving_speed(current_vehicle):
         current_vehicle.x += current_vehicle.speed
         if current_vehicle.x > 49:
             current_vehicle.x = -49
+
+
+

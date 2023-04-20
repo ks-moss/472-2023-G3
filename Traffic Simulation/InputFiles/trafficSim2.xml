@@ -7,7 +7,7 @@
     </ROAD>
 <!-- Minor Roads -->
     <ROAD>
-        <name>E Windmall Pkwy</name>
+        <name>E Windmill Pkwy</name>
         <length>100</length>
     </ROAD>
      <ROAD>
@@ -23,7 +23,7 @@
 <!-- Keep them together -->
     <CROSSROADS>
         <road position="-5">S Eastern Ave</road>
-        <road position="50">E Windmall Pkwy</road>
+        <road position="50">E Windmill Pkwy</road>
     </CROSSROADS>
     <TRAFFICLIGHT>
     <!-- Major Road -->
@@ -33,7 +33,7 @@
     </TRAFFICLIGHT>
     <TRAFFICLIGHT>
     <!-- Minor Roads -->
-        <road>E Windmall Pkwy</road>
+        <road>E Windmill Pkwy</road>
         <position>50</position>
         <cycle>20</cycle>
     </TRAFFICLIGHT>
@@ -61,7 +61,7 @@
 <!-- Keep them together -->
     <CROSSROADS>
         <road position="5">N Pecos Rd</road>
-        <road position="50">E Windmall Pkwy</road>
+        <road position="50">E Windmill Pkwy</road>
     </CROSSROADS>
     <TRAFFICLIGHT>
     <!-- Major Road -->
@@ -71,7 +71,7 @@
     </TRAFFICLIGHT>
     <TRAFFICLIGHT>
     <!-- Minor Roads -->
-        <road>E Windmall Pkwy</road>
+        <road>E Windmill Pkwy</road>
         <position>50</position>
         <cycle>20</cycle>
     </TRAFFICLIGHT>
@@ -138,14 +138,14 @@
         <type>car</type>
     </VEHICLE>
     <VEHICLE>
-        <road>E Windmall Pkwy</road>
+        <road>E Windmill Pkwy</road>
         <position>25</position>
         <speed>20</speed>
         <acceleration>1.2</acceleration>
         <type>fire truck</type>
     </VEHICLE>
     <VEHICLE>
-        <road>E Windmall Pkwy</road>
+        <road>E Windmill Pkwy</road>
         <position>10</position>
         <speed>15</speed>
         <acceleration>1.2</acceleration>
@@ -153,6 +153,11 @@
     </VEHICLE>
     <BUSSTOP>
         <road>S Eastern Ave</road>
+        <position>-10</position>
+        <waitingtime>20</waitingtime>
+    </BUSSTOP>
+    <BUSSTOP>
+        <road>N Pecos Rd</road>
         <position>-10</position>
         <waitingtime>20</waitingtime>
     </BUSSTOP>
