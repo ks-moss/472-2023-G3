@@ -137,7 +137,6 @@ def on_restart_button_click():
     for triggerbox in triggerboxes:
         destroy(triggerbox)
 
-    print(len(busStopsEntity))
     for busStop in busStopsEntity:
         destroy(busStop)
         
