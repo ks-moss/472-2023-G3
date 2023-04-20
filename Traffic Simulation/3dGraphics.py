@@ -72,29 +72,30 @@ def update():
 
          #loop through the car's trigger boxes and check if they are colliding with a light that is red or yellow, then adjust speed
         for triggerbox in triggerboxes:
-            global timePassed
+            
             #check for bus stop trigger
             for busStopEntity in busStopsEntity:
-                
-                if timePassed > busStopEntity.waitingTime + 5:
-                    timePassed = 0
+                global timePassed
+
                 if(busStopEntity.intersects(vehicle)) and vehicle.isBus == True:
-                    
+
                     vehicle.speed = 0
                     #simulate time with timepassing
-                    timePassed += .01
-                    
+                    timePassed += .02
+                        
                     #check to see if waitingTime has been reached and set speed back
                     if timePassed > busStopEntity.waitingTime:
                         vehicle.speed = vehicle.originalSpeed
-                        
+
+                elif not (busStopEntity.intersects(vehicle)) and vehicle.isBus == True:
+                    timePassed = 0
+
             #check for lights trigger         
             for lightNS in trafficLightsNS:
                 adjust_vehicle_speed_at_light(vehicle, lightNS, triggerbox)
             for lightEW in trafficLightsEW:
                 adjust_vehicle_speed_at_light(vehicle, lightEW, triggerbox)
-        #needed for timePass issue for bus... 
-        timePassed += .001
+
         activate_moving_speed(vehicle)
 
 
