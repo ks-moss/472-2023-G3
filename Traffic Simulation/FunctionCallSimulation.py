@@ -170,7 +170,7 @@ def place_bus_stops(traffic_system, EntityModels):
 
 
 def create_vehicle_entity(current_speed, current_car_type, current_road, current_position, roadEntityModels, roadsDuplicateList, vehiclesList, triggerboxesList):
-    available_colors = [color.gold, color.white, color.magenta, color.yellow, color.white, color.gray, color.orange]
+    available_colors = [color.gold, color.white, color.magenta, color.yellow, color.white, color.pink, color.orange]
     color_random_index = random.randint(0, len(available_colors)-1)
     car = Entity(model='cube', scale=(2, 1, 1), color=available_colors[color_random_index])
     car.collider = 'box'
