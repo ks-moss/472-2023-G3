@@ -30,7 +30,7 @@ def create_roads(traffic_system):
                     # Create the object_rec Entity and pass text_entity as a child
                     road_model = Entity(model='cube', scale=(4, 100, 0.1), color=color.gray)
                     road_model.texture=load_texture(f'textures/road.png')
-                    trigger_box_road1 = Entity(model='wireframe_cube', color=color.white, scale=(.05, 1, 1), collider='box', origin_x=8)
+                    trigger_box_road1 = Entity(model='wireframe_cube', color=color.clear, scale=(.05, 1, 1), collider='box', origin_x=8)
                     trigger_box_road1.parent = road_model
                     #add trigger box to list of NS roads triggers
                     triggerBoxesNS.append(trigger_box_road1)
@@ -53,7 +53,7 @@ def create_roads(traffic_system):
                     road_model = Entity(model='cube', scale=(100, 4, 0.1), color=color.gray)
                     road_model.texture=load_texture(f'textures/road2.png')
                     road_model.texture.rotation = (0,0,90)
-                    trigger_box_road2 = Entity(model='wireframe_cube', color=color.white, scale=(1, .05, 1), collider='box', origin_y=8)
+                    trigger_box_road2 = Entity(model='wireframe_cube', color=color.clear, scale=(1, .05, 1), collider='box', origin_y=8)
                     trigger_box_road2.parent = road_model
                     triggerboxesEW.append(trigger_box_road2)
                     road_model.y = road_position/2
@@ -61,7 +61,13 @@ def create_roads(traffic_system):
                     roadText.parent = road_model
                     roadText.z = -2
                     roadText.y = -.5
+                    road_model.name = road_name
                     Entity_models.append(road_model)
+                    
+                    box3 = Entity(model='cube', scale=(3,5,7))
+                    box3.position = road_model.position -4 # then adjust the z-position relative to box
+                    box3.texture=load_texture(f'textures/building2.png')
+                    box3.rotation = (28,30,32)
 
                 else:
                     print("Please Declair N|S|E|W in the", traffic_system.file_name, "input file")
@@ -130,7 +136,8 @@ def place_traffic_lights_and_bus_stops(traffic_system, EntityModels):
         print("BUSSSTOPS", busStops)
         busStop1 = Entity(model='cube', scale=(3.5, 0.5, 1), color= color.blue)
         busStop1.collider = 'box'
-        busStop1.waitingTime = busStops[i]['waitingtime'] /2
+        busStop1.waitingTime = busStops[i]['waitingtime'] 
+        busStop1.isTriggered = False
         for roads in EntityModels:
             if roads.name == busStops[i]['road']:
                 busStop1.position = roads.position
@@ -187,7 +194,7 @@ def create_vehicle_entity(current_speed, current_car_type, current_road, current
                 car.position = (car.pos, roadEntityModels[i].y)
                 car.rotation = (0, 0, 180)
 
-            trigger_box3 = Entity(model='wireframe_cube', color=color.white, scale=(2.75, 1, 1), collider='box', origin_x=.3)
+            trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2.75, 1, 1), collider='box', origin_x=.3)
             trigger_box3.parent = car
             triggerboxesList.append(trigger_box3)
             # Add the car to the list of vehicles
