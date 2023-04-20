@@ -136,7 +136,6 @@ def on_restart_button_click():
         destroy(vehicle)
     for triggerbox in triggerboxes:
         destroy(triggerbox)
-
     for busStop in busStopsEntity:
         destroy(busStop)
         
