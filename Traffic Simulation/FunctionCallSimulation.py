@@ -63,10 +63,12 @@ def create_roads(traffic_system):
                     roadText.y = -.5
                     road_model.name = road_name
                     Entity_models.append(road_model)
+                    
                     box3 = Entity(model='cube', scale=(3,5,7))
                     box3.position = road_model.position -4 # then adjust the z-position relative to box
                     box3.texture=load_texture(f'textures/building2.png')
                     box3.rotation = (28,30,32)
+
                 else:
                     print("Please Declair N|S|E|W in the", traffic_system.file_name, "input file")
                     # Terminate the program without specifying an exit code
@@ -135,6 +137,7 @@ def place_traffic_lights_and_bus_stops(traffic_system, EntityModels):
         busStop1 = Entity(model='cube', scale=(3.5, 0.5, 1), color= color.blue)
         busStop1.collider = 'box'
         busStop1.waitingTime = busStops[i]['waitingtime'] 
+        busStop1.isTriggered = False
         for roads in EntityModels:
             if roads.name == busStops[i]['road']:
                 busStop1.position = roads.position
@@ -283,7 +286,6 @@ def direction_control(vehicle_object, triggerboxes_NS_object, triggerboxes_EW_ob
 
 
 def adjust_vehicle_speed_at_light(vehicle_object, light_signal, triggerbox_object):
-    
     if light_signal.intersects(triggerbox_object) and vehicle_object.intersects(triggerbox_object) and light_signal.color == color.green:
         vehicle_object.speed = vehicle_object.originalSpeed
     elif light_signal.intersects(triggerbox_object) and vehicle_object.intersects(triggerbox_object) and (light_signal.color == color.yellow):

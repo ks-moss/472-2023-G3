@@ -8,6 +8,7 @@ from VehicleGenerator import addVehicle
 app = Ursina()
 
 trafficSystem = AutomaticSimulation()
+
 busStopsEntityModels = []
 # Create a camera with a bird's eye view
 camera.orthographic = True
@@ -77,19 +78,18 @@ def update():
             for busStopEntity in busStopsEntity:
                 global timePassed
 
-                if(busStopEntity.intersects(vehicle)) and vehicle.isBus == True:
-
+                if(vehicle.intersects(busStopEntity)) and vehicle.isBus == True:
+                    busStopEntity.isTriggered = True
                     vehicle.speed = 0
                     #simulate time with timepassing
                     timePassed += .02
-                        
                     #check to see if waitingTime has been reached and set speed back
                     if timePassed > busStopEntity.waitingTime:
                         vehicle.speed = vehicle.originalSpeed
-
-                elif not (busStopEntity.intersects(vehicle)) and vehicle.isBus == True:
+                        
+                elif not (busStopEntity.intersects(vehicle)) and vehicle.isBus == True and busStopEntity.isTriggered == True:
                     timePassed = 0
-
+                    busStopEntity.isTriggered = False
             #check for lights trigger         
             for lightNS in trafficLightsNS:
                 adjust_vehicle_speed_at_light(vehicle, lightNS, triggerbox)
@@ -97,11 +97,6 @@ def update():
                 adjust_vehicle_speed_at_light(vehicle, lightEW, triggerbox)
 
         activate_moving_speed(vehicle)
-
-
-# Create the button
-def add_vehicle():
-    pass
 
 def on_add_busStop_button_click():
     
@@ -119,9 +114,14 @@ def on_add_busStop_button_click():
     else:
         return    
     busStop.collider = 'box'    
-    busStop.waitingTime = 20
+    busStop.isTriggered = False
+    busStop.waitingTime = 30
     busStopsEntity.append(busStop)
     
+# Create the button
+def add_vehicle():
+    pass
+
 def on_restart_button_click():
     global vehicles
     global triggerboxes
