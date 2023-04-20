@@ -9,7 +9,6 @@ app = Ursina()
 
 trafficSystem = AutomaticSimulation()
 
-busStopsEntityModels = []
 # Create a camera with a bird's eye view
 camera.orthographic = True
 camera.position = (35, 25, -35)
@@ -21,7 +20,10 @@ box.texture=load_texture(f'textures/desert.png')
 # Create Roads
 roads_name_duplicate_lists, roads_Entity_objects, triggerboxesRoadsNS, triggerboxesRoadsEW = create_roads(trafficSystem)
 # Create Teaffic Lights
-trafficLightsNS, trafficLightsEW, busStopsEntity = place_traffic_lights_and_bus_stops(trafficSystem, roads_Entity_objects)    
+trafficLightsNS, trafficLightsEW = place_traffic_lights(trafficSystem) 
+# Create Bus Stops
+busStopsEntity = place_bus_stops(trafficSystem, roads_Entity_objects)  
+         
         
 vehicles = []
 triggerboxes = []
@@ -87,7 +89,7 @@ def update():
                     if timePassed > busStopEntity.waitingTime:
                         vehicle.speed = vehicle.originalSpeed
                         
-                elif not (busStopEntity.intersects(vehicle)) and vehicle.isBus == True and busStopEntity.isTriggered == True:
+                elif not (vehicle.intersects(busStopEntity)) and vehicle.isBus == True and busStopEntity.isTriggered == True:
                     timePassed = 0
                     busStopEntity.isTriggered = False
             #check for lights trigger         
@@ -97,6 +99,7 @@ def update():
                 adjust_vehicle_speed_at_light(vehicle, lightEW, triggerbox)
 
         activate_moving_speed(vehicle)
+  
 
 def on_add_busStop_button_click():
     
@@ -104,11 +107,11 @@ def on_add_busStop_button_click():
     randomRoad = random.choice(roads_Entity_objects)
     
     if randomRoad.name[0] in ['N','S']:
-        busStop = Entity(model='cube', scale=(3.5, 0.5, 1), color= color.blue)
+        busStop = Entity(model='cube', scale=(3.5, 0.5, 1), color= color.white)
         busStop.position = randomRoad.position
         busStop.y += random.choice(range(-20,20))
     elif randomRoad.name[0] in ['E','W']:
-        busStop = Entity(model='cube', scale=(0.5, 3.5, 1), color= color.blue)
+        busStop = Entity(model='cube', scale=(0.5, 3.5, 1), color= color.white)
         busStop.position = randomRoad.position
         busStop.x += random.choice(range(-20,20))
     else:
