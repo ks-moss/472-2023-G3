@@ -158,35 +158,31 @@ def adjustAccelerationToStop(vehicles, vehicleIndex):
     vehicles[vehicleIndex]["acceleration"] = -1 * ((maximumBrakingFactor * currentSpeed) / maximumSpeed)
 
 
-# Checks to see if a vehicle is out of bounds by 
+# Checks to see if each vehicle is out of bounds by 
 # comparing the length of the street and the position
 # of the vehicle.
 # parameters:
 #   vehicleList  -  vehicleList from TrafficSystem()
-#   vehicleIndex -  the index of the vehicle to be checked
 #   roadList     -  roadList from TrafficSystem()
-#   newPosition  -  the new position that the vehicle will be on the 
-#                   next simulation step
+#   to_be_removed  -  list of indices of vehicles that have reached the end of the road
 # precondition:
-#   a new positon is calculated for the vehicle
+#   vehicles new positions have been recalculated and may be off of the road
 # postcondition:
-#   vehicle will be removed from list if the new position
-#   is off the street
+#   vehicle index will be appended to to_be_removed if the new position
+#   is off the road
 # return:
 #   void
-def vehicleOutOfBounds(vehicleList: TrafficSystem, vehicleIndex, roadList: TrafficSystem):
-    roads = roadList
-
-    vehicle = vehicleList[vehicleIndex]
-
-    # search for the current road the vehicle is on
-    for road in roads:
-        if (road["name"] == vehicle["road"]):
-            # check if vehicle is off the road
-            if (vehicle["position"] > road["length"]):
-                # remove vehicle from road
-                del vehicleList[vehicleIndex]
-                break
+def calculateVehicleOOB(vehicleList: TrafficSystem, roadList: TrafficSystem, to_be_removed: TrafficSystem):
+    # Appends the index of all vehicles not on the road to to_be_removed
+    for i in range(len(vehicleList)):
+        vehicle = vehicleList[i]
+        for road in roadList:
+            if (road["name"] == vehicle["road"]):
+                # check if vehicle is off the road
+                if (vehicle["position"] > road["length"]):
+                    # remove vehicle from road
+                    to_be_removed.append(i)
+                    print("Vehicle", i, "has driven off the road, ")
     
     #DEBUG
     # print('current vehicle list', *vehicles, sep="\n")
