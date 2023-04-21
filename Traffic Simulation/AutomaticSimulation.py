@@ -50,6 +50,8 @@ class AutomaticSimulation:
         self.intersection_sim = IntersectionSim(self.intersection_list, self.road_list)
         #Get Bus Stop list
         self.bust_stop_list = self.trafficSystem.busStopList
+        # List of indices of vehicles that are out of bounds
+        self.to_be_removed = []
 
         
         # Store current state of trafficlight
@@ -99,9 +101,23 @@ class AutomaticSimulation:
             self.trafficlight_current_state[i]["cycle"] = self.traffic_light_list[i]["cycle"]
             trafficLightInteraction(self.traffic_light_list, self.vehicle_list, i)
 
+    def create_vehicle_on_road(self, road, position, speed, acceration, type):
+        self.vehicle_list.append({"road": road,
+                                  "position": position,
+                                  "speed": speed,
+                                  "acceleration": acceration,
+                                  "type": type})
+        
+    def remove_vehicles_off_road(self):
+        for i in sorted(self.to_be_removed, reverse=True):
+            del self.vehicle_list[i]
+        
+        self.to_be_removed.clear()
+
     def update(self):
         self.vehicle_on_road()
         self.traffic_light_on_road()
+        VehicleCalculations.calculateVehicleOOB(self.vehicle_list, self.road_list, self.to_be_removed)
         
 
 

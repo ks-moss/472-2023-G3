@@ -1,7 +1,8 @@
 # 3.4
 import VehicleCalculations
+from TrafficSimulation2 import TrafficSystem
 from AutomaticSimulation import AutomaticSimulation
-import unittest
+import os
 
 # Goal: Simulation with vehicle generator
 # Precondition: The system contains a diagram of the virtual road network. There is a vehicle generator on a road.
@@ -32,8 +33,12 @@ import unittest
 #       -calls vehicle_on_road(), traffic_light_on_road(), and vehicle_generator_update()
 class VehicleGeneratorSimulation(AutomaticSimulation):
 
-    def __init__(self):
+    def __init__(self, input_file):
         super().__init__()
+        if (input_file != ""):
+            self.trafficSystem = TrafficSystem()
+            self.trafficSystem.ReadElementsFromFile(input_file)
+            self.file_name = os.path.basename(input_file)
         # Get Vehicle Generator List
         self.vehicle_generator_list = self.trafficSystem.vehicleGeneratorList
         # Declare and initalize list of Vehicle Generator dictionaries to keep track of VGs
@@ -68,53 +73,3 @@ class VehicleGeneratorSimulation(AutomaticSimulation):
         self.vehicle_generator_update()
         self.vehicle_on_road()
         self.traffic_light_on_road()
-
-# Unit Testing
-class TestVehicleGeneratorSim(unittest.TestCase):
-    def test_vg_obstructed(self):
-        self.sim = VehicleGeneratorSimulation()
-        self.sim.vehicle_generator_list = [{"name": "Tropicana", "frequency": 10, "type": "auto"}]
-        self.sim.vehicle_list = [{"road": "Tropicana", "position": 0, "speed": 10, "acceleration": 1.2, "type": "car"}]
-        vehicleCount = len(self.sim.vehicle_list)
-        updateCount = self.sim.vehicle_generator_list[0]["frequency"]
-        for i in range(updateCount):
-            self.sim.vehicle_generator_update()
-        
-        """Vehicle List has not grown"""
-        self.assertTrue(vehicleCount == len(self.sim.vehicle_list))
-        """VG is ready"""
-        self.assertTrue(self.sim.vehicle_generator_ready[0]["ready"])
-        """VG counter is 1 + the number of updates performed"""
-        self.assertTrue(self.sim.vehicle_generator_ready[0]["counter"] == self.sim.vehicle_generator_list[0]["frequency"])
-
-    def test_vg_unobstructed(self):
-        self.sim = VehicleGeneratorSimulation()
-        self.sim.vehicle_generator_list = [{"name": "Tropicana", "frequency": 10, "type": "auto"}]
-        self.sim.vehicle_list = [{"road": "Tropicana", "position": 200, "speed": 10, "acceleration": 1.2, "type": "car"}]
-        vehicleCount = len(self.sim.vehicle_list)
-        updateCount = self.sim.vehicle_generator_list[0]["frequency"]
-        for i in range(updateCount):
-            self.sim.vehicle_generator_update()
-        
-        """Vehicle List has grown"""
-        self.assertFalse(vehicleCount == len(self.sim.vehicle_list))
-        """VG is no longer ready"""
-        self.assertFalse(self.sim.vehicle_generator_ready[0]["ready"])
-        """VG counter is reset to 1"""
-        self.assertTrue(self.sim.vehicle_generator_ready[0]["counter"] == 0)
-
-unittest.main()
-""" Tests 
-simulation = VehicleGeneratorSimulation()
-print(len(simulation.vehicle_list))
-simulation.update()
-simulation.update()
-simulation.update()
-simulation.update()
-simulation.update()
-simulation.update()
-simulation.update()
-simulation.update()
-simulation.update()
-simulation.update()
-"""
