@@ -5,10 +5,6 @@ import time
 # Precondition: The system contains a diagram of the virtual road network. There is a traffic light on a road.
 # Postcondition: Vehicles adapt depending on the state of the traffic light.
 
-# Global Variables
-green_light = {}    # (road name, True/False) True means green, False means red
-light_Times = {}    # (road name, time since traffic light was last changed)
-
 # Vehicles adapt depending on the state of the traffic light.
 # Parameters:
 #   trafficLight - The current traffic light on the given road
@@ -16,84 +12,49 @@ light_Times = {}    # (road name, time since traffic light was last changed)
 #   timeSinceLastChange - The time since last change passed in from 3.3 Automatic Simulation
 # Returns:
 #   vehicles - The list of vehicles that have interacted with the traffic light
-def trafficLightInteraction (trafficLight, vehicles, light_index):
-    # Traffic Light Variables
-    global green_light
-    global light_Times
-
-    trafficLight_road = trafficLight[light_index]["road"]
-    trafficLight_position = trafficLight[light_index]["position"]
-    trafficLight_cycle = trafficLight[light_index]["cycle"]
-    
-    # Track the time when the traffic light was first read
-    if trafficLight_road not in light_Times:
-        green_light[trafficLight_road] = True
-        light_Times[trafficLight_road] = datetime.datetime.now()
-        timeSinceLastChange = 0
-    # If the time of the traffic light was previously recorded, calculate the difference between now and recorded time
-    else:
-        difference_time = datetime.datetime.now() - light_Times[trafficLight_road]
-        timeSinceLastChange = difference_time.total_seconds()
-        
+def trafficLightInteraction (trafficLight, vehicles, light_index, lightStates):
 
     # 1 & 1.1. IF time since last change > cycle, THEN change the color of the light (green ⇐⇒ red)
-    if timeSinceLastChange > trafficLight_cycle:
-        light_Times[trafficLight_road] = datetime.datetime.now()
-        if green_light[trafficLight_road]:
-            print(trafficLight_road ,"'s light turned RED")
-            green_light[trafficLight_road] = False
+    if lightStates[light_index]["counter"] == trafficLight[light_index]["cycle"]:
+        lightStates[light_index]["counter"] = 0
+        if lightStates[light_index]["color"] == "red":
+            lightStates[light_index]["color"] = "green"
         else:
-            print(trafficLight_road, "'s light turned GREEN")
-            green_light[trafficLight_road] = True
-    else:
-        if green_light[trafficLight_road]:
-            print(trafficLight_road, "'s Light has been GREEN for", timeSinceLastChange, "s, changes every ", trafficLight_cycle, "s")
-        else:
-            print(trafficLight_road, "'s Light has been RED for", timeSinceLastChange, "s, changes every ", trafficLight_cycle, "s")
-        
+            lightStates[light_index]["color"] = "red"
+    
+    if lightStates[light_index]["counter"] == trafficLight[light_index]["cycle"]*0.9 and lightStates[light_index]["color"] == "green":
+        lightStates[light_index]["color"] == "yellow"
+
     # 2 & 2.1. IF traffic light is green, THEN vehicles in front of the traffic light may accelerate back up
-    if green_light[trafficLight_road] == True:
+    if lightStates[light_index]["color"] == "green":
         # Invoke acceleration function for ALL vehicles in front of the current traffic light
         i = 0
         j = 0
-        emergencyDeceleration = False
 
         while i < len(vehicles):
             # Make sure the current vehicle is on the current road
-            if vehicles[i]["road"] == trafficLight_road:   
+            if vehicles[i]["road"] == trafficLight[light_index]["road"]:   
                 # Adjust acceleration of vehicle if the vehicle is behind the traffic light's position
-                if vehicles[i]["position"] < trafficLight_position:
-                    # 3.5 If the first vehicle is an emergency vehicle, the rest of the vehicles don't need to slow down
-                    # Checks if there is an emergency vehicle on the road
-                    if (vehicles[i]["position"] != 0) and (vehicles[i]["type"] == "fire truck" or vehicles[i]["type"] == "police van" or vehicles[i]["type"] == "ambulance"):
-                        if emergencyDeceleration == False:
-                            while j < len(vehicles):
-                                # Make sure the current vehicle is on the current road and being traffic light
-                                if vehicles[j]["road"] == trafficLight_road and vehicles[j]["position"] < trafficLight_position:
-                                    # Only apply deceleration factor if it's not the current emergency vehicle
-                                    if (vehicles[j]["type"] != "fire truck" or vehicles[j]["type"] != "police van" or vehicles[j]["type"] != "ambulance"): 
-                                        VehicleCalculations.applyDecelerationFactor(vehicles, j)
-                                j += 1
-                                
-                        # Reduces time complexity
-                        # Applies deceleration to every vehicle (that is not an emergency vehicle) on the road if there is an emergency vehicle present
-                        # Doesn't require deceleration for each emergency vehicle found on the road
-                        emergencyDeceleration == True
-                    
-                    VehicleCalculations.calculateAcceleration(vehicles, i)
+                if vehicles[i]["position"] < trafficLight[light_index]["position"]:
+                    lightInBetween = False
+                    for l in trafficLight:
+                        if (l["position"] < trafficLight[light_index]["position"] and l["position"] > vehicles[i]["position"]):
+                            lightInBetween = True
+                    if (not lightInBetween):
+                        VehicleCalculations.calculateAcceleration(vehicles, i)
                     
             i += 1
                     
     # 3.1 IF traffic light is red
-    if green_light[trafficLight_road] == False:
+    if lightStates[light_index]["color"] == "red" or lightStates[light_index]["color"] == "yellow":
 
         # 3.1.1 THEN IF the first vehicle in front of the light is in the deceleration distance
-        distance = trafficLight_position - vehicles[0]["position"] # Calculate distance between traffic light & first vehicle position
+        distance = trafficLight[light_index]["position"] - vehicles[0]["position"] # Calculate distance between traffic light & first vehicle position
         closest_vehicle_index = 0
-        closest_vehicle_distance = abs(trafficLight_position - vehicles[0]["position"])
+        closest_vehicle_distance = abs(trafficLight[light_index]["position"] - vehicles[0]["position"])
         for i in range(1, len(vehicles)):
             # Calculate the distance between the traffic light and the current vehicle
-            distance_to_traffic_light = abs(trafficLight_position - vehicles[i]["position"])
+            distance_to_traffic_light = abs(trafficLight[light_index]["position"] - vehicles[i]["position"])
             # If the current vehicle is closer to the traffic light than the previous closest vehicle, update the closest vehicle
             if distance_to_traffic_light < closest_vehicle_distance:
                 closest_vehicle_index = i
@@ -101,7 +62,7 @@ def trafficLightInteraction (trafficLight, vehicles, light_index):
         if closest_vehicle_distance > 0.0 and closest_vehicle_distance < VehicleCalculations.decelerationDistance:
             # Apply the deceleration factor to the closest vehicle and all vehicles behind it within the deceleration distance
             for i in range(closest_vehicle_index, len(vehicles)):
-                distance_to_traffic_light = trafficLight_position - vehicles[i]["position"]
+                distance_to_traffic_light = trafficLight[light_index]["position"] - vehicles[i]["position"]
                 if distance_to_traffic_light <= VehicleCalculations.decelerationDistance:
                     VehicleCalculations.applyDecelerationFactor(vehicles, i)
                     # Debug print
@@ -118,5 +79,4 @@ def trafficLightInteraction (trafficLight, vehicles, light_index):
                     i += 1
             VehicleCalculations.adjustAccelerationToStop(vehicles, i)
     
-    # Return the list of vehicles that have interacted with the traffic light with updated attributes
-    return vehicles
+    lightStates[light_index]["counter"] += 1

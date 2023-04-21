@@ -84,7 +84,7 @@ for i in range(len(trafficSystem.intersection_list)):
 
 # PLACE THE TRAFFIC LIGHTS ONTO THE ROADS
 lights = trafficSystem.traffic_light_list
-busStops = trafficSystem.bust_stop_list
+busStops = trafficSystem.bus_stop_list
 
 for i in range(0, len(lights)-1, 2):
 # Because we are looking at crossroads/intersections,
@@ -172,10 +172,6 @@ def initializeVehicles():
 
 def removeCarsOutOfBounds():
     for i in sorted(trafficSystem.to_be_removed, reverse=True):
-        print(trafficSystem.to_be_removed)
-        print(vehicles)
-        print(trafficSystem.vehicle_list)
-        print("Deleting car ", i)
         destroy(vehicles[i])
         del vehicles[i]
     
