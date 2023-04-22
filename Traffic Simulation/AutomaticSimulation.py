@@ -29,10 +29,9 @@ import time
 #   update()
 #       -calls vehicle_on_road() and traffic_light_on_road()
 
-INPUT_FILE_PATCH = "./InputFiles/trafficSim2.xml"
 
 class AutomaticSimulation:
-    def __init__(self):
+    def __init__(self, INPUT_FILE_PATCH = "./InputFiles/trafficSim2.xml"):
         self.green_light = green_light
         # create a TrafficSystem object from the input file
         self.trafficSystem = TrafficSystem()

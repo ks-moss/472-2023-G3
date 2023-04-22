@@ -1,8 +1,6 @@
 from ursina import *
 from ursina.shaders import lit_with_shadows_shader
 
-#TODO make vehicle models for each type
-
 class Sedan(Entity):
     def __init__(self, parent):
         super().__init__(parent = parent)
@@ -12,6 +10,7 @@ class Sedan(Entity):
         self.color = color.rgba(255, 255, 255, 255)
         self.y = 0.15
         self.z = -5
+        self.collider = 'box'
     
 class Bus(Entity):
     def __init__(self, parent):
@@ -21,6 +20,7 @@ class Bus(Entity):
         self.scale = 6
         self.y = 1
         self.z = -10
+        self.collider = 'box'
 
 class FireTruck(Entity):
     def __init__(self, parent):
@@ -30,6 +30,7 @@ class FireTruck(Entity):
         self.scale = 6
         self.y = 1
         self.z = -8
+        self.collider = 'box'
 
 class PoliceCar(Entity):
     def __init__(self, parent):
@@ -39,6 +40,7 @@ class PoliceCar(Entity):
         self.scale = 4
         self.y = 0.15
         self.z = -4
+        self.collider = 'box'
         
 
 
