@@ -109,8 +109,11 @@ def calculateAcceleration(vehicleList: TrafficSystem, vehicleIndex):
 
     if(closestVehicle["position"] != 999999999):
         positionDifference = closestVehicle["position"] - vehicle["position"] - lengths[typeIndex]
-        speedDifference = speed - closestVehicle["speed"]
-        vehicleInteration = ((minFollowingDists[typeIndex] + max(0, speed + ((speed*speedDifference)/(2*math.sqrt(maxAccels[typeIndex]*maxBrakingFactors[typeIndex])))))/positionDifference)
+        if (positionDifference < 3):
+            speedDifference = speed - closestVehicle["speed"]
+            vehicleInteration = ((minFollowingDists[typeIndex] + max(0, speed + ((speed*speedDifference)/(2*math.sqrt(maxAccels[typeIndex]*maxBrakingFactors[typeIndex])))))/positionDifference)
+        else:
+            vehicleInteration = 0
     else:
         vehicleInteration = 0
     
@@ -198,7 +201,7 @@ def calculateVehicleOOB(vehicleList: TrafficSystem, roadList: TrafficSystem, to_
 #   void
 def applyDecelerationFactor(vehicles, i):
 
-    deceleration_factor = 0.5  # Slow it down by half
+    deceleration_factor = 0.2  # Slow it down by half
     
     # Apply the deceleration factor to the ith vehicle
     vehicles[i]["acceleration"] *= deceleration_factor

@@ -85,64 +85,70 @@ for i in range(len(trafficSystem.road_list)):
 
 # Initialize traffic lights
 lights_Entity_objects = [] # list of traffic light entities
-for t in trafficSystem.traffic_light_list:
-    for i in range(len(roads_Entity_objects)):
-        r = roads_Entity_objects[i]
-        if (r.name == t["road"]):
-            road_index = i
-    
-    r1 = roads_Entity_objects[road_index]
-    if (r1.name[0] == "N" or r1.name[0] == "S") and r1.name[1] == " ":
-        NS_traffic_y = (t["position"]-50) + ((100-trafficSystem.road_list[road_index]["length"])/2)
-        NS_traffic_Entity = Entity(model='sphere', scale=(1, 1, 1), color= color.green)
-        NS_traffic_Entity.x = r1.x
-        NS_traffic_Entity.y = NS_traffic_y + 2
-        NS_traffic_Entity.name = t["position"]
-        lights_Entity_objects.append(NS_traffic_Entity)
+def initializeTrafficLights():
+    for t in trafficSystem.traffic_light_list:
+        for i in range(len(roads_Entity_objects)):
+            r = roads_Entity_objects[i]
+            if (r.name == t["road"]):
+                road_index = i
+        
+        r1 = roads_Entity_objects[road_index]
+        if (r1.name[0] == "N" or r1.name[0] == "S") and r1.name[1] == " ":
+            NS_traffic_y = (t["position"]-50) + ((100-trafficSystem.road_list[road_index]["length"])/2)
+            NS_traffic_Entity = Entity(model='sphere', scale=(1, 1, 1), color= color.green)
+            NS_traffic_Entity.x = r1.x
+            NS_traffic_Entity.y = NS_traffic_y + 2
+            NS_traffic_Entity.z = -.5
+            NS_traffic_Entity.name = t["position"]
+            lights_Entity_objects.append(NS_traffic_Entity)
 
-    elif (r1.name[0] == "E" or r1.name[0] == "W") and r1.name[1] == " ":
-        EW_traffic_x = (t["position"]-50) + ((100-trafficSystem.road_list[road_index]["length"])/2)
-        EW_traffic_Entity = Entity(model='sphere', scale=(1, 1, 1), color= color.green)
-        EW_traffic_Entity.x = EW_traffic_x + 2
-        EW_traffic_Entity.y = r1.y
-        EW_traffic_Entity.name = t["position"]
-        lights_Entity_objects.append(EW_traffic_Entity)
+        elif (r1.name[0] == "E" or r1.name[0] == "W") and r1.name[1] == " ":
+            EW_traffic_x = (t["position"]-50) + ((100-trafficSystem.road_list[road_index]["length"])/2)
+            EW_traffic_Entity = Entity(model='sphere', scale=(1, 1, 1), color= color.green)
+            EW_traffic_Entity.x = EW_traffic_x + 2
+            EW_traffic_Entity.y = r1.y
+            EW_traffic_Entity.z = -.5
+            EW_traffic_Entity.name = t["position"]
+            lights_Entity_objects.append(EW_traffic_Entity)
 
 
 
 # Initialize intersections
-for i in trafficSystem.intersection_list:
-    for j in range(len(roads_Entity_objects)):
-        r = roads_Entity_objects[j]
-        if (r.name == i[0]["road"]):
-            i_0_entity = j
-        if (r.name == i[1]["road"]):
-            i_1_entity = j
-    
-    r1 = roads_Entity_objects[i_0_entity]
-    r2 = roads_Entity_objects[i_1_entity]
-    if (r1.name[0] == "N" or r1.name[0] == "S") and r1.name[1] == " ":
-        NS_traffic_position = (r2.y + 50) - ((100 - trafficSystem.road_list[i_0_entity]["length"])/2)
-        i[0]["position"] = NS_traffic_position
-        trafficSystem.create_traffic_light_on_road(i[0]["road"], NS_traffic_position, 200, "green")
-        NS_traffic_Entity = Entity(model='sphere', scale=(1, 1, 1), color= color.green)
-        NS_traffic_Entity.x = r1.x
-        NS_traffic_Entity.y = r2.y + 2
-        NS_traffic_Entity.name = i[0]["road"]
-        lights_Entity_objects.append(NS_traffic_Entity)
+def initializeIntersections():
+    for i in trafficSystem.intersection_list:
+        for j in range(len(roads_Entity_objects)):
+            r = roads_Entity_objects[j]
+            if (r.name == i[0]["road"]):
+                i_0_entity = j
+            if (r.name == i[1]["road"]):
+                i_1_entity = j
+        
+        r1 = roads_Entity_objects[i_0_entity]
+        r2 = roads_Entity_objects[i_1_entity]
+        if (r1.name[0] == "N" or r1.name[0] == "S") and r1.name[1] == " ":
+            NS_traffic_position = (r2.y + 50) - ((100 - trafficSystem.road_list[i_0_entity]["length"])/2)
+            i[0]["position"] = NS_traffic_position
+            trafficSystem.create_traffic_light_on_road(i[0]["road"], NS_traffic_position, 200, "green")
+            NS_traffic_Entity = Entity(model='sphere', scale=(1, 1, 1), color= color.green)
+            NS_traffic_Entity.x = r1.x
+            NS_traffic_Entity.y = r2.y + 2
+            NS_traffic_Entity.z = -.5
+            NS_traffic_Entity.name = i[0]["road"]
+            lights_Entity_objects.append(NS_traffic_Entity)
 
-        EW_traffic_position = (r1.x + 50) - ((100 - trafficSystem.road_list[i_1_entity]["length"])/2)
-        i[1]["position"] = EW_traffic_position
-        trafficSystem.create_traffic_light_on_road(i[1]["road"], EW_traffic_position, 200, "red")
-        EW_traffic_Entity = Entity(model='sphere', scale=(1, 1, 1), color= color.red)
-        EW_traffic_Entity.x = r1.x + 2
-        EW_traffic_Entity.y = r2.y
-        NS_traffic_Entity.name = i[1]["road"]
-        lights_Entity_objects.append(EW_traffic_Entity)
-    
-    else:
-        print("Error - NS road must come first for each intersection in the XML file")
-        sys.exit()
+            EW_traffic_position = (r1.x + 50) - ((100 - trafficSystem.road_list[i_1_entity]["length"])/2)
+            i[1]["position"] = EW_traffic_position
+            trafficSystem.create_traffic_light_on_road(i[1]["road"], EW_traffic_position, 200, "red")
+            EW_traffic_Entity = Entity(model='sphere', scale=(1, 1, 1), color= color.red)
+            EW_traffic_Entity.x = r1.x + 2
+            EW_traffic_Entity.y = r2.y
+            EW_traffic_Entity.z = -.5
+            NS_traffic_Entity.name = i[1]["road"]
+            lights_Entity_objects.append(EW_traffic_Entity)
+        
+        else:
+            print("Error - NS road must come first for each intersection in the XML file")
+            sys.exit()
     
 busStops = trafficSystem.bus_stop_list
 #PLACE BUS STOPS
@@ -232,6 +238,8 @@ def updateTrafficLights():
 
 # Places initial cars onto roads
 initializeVehicles()
+initializeTrafficLights()
+initializeIntersections()
 
 # Define a function to move the cars
 def update():
@@ -247,25 +255,30 @@ def update():
 def on_restart_button_click():
     global vehicles
     global triggerboxes
+    global lights_Entity_objects
     for vehicle in vehicles:
         destroy(vehicle)
     for triggerbox in triggerboxes:
         destroy(triggerbox)
+    for light in lights_Entity_objects:
+        destroy(light)
 
     vehicles = []
     triggerboxes = []
+    lights_Entity_objects = []
     
     global trafficSystem
     trafficSystem = VehicleGeneratorSimulation("./InputFiles/prototype2.xml")
     initializeVehicles()
-
+    initializeTrafficLights()
+    initializeIntersections()
     
 def on_end_button_click():
     sys.exit()
     
 def on_add_vehicle_button_click():
     road = random.choice(trafficSystem.road_list)["name"]
-    trafficSystem.create_vehicle_on_road(road, 0, 50, 1.2, 'car')
+    trafficSystem.create_vehicle_on_road(road, 0, 10, 1.2, 'car')
     createVehicleEntity(len(trafficSystem.vehicle_list)-1)
     
 

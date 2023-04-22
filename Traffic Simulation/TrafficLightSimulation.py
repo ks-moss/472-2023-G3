@@ -28,10 +28,7 @@ def trafficLightInteraction (trafficLight, vehicles, light_index, lightStates):
     # 2 & 2.1. IF traffic light is green, THEN vehicles in front of the traffic light may accelerate back up
     if lightStates[light_index]["color"] == "green":
         # Invoke acceleration function for ALL vehicles in front of the current traffic light
-        i = 0
-        j = 0
-
-        while i < len(vehicles):
+        for i in range(len(vehicles)):
             # Make sure the current vehicle is on the current road
             if vehicles[i]["road"] == trafficLight[light_index]["road"]:   
                 # Adjust acceleration of vehicle if the vehicle is behind the traffic light's position
@@ -41,42 +38,28 @@ def trafficLightInteraction (trafficLight, vehicles, light_index, lightStates):
                         if (l["position"] < trafficLight[light_index]["position"] and l["position"] > vehicles[i]["position"]):
                             lightInBetween = True
                     if (not lightInBetween):
-                        VehicleCalculations.calculateAcceleration(vehicles, i)
-                    
-            i += 1
+                        if (vehicles[i]["speed"] < 5):
+                            vehicles[i]["speed"] = 5
+                        if (vehicles[i]["acceleration"] < 2):
+                            vehicles[i]["acceleration"] = 2
                     
     # 3.1 IF traffic light is red
-    if lightStates[light_index]["color"] == "red" or lightStates[light_index]["color"] == "yellow":
-
+    elif lightStates[light_index]["color"] == "red":
         # 3.1.1 THEN IF the first vehicle in front of the light is in the deceleration distance
-        distance = trafficLight[light_index]["position"] - vehicles[0]["position"] # Calculate distance between traffic light & first vehicle position
-        closest_vehicle_index = 0
-        closest_vehicle_distance = abs(trafficLight[light_index]["position"] - vehicles[0]["position"])
-        for i in range(1, len(vehicles)):
-            # Calculate the distance between the traffic light and the current vehicle
-            distance_to_traffic_light = abs(trafficLight[light_index]["position"] - vehicles[i]["position"])
-            # If the current vehicle is closer to the traffic light than the previous closest vehicle, update the closest vehicle
-            if distance_to_traffic_light < closest_vehicle_distance:
-                closest_vehicle_index = i
-                closest_vehicle_distance = distance_to_traffic_light
-        if closest_vehicle_distance > 0.0 and closest_vehicle_distance < VehicleCalculations.decelerationDistance:
-            # Apply the deceleration factor to the closest vehicle and all vehicles behind it within the deceleration distance
-            for i in range(closest_vehicle_index, len(vehicles)):
-                distance_to_traffic_light = trafficLight[light_index]["position"] - vehicles[i]["position"]
-                if distance_to_traffic_light <= VehicleCalculations.decelerationDistance:
-                    VehicleCalculations.applyDecelerationFactor(vehicles, i)
-                    # Debug print
-                    # print("Applied Deceleration Factor to Vehicle: ", vehicles[i]["type"])
-
-        # 3.1.2 ELSE IF the first vehicle in front of the light is in the first half of the stopping distance
-        elif distance > (VehicleCalculations.stoppingDistance / 2) and distance < VehicleCalculations.stoppingDistance:
-            # 3.1.2.1 THEN stop the vehicle
-            def stopVehicle(vehicles):
-                # iterate through all vehicles and set them to stop at their current position
-                i = 0
-                while i < len(vehicles):
-                    vehicles[i]["position"] = "position"
-                    i += 1
-            VehicleCalculations.adjustAccelerationToStop(vehicles, i)
+        for k in range(len(vehicles)):
+            distance = (trafficLight[light_index]["position"] - 4) - vehicles[k]["position"] # Calculate distance between traffic light & first vehicle position
+            if (vehicles[k]["road"] == trafficLight[light_index]["road"]):
+                if vehicles[k]["position"] < trafficLight[light_index]["position"]:
+                    lightInBetween = False
+                    for l in trafficLight:
+                        if (l["position"] < trafficLight[light_index]["position"] and l["position"] > vehicles[k]["position"]):
+                            lightInBetween = True
+                    if (not lightInBetween):
+                        if (distance < VehicleCalculations.stoppingDistance):
+                            VehicleCalculations.adjustAccelerationToStop(vehicles, k)
+                            VehicleCalculations.applyDecelerationFactor(vehicles, k)
+                            if (distance > 0 and distance < 0.3):
+                                vehicles[k]["speed"] = 0
+                                vehicles[k]["acceleration"] = 0
     
     lightStates[light_index]["counter"] += 1

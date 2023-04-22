@@ -72,10 +72,7 @@ class AutomaticSimulation:
         # 1. FOR any vehicle in the road network
         for i in range(len(self.vehicle_list)):
             # 3.1 GOES HERE
-            # Execute use-case 3.1 out on the vehicle
-            if self.vehicle_list[i]["type"] == "bus":
-                busStopSimulation(self.bus_stop_list, self.vehicle_list, i)
-            
+            # Execute use-case 3.1 out on the vehicle            
             # print("\n==============")
             # print("Vehicle:" , i)
             # print("==============")
@@ -105,6 +102,10 @@ class AutomaticSimulation:
             # print("    -> cycle: ", self.traffic_light_list[i]["cycle"])
             trafficLightInteraction(self.traffic_light_list, self.vehicle_list, i, self.trafficlight_current_states)
 
+    def bus_stop_on_road(self):
+        for i in range(len(self.bus_stop_list)):
+            busStopSimulation(self.bus_stop_list, self.vehicle_list, i)
+
     def create_vehicle_on_road(self, road, position, speed, acceration, type):
         self.vehicle_list.append({"road": road,
                                   "position": position,
@@ -127,6 +128,7 @@ class AutomaticSimulation:
     def update(self):
         self.vehicle_on_road()
         self.traffic_light_on_road()
+        #self.bus_stop_on_road()
         VehicleCalculations.calculateVehicleOOB(self.vehicle_list, self.road_list, self.to_be_removed)
         
 
