@@ -1,0 +1,105 @@
+<root>
+    <ROAD>
+        <name>S Eastern Ave</name>
+        <length>100</length>
+    </ROAD>
+    <ROAD>
+        <name>E Windmill Pkwy</name>
+        <length>100</length>
+    </ROAD>
+     <ROAD>
+        <name>E Wigwam Ave</name>
+        <length>100</length>
+    </ROAD>
+    <ROAD>
+        <name>N Pecos Rd</name>
+        <length>100</length>
+    </ROAD>
+    <CROSSROADS>
+        <road position="-5">S Eastern Ave</road>
+        <road position="50">E Windmill Pkwy</road>
+    </CROSSROADS>
+    <CROSSROADS>
+        <road position="-5">S Eastern Ave</road>
+        <road position="-50">E Wigwam Ave</road>
+    </CROSSROADS>
+    <CROSSROADS>
+        <road position="5">N Pecos Rd</road>
+        <road position="50">E Windmill Pkwy</road>
+    </CROSSROADS>
+    <CROSSROADS>
+        <road position="5">N Pecos Rd</road>
+        <road position="-50">E Wigwam Ave</road>
+    </CROSSROADS>
+    <TRAFFICLIGHT>
+        <road>E Wigwam Ave</road>
+        <position>50</position>
+        <cycle>100</cycle>
+    </TRAFFICLIGHT>
+    <VEHICLE>
+        <road>S Eastern Ave</road>
+        <position>0</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>bus</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>S Eastern Ave</road>
+        <position>40</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>E Wigwam Ave</road>
+        <position>80</position>
+        <speed>20</speed>
+        <acceleration>1.2</acceleration>
+        <type>police van</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>E Wigwam Ave</road>
+        <position>75</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>N Pecos Rd</road>
+        <position>20</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>N Pecos Rd</road>
+        <position>60</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>E Windmill Pkwy</road>
+        <position>25</position>
+        <speed>20</speed>
+        <acceleration>1.2</acceleration>
+        <type>fire truck</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>E Windmill Pkwy</road>
+        <position>10</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>car</type>
+    </VEHICLE>
+    <BUSSTOP>
+        <road>S Eastern Ave</road>
+        <position>50</position>
+        <waitingtime>20</waitingtime>
+    </BUSSTOP>
+    <BUSSTOP>
+        <road>N Pecos Rd</road>
+        <position>50</position>
+        <waitingtime>20</waitingtime>
+    </BUSSTOP>
+</root>
