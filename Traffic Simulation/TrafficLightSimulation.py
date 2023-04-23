@@ -56,7 +56,7 @@ def trafficLightInteraction (trafficLight, vehicles, light_index, lightStates):
                             lightInBetween = True
                     if (not lightInBetween):
                         if (distance <= VehicleCalculations.stoppingDistance):
-                            if (distance > 10):
+                            if (distance > 1):
                                 VehicleCalculations.adjustAccelerationToStop(vehicles, k)
                                 VehicleCalculations.applyDecelerationFactor(vehicles, k)
                         
