@@ -18,6 +18,7 @@ vehicles = traffic_system.vehicleGeneratorList
 # returns:
 #   none
 def addVehicle():
+    temp = []
     for i in range(len(vehicles)):
-        traffic_system.vehicleList.append({"speed" : vehicles[i]["speed"], "type" : vehicles[i]["type"] ,"name" : vehicles[i]["name"], "position" : vehicles[i]["position"]})
-    return vehicles
+        temp.append({"speed" : vehicles[i]["speed"], "type" : vehicles[i]["type"] ,"name" : vehicles[i]["name"], "position" : vehicles[i]["position"], "acceleration" : vehicles[i]["acceleration"]})
+    return temp

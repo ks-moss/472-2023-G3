@@ -4,11 +4,11 @@
         <length>100</length>
     </ROAD>
     <ROAD>
-        <name>E Windmill Pkwy</name>
+        <name>E Wigwam Ave</name>
         <length>100</length>
     </ROAD>
      <ROAD>
-        <name>E Wigwam Ave</name>
+        <name>E Windmill Pkwy</name>
         <length>100</length>
     </ROAD>
     <ROAD>
@@ -32,14 +32,14 @@
         <road position="-50">E Wigwam Ave</road>
     </CROSSROADS>
     <TRAFFICLIGHT>
-        <road>E Wigwam Ave</road>
+        <road>N Pecos Rd</road>
         <position>50</position>
-        <cycle>100</cycle>
+        <cycle>300</cycle>
     </TRAFFICLIGHT>
     <VEHICLE>
         <road>S Eastern Ave</road>
         <position>0</position>
-        <speed>15</speed>
+        <speed>10</speed>
         <acceleration>1.2</acceleration>
         <type>bus</type>
     </VEHICLE>
@@ -98,7 +98,7 @@
         <waitingtime>20</waitingtime>
     </BUSSTOP>
     <BUSSTOP>
-        <road>N Pecos Rd</road>
+        <road>E Windmill Pkwy</road>
         <position>50</position>
         <waitingtime>20</waitingtime>
     </BUSSTOP>
