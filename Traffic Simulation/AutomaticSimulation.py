@@ -29,7 +29,7 @@ import time
 #   update()
 #       -calls vehicle_on_road() and traffic_light_on_road()
 
-INPUT_FILE_PATCH = "./InputFiles/trafficSim2.xml"
+INPUT_FILE_PATCH = "./InputFiles/prototype2.xml"
 
 class AutomaticSimulation:
     def __init__(self, input_file):
@@ -82,11 +82,8 @@ class AutomaticSimulation:
             # print("    -> acceleration: ", self.vehicle_list[i]["acceleration"])
             # print("    -> type: ", self.vehicle_list[i]["type"])
             
-            # If vehivle is at the intersection, then make a selection and update new position on the road
-            #self.vehicle_list[i]["road"], self.vehicle_list[i]["position"] = self.intersection_sim.is_approaching_N_selected_road(self.vehicle_list[i]["road"], self.vehicle_list[i]["position"])
             # Get new speed and position
             VehicleCalculations.calculateVehicleSpeedAndPosition(self.vehicle_list, i)
-
 
 
     def traffic_light_on_road(self):
