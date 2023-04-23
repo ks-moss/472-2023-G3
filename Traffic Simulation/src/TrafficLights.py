@@ -77,6 +77,11 @@ class TrafficLights(Entity):
         for l in self.tlights:
             l['position'] -= self.roadWidth
 
+        self.update()
+        for r in self.glight.keys():
+            if 'E' == r[0] or 'W' == r[0]:
+                self.glight[r] = False
+
 
     # createTrafficLights
     # called after the TrafficLights class is instantiated

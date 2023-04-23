@@ -22,7 +22,7 @@ class Road(Entity):
              origin = (0, 0),
              scale = (1, 30),
              world_rotation_x = 90,
-             world_rotation_z = 90,
+             world_rotation_z = -90,
              current_color = color.white,
              shader = None)
         
@@ -97,10 +97,10 @@ class RoadGen:
                       'E': (1, 0),
                       'S': (0, -1),
                       'W': (-1, 0)}
-        directionAngle = {'N': 90,
-                          'E': 0,
-                          'S': 270,
-                          'W': 180}
+        directionAngle = {'N': 0,
+                          'E': 90,
+                          'S': 180,
+                          'W': 270}
 
         for intersection in self.crossRoads:
             x = intersection[0]['position']
@@ -131,8 +131,8 @@ class RoadGen:
                 dName = name.split(' ')[0]
                 numD = directions[dName]
 
-                dx = position if not numD[1] else 0
-                dz = position if not numD[0] else 0
+                dx = position if not numD[0] else 0
+                dz = position if not numD[1] else 0
 
                 # get length from roads list
                 for r in self.roads:
@@ -148,14 +148,15 @@ class RoadGen:
                                rotation_x = 0,
                                rotation_y = directionAngle[dName],
                                rotation_z = 0,
-                               scale_z = length,
                                scale_x = self.roadWidth,
-                               scale_y = 1)
+                               scale_y = 1,
+                               scale_z = length)
                 
                 self.roadObjs.append(roadObj)
 
                 # create starting point entities
                 startPoint = Entity(parent = roadObj,
+                                    model = 'cube',
                                     z = -0.5,
                                     y = 1,
                                     scale = (1 / self.roadWidth, 1, 1 / length))

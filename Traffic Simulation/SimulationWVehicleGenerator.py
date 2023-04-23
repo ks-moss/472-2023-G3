@@ -33,8 +33,8 @@ import os
 #       -calls vehicle_on_road(), traffic_light_on_road(), and vehicle_generator_update()
 class VehicleGeneratorSimulation(AutomaticSimulation):
 
-    def __init__(self, input_file):
-        super().__init__()
+    def __init__(self, input_file, sim_file):
+        super().__init__(sim_file)
         if (input_file != ""):
             self.trafficSystem = TrafficSystem()
             self.trafficSystem.ReadElementsFromFile(input_file)
@@ -63,10 +63,13 @@ class VehicleGeneratorSimulation(AutomaticSimulation):
                     noVehicle = False
             # 3.1.1.1 (If all of the above) THEN add vehicle to road at position 0
             if (noVehicle and self.vehicle_generator_ready[i]["ready"]):
-                self.vehicle_list.append({"road": self.vehicle_generator_list[i]["name"], "position": 0, "speed": 10, "acceleration": 1.2})
+                gen = self.vehicle_generator_list[i]
+                self.vehicle_list.append({"road": gen["name"], "position": gen["position"], "speed": gen["speed"], "acceleration": gen["acceleration"], "type":gen["type"]})
                 # Reset vehicle generator ready
                 self.vehicle_generator_ready[i]["ready"] = False
                 self.vehicle_generator_ready[i]["counter"] = 0
+                return True
+        return False
 
     # overrides AutomaticSimulation update()
     def update(self):

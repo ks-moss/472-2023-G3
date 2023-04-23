@@ -46,7 +46,7 @@ class AutomaticSimulation:
         # Get Crossroads
         self.intersection_list = self.trafficSystem.intersectionList
         # Simulate Intersection
-        self.intersection_sim = IntersectionSim(self.intersection_list, self.road_list)
+        self.intersection_sim = IntersectionSim(self.intersection_list, self.road_list, self.traffic_light_list)
         #Get Bus Stop list
         self.bust_stop_list = self.trafficSystem.busStopList
         # List of indices of vehicles that are out of bounds

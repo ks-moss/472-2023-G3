@@ -11,6 +11,7 @@ except Exception as e:
     
 # source modules
 from AutomaticSimulation import AutomaticSimulation
+from SimulationWVehicleGenerator import VehicleGeneratorSimulation
 from src.RoadGen import RoadGen
 from src.VehicleFactory import VehicleFactory
 from src.TrafficLights import TrafficLights
@@ -120,14 +121,14 @@ class GraphicsEngine(Ursina):
         window.borderless = False
         window.fullscreen = False
         window.exit_button.disable()
-        window.fps_counter.disable()
+        # window.fps_counter.disable()
         window.cog_button.disable()
 
         # create custom camera class
         self.cam = Camera(gravity = 0)
 
         # create simulation data object
-        self.simData = AutomaticSimulation("./InputFiles/trafficSim3.xml")
+        self.simData = VehicleGeneratorSimulation("./InputFiles/vehicleGen2.xml", "./InputFiles/trafficSim3.xml")
 
         self.createScene()
 

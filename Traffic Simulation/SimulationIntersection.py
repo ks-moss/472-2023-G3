@@ -1,5 +1,5 @@
 import random as rng
-rng.seed(rng.random)
+rng.seed(rng.random())
 
 #3.7 Simulation of intersections
 
