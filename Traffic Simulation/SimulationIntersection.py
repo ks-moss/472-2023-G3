@@ -1,3 +1,6 @@
+import random as rng
+rng.seed(rng.random)
+
 #3.7 Simulation of intersections
 
 # Goal:
@@ -30,9 +33,10 @@
 
 class IntersectionSim:
 
-    def __init__(self, intersections_data, roads_data):
+    def __init__(self, intersections_data, roads_data, trafficLight_data):
         self.intersection_list = intersections_data
         self.road_list = roads_data
+        self.trafficLight_list = trafficLight_data
 
         
 
@@ -44,11 +48,15 @@ class IntersectionSim:
         for i in range(len(self.intersection_list)):
             for j in range(len(self.intersection_list[i])):
 
-                trafficlight_position = (self.intersection_list[i][j]["position"])
-                
-                     
-                 # Check if vehicle is on the same road as the intersection
-                if (vehicle_road == self.intersection_list[i][j]["road"] and vehicle_position < trafficlight_position + 0.18):
+                if self.intersection_list[i][j]['road'] != vehicle_road:
+                    continue
+
+                trafficLights = [l if l['road'] == vehicle_road else None for l in self.trafficLight_list]
+                trafficlight = trafficLights[i*2 + j]
+                trafficlight_position = trafficlight['position']
+                        
+                # Check if vehicle is on the same road as the intersection
+                if (vehicle_road == self.intersection_list[i][j]["road"] and vehicle_position < trafficlight_position + 0.5):
                     # print("______________________________________________________")
                     # print("| VEHICLE IS APPROACHING THE INTERSECTION(S)")
                     # print("______________________________________________________")
@@ -58,7 +66,7 @@ class IntersectionSim:
                     # print("| Intersection Position: ", trafficlight_position)
                     # print("______________________________________________________\n")
                           
-                    if (vehicle_position > trafficlight_position): 
+                    if (vehicle_position > trafficlight_position and rng.choice([True, False])): 
 
                         if(j == 0):       
                             selected_road = self.intersection_list[i][1]["road"]      
@@ -66,15 +74,14 @@ class IntersectionSim:
                             selected_road = self.intersection_list[i][0]["road"]
                     
                         # Update position after making a turn
-                        for k in range(len(self.road_list)):
-                            if(selected_road == self.road_list[k]["name"]):
-                                get_position = self.road_list[k]["length"] - vehicle_position
+                        get_position = self.trafficLight_list[self.trafficLight_list.index(trafficlight) + (-1 if j else 1)]['position'] + 10
 
                         # print("------------------------| Vehivle make a TURN to: ", selected_road)
                         # print("------------------------| Current Position: ", get_position)
                         # print("______________________________________________________\n")
-    
-        return selected_road, get_position
+
+                        return selected_road, get_position
+        return vehicle_road, vehicle_position
 
        
 
