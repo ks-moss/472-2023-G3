@@ -55,8 +55,12 @@ def trafficLightInteraction (trafficLight, vehicles, light_index, lightStates):
                         if (l["position"] < trafficLight[light_index]["position"] and l["position"] > vehicles[k]["position"]):
                             lightInBetween = True
                     if (not lightInBetween):
-                        if (distance < VehicleCalculations.stoppingDistance):
-                            if (distance > 0 and distance < 0.3):
+                        if (distance <= VehicleCalculations.stoppingDistance):
+                            if (distance > 10):
+                                VehicleCalculations.adjustAccelerationToStop(vehicles, k)
+                                VehicleCalculations.applyDecelerationFactor(vehicles, k)
+                        
+                            if (distance > 0 and distance < 1):
                                 vehicles[k]["speed"] = 0
                                 vehicles[k]["acceleration"] = 0
                                 
@@ -72,7 +76,7 @@ def trafficLightInteraction (trafficLight, vehicles, light_index, lightStates):
                         if (l["position"] < trafficLight[light_index]["position"] and l["position"] > vehicles[k]["position"]):
                             lightInBetween = True
                     if (not lightInBetween):
-                        if (distance < VehicleCalculations.stoppingDistance):
+                        if (distance <= VehicleCalculations.stoppingDistance):
                             VehicleCalculations.adjustAccelerationToStop(vehicles, k)
                             VehicleCalculations.applyDecelerationFactor(vehicles, k)
                             if (distance > 0 and distance < 0.3):

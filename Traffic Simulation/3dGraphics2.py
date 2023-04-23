@@ -278,8 +278,8 @@ def updateTrafficLights():
             l.color = color.yellow
 
 
-def vehicle_direction_control():
-    print("vehicle_direction_control is INCOMPLETE")
+# def vehicle_direction_control():
+#     print("vehicle_direction_control is INCOMPLETE")
 
     # INCPMPLETE
 
@@ -300,7 +300,7 @@ def update():
     removeCarsOutOfBounds()
     updateCarPositions()
     updateTrafficLights()
-    vehicle_direction_control()
+    # vehicle_direction_control()
     
 
 # Create the button
