@@ -79,7 +79,7 @@ def trafficLightInteraction (trafficLight, vehicles, light_index, lightStates):
                         if (distance <= VehicleCalculations.stoppingDistance):
                             VehicleCalculations.adjustAccelerationToStop(vehicles, k)
                             VehicleCalculations.applyDecelerationFactor(vehicles, k)
-                            if (distance > 0 and distance < 0.3):
+                            if (distance > 0 and distance < 1):
                                 vehicles[k]["speed"] = 0
                                 vehicles[k]["acceleration"] = 0
 
