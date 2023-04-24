@@ -17,8 +17,8 @@ camera.rotation = (25, -45, 45)
 camera.fov = 90
 
 # create base
-box = Entity(model='quad', scale=(250))
-box.texture=load_texture(f'textures/desert.png')
+box = Entity(model='quad', scale=(280,200,0), color="76AE76")
+box.position = (0, 0, 20)
 
 vehicles = []
 triggerboxes = []
@@ -85,6 +85,7 @@ for i in range(len(trafficSystem.road_list)):
         roadText.y = (e.y / (50*num_EW_roads)) - .02
         roadText.z = -2
 
+# TRAFFICLIGHT in xml file
 # Initialize traffic lights
 lights_Entity_objects = [] # list of traffic light entities
 def initializeTrafficLights():
@@ -93,7 +94,7 @@ def initializeTrafficLights():
             r = roads_Entity_objects[i]
             if (r.name == t["road"]):
                 road_index = i
-        
+
         r1 = roads_Entity_objects[road_index]
         if (r1.name[0] == "N" or r1.name[0] == "S") and r1.name[1] == " ":
             NS_traffic_y = (t["position"]-50) + ((100-trafficSystem.road_list[road_index]["length"])/2)
@@ -101,17 +102,18 @@ def initializeTrafficLights():
             NS_traffic_Entity.x = r1.x
             NS_traffic_Entity.y = NS_traffic_y + 4
             NS_traffic_Entity.z = -.5
-            NS_traffic_Entity.name = t["position"]
+            NS_traffic_Entity.name = t["road"]
             lights_Entity_objects.append(NS_traffic_Entity)
 
         elif (r1.name[0] == "E" or r1.name[0] == "W") and r1.name[1] == " ":
             EW_traffic_x = (t["position"]-50) + ((100-trafficSystem.road_list[road_index]["length"])/2)
-            EW_traffic_Entity = Entity(model='cube', scale=(0.5, 5, 1), color= color.green)
+            EW_traffic_Entity = Entity(model='cube', scale=(0.5, 5, 1), color= color.red)
             EW_traffic_Entity.x = EW_traffic_x + 4
             EW_traffic_Entity.y = r1.y
             EW_traffic_Entity.z = -.5
-            EW_traffic_Entity.name = t["position"]
+            EW_traffic_Entity.name = t["road"]
             lights_Entity_objects.append(EW_traffic_Entity)
+
 
 
 
@@ -146,7 +148,7 @@ def initializeIntersections():
             EW_traffic_Entity.x = r1.x + 4
             EW_traffic_Entity.y = r2.y
             EW_traffic_Entity.z = -.5
-            NS_traffic_Entity.name = i[1]["road"]
+            EW_traffic_Entity.name = i[1]["road"]
             lights_Entity_objects.append(EW_traffic_Entity)
         
         else:
@@ -279,7 +281,8 @@ def updateTrafficLights():
 
 
 def vehicle_direction_control():
-    print("vehicle_direction_control is INCOMPLETE")
+    print("")
+    # print("vehicle_direction_control is INCOMPLETE")
 
     # INCPMPLETE
 
@@ -300,7 +303,7 @@ def update():
     removeCarsOutOfBounds()
     updateCarPositions()
     updateTrafficLights()
-    vehicle_direction_control()
+   # vehicle_direction_control()
     
 
 # Create the button
@@ -339,9 +342,61 @@ def on_add_vehicle_button_click():
 
         trafficSystem.create_vehicle_on_road(road, position, speed, acceleration, type)
         createVehicleEntity(len(trafficSystem.vehicle_list)-1)
+
+def add_traffic_light_button_click():
+
+    store_dup = []
+    for i in range(len(lights_Entity_objects)):
+        found = False
+        for j in range(len(store_dup)):
+            if store_dup[j][0] == str(lights_Entity_objects[i]):
+                store_dup[j][1] += 1
+                found = True
+                break
+        if not found:
+            store_dup.append([str(lights_Entity_objects[i].name), 1])
+
+
+    store_dup = sorted(store_dup, key=lambda x: x[1], reverse=False)
+
+    first = store_dup[0]
+
+    if (first[1] < 3):
+
+        for i in range(len(roads_Entity_objects)):
+            r = roads_Entity_objects[i]
+
+            if (r.name == first[0]):
+
+                if (first[0][0] == "N" or first[0][0] == "S") and first[0][1] == " ":
+                    NS_traffic_y = ((100-trafficSystem.road_list[i]["length"])/2)
+                    NS_traffic_Entity = Entity(model='cube', scale=(5, 0.5, 1), color= color.green)
+                    NS_traffic_Entity.x = r.x
+                    NS_traffic_Entity.y = NS_traffic_y + 4
+                    NS_traffic_Entity.z = -.5
+                    NS_traffic_Entity.name = first[0]
+                    trafficSystem.create_traffic_light_on_road(first[0], 55, 300, "green")
+                    lights_Entity_objects.append(NS_traffic_Entity)
+
+                elif (first[0][0] == "E" or first[0][0] == "W") and first[0][1] == " ":
+                    EW_traffic_x = ((100-trafficSystem.road_list[i]["length"])/2)
+                    EW_traffic_Entity = Entity(model='cube', scale=(0.5, 5, 1), color= color.red)
+                    EW_traffic_Entity.x = EW_traffic_x + 4
+                    EW_traffic_Entity.y = r.y
+                    EW_traffic_Entity.z = -.5
+                    EW_traffic_Entity.name = first[0]
+                    trafficSystem.create_traffic_light_on_road(first[0], 55, 300, "green")
+                    lights_Entity_objects.append(EW_traffic_Entity)
+    else:
+        print("Cannot add anymore traffic light!")
+
+
+
+    
     
 
-button = Button(text='Add\nVehicle', color=color.azure, highlight_color=color.cyan, position=(0.50, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_add_vehicle_button_click)
-restartButton = Button(text='Restart\nSimulation', color=rgb(128, 128, 0), highlight_color=color.cyan, position=(0.38, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_restart_button_click)
-endButton = Button(text='End\nSimulation', color=rgb(128, 0, 0), highlight_color=color.red, position=(0.62, 0.45), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_end_button_click)
+add_vehicles_button = Button(text='Add\nVehicle', color=color.azure, highlight_color=color.cyan, position=(0.50, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_add_vehicle_button_click)
+restartButton = Button(text='Restart\nSimulation', color=rgb(128, 128, 0), highlight_color=color.cyan, position=(0.38, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_restart_button_click)
+endButton = Button(text='End\nSimulation', color=rgb(128, 0, 0), highlight_color=color.red, position=(0.62, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=on_end_button_click)
+addBusStop = Button(text='Add\nTraffic\nLight', color=color.blue, highlight_color=color.cyan, position=(.44, 0.34), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=add_traffic_light_button_click)
 app.run()
