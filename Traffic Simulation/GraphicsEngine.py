@@ -1,31 +1,35 @@
 #2.3
-from AutomaticSimulation import AutomaticSimulation
-from src.RoadGen import RoadGen
-from src.VehicleFactory import VehicleFactory
-from src.TrafficLights import TrafficLights
-from src.SunLight import SunLight
-
-from types import MethodType
-from panda3d.core import DirectionalLight as pandaDirectionalLight
-from direct.stdpy import thread
-
 # importing Ursina Engine
 try:
     from ursina import *
     from ursina.shaders import lit_with_shadows_shader
     from ursina.prefabs.first_person_controller import FirstPersonController
     
-except(e):
-    print('Make sure to install Ursina Engine via "pip install ursina"')
+except Exception as e:
+    print('Make sure to install Ursina Engine via "pip install ursina"', e)
     exit()
+    
+# source modules
+from AutomaticSimulation import AutomaticSimulation
+from SimulationWVehicleGenerator import VehicleGeneratorSimulation
+from src.RoadGen import RoadGen
+from src.VehicleFactory import VehicleFactory
+from src.TrafficLights import TrafficLights
+from src.SunLight import SunLight
+from src.BusStops import BusStops
+
+# python modules
+from threading import Thread
+
 
 
 # what to do next
-#TODO add vehicle generator
 #TODO clean and reset scene
 #TODO 4.1 GUI for simulation
 #TODO 4.2 GUI for traffic lights
 #TODO 4.3 GUI for vehicle generator
+#TODO reduce lag | frame drops
+#TODO maybe add some flair
 
 
 # Camera Class
@@ -33,6 +37,8 @@ except(e):
 # converts the 1st person camera to 3rd person and modifies the
 # default controls to be clamped between the ground at normal of ground
 class Camera(FirstPersonController):
+
+    CAM_SPEED = 50
 
     # Called when instantiated in @GraphicsEngine.__init__
     # modifies the default FirstPersonController fields
@@ -50,7 +56,8 @@ class Camera(FirstPersonController):
         camera.rotation_x = 90
         camera.y = 100  # distance from origin
         camera.fov = 120
-        self.focusTimer = 100
+        self.focusTimer = 0
+        self.add_to_scene_entities = False
     
 
     # called when the left mouse button is clicked
@@ -65,7 +72,7 @@ class Camera(FirstPersonController):
         
         self.targetx = mouse.collisions[0].entity.world_x
         self.targetz = mouse.collisions[0].entity.world_z
-        self.focusTimer = 0
+        self.focusTimer = self.CAM_SPEED
         self.oldx = self.x
         self.oldz = self.z
 
@@ -84,11 +91,11 @@ class Camera(FirstPersonController):
             self.camera_pivot.rotation_x -= mouse.velocity[1] * self.mouse_sensitivity[0]
             self.camera_pivot.rotation_x = clamp(self.camera_pivot.rotation_x, -90, 0)
 
-        if self.focusTimer < 100:
-            self.focusTimer += 1
-            t = self.focusTimer / 100
-            self.x = lerp(self.oldx, self.targetx, t)
-            self.z = lerp(self.oldz, self.targetz, t)
+        if self.focusTimer > 0:
+            self.focusTimer -= 1
+            t = self.focusTimer / self.CAM_SPEED
+            self.x = lerp(self.targetx, self.oldx, t)
+            self.z = lerp(self.targetz, self.oldz, t)
         
 
 
@@ -100,7 +107,7 @@ class Camera(FirstPersonController):
 class GraphicsEngine(Ursina):
 
     # CLASS VARIABLES
-    ROAD_WIDTH = 5         # block size of road (ex. 50 => road.len = 100 => 2 blocks)
+    ROAD_WIDTH = 6         # block size of road (ex. 50 => road.len = 100 => 2 blocks)
     ZOOM_SENSITIVITY = 10    # sensitivity of zoooooom
 
     # Called when the GraphicsEngine class is instantiated
@@ -112,18 +119,18 @@ class GraphicsEngine(Ursina):
 
         # window module settings
         window.title = "Traffic Simulation 3D"
-        window.vsync = True
+        window.vsync = False
         window.borderless = False
         window.fullscreen = False
         window.exit_button.disable()
-        window.fps_counter.disable()
+        # window.fps_counter.disable()
         window.cog_button.disable()
 
         # create custom camera class
         self.cam = Camera(gravity = 0)
 
         # create simulation data object
-        self.simData = AutomaticSimulation()
+        self.simData = VehicleGeneratorSimulation("./InputFiles/trafficSim3.xml")
 
         self.createScene()
 
@@ -133,14 +140,22 @@ class GraphicsEngine(Ursina):
     # calls the functions that creates the scene up.
     def createScene(self):
         Entity.default_shader = lit_with_shadows_shader
-        try:
-            thread.start_new_thread(function= self.load_assets, args='')
-        except Exception as e:
-            print("error starting thread", e)
-        self.createEnvironment()
-        self.createWorldMap()
-        self.addDefaultVehicles()
-        self.createTrafficLights()
+        t1 = Thread(target = self.load_assets)
+        t2 = Thread(target = self.createEnvironment)
+        t3 = Thread(target = self.createWorldMap)
+        t4 = Thread(target = self.addDefaultVehicles)
+        t5 = Thread(target = self.createTrafficLights)
+        t6 = Thread(target = self.createBusStops)
+
+        t1.start()
+        t2.start()
+        t3.start()      # still don't know how the loading times are still slow
+
+        # t4, t5, & t6 need startingPoints from t3
+        t3.join()
+        t4.start()
+        t5.start()
+        t6.start()
 
     
     def load_assets(self):
@@ -170,14 +185,14 @@ class GraphicsEngine(Ursina):
         self.terrain = Entity(model = 'quad', 
                               scale = (10000, 10000, 0), 
                               position = (0, 0, 0), 
-                              texture = 'grass', 
+                              texture = 'softgrass', 
                               rotation_x = 90,
                               collider = None)
         self.terrain.texture_scale = Vec2(100, 100)
 
         # sky
         sun = SunLight(direction = (-0.7, -0.9, 0.5),
-                       resolution= 3072,
+                       resolution= 3072 * 4,
                        focus = self.terrain)
         scene.fog_density = 0.002
         Sky()
@@ -197,6 +212,11 @@ class GraphicsEngine(Ursina):
     def createTrafficLights(self):
         self.trafficLights = TrafficLights(self.simData, self.startingPoints)
         self.trafficLights.createTrafficLights()
+
+    
+    def createBusStops(self):
+        self.busStops = BusStops(self.simData, self.startingPoints)
+        self.busStops.createBusStops()
 
 
     # resetSimulation

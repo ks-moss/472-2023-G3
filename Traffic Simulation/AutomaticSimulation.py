@@ -6,6 +6,7 @@ from SimulationIntersection import *
 from BusStopSimulation import *
 import os
 import time
+import __main__
 
 # Goal: Run simulation automatically
 # Precondition: The system contains a diagram of the virtual road network.
@@ -51,7 +52,7 @@ class AutomaticSimulation:
         # Get Crossroads
         self.intersection_list = self.trafficSystem.intersectionList
         # Simulate Intersection
-        self.intersection_sim = IntersectionSim(self.intersection_list, self.road_list)
+        self.intersection_sim = IntersectionSim(self.intersection_list, self.road_list, self.traffic_light_list)
         #Get Bus Stop list
         self.bus_stop_list = self.trafficSystem.busStopList
         # List of indices of vehicles that are out of bounds
@@ -84,6 +85,9 @@ class AutomaticSimulation:
             
             # Get new speed and position
             VehicleCalculations.calculateVehicleSpeedAndPosition(self.vehicle_list, i)
+            if 'GraphicsEngine.py' in __main__.__file__:
+                self.vehicle_list[i]['road'], self.vehicle_list[i]['position'] = self.intersection_sim.is_approaching_N_selected_road(self.vehicle_list[i]['road'], self.vehicle_list[i]['position'])
+
 
 
     def traffic_light_on_road(self):

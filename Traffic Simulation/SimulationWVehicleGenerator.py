@@ -55,14 +55,18 @@ class VehicleGeneratorSimulation(AutomaticSimulation):
             # 3.1.1 If no vehicle on road between positions 0 and 2*(length of vehicle)
             noVehicle = True
             for v in self.vehicle_list:
-                if (v["road"] == self.vehicle_generator_list[i]["name"]) and (v["position"] <= (VehicleCalculations.length * 2)):
+                vType = VehicleCalculations.vehicleType[self.vehicle_generator_list[i]['type']]
+                if (v["road"] == self.vehicle_generator_list[i]["name"]) and (v["position"] <= (VehicleCalculations.lengths[vType] * 2)):
                     noVehicle = False
             # 3.1.1.1 (If all of the above) THEN add vehicle to road at position 0
             if (noVehicle and self.vehicle_generator_ready[i]["ready"]):
-                self.vehicle_list.append({"road": self.vehicle_generator_list[i]["name"], "position": 0, "speed": 10, "acceleration": 1.2})
+                gen = self.vehicle_generator_list[i]
+                self.vehicle_list.append({"road": gen["name"], "position": gen["position"], "speed": gen["speed"], "acceleration": gen["acceleration"], "type":gen["type"]})
                 # Reset vehicle generator ready
                 self.vehicle_generator_ready[i]["ready"] = False
                 self.vehicle_generator_ready[i]["counter"] = 0
+                return True
+        return False
 
     # overrides AutomaticSimulation update()
     def update(self):
