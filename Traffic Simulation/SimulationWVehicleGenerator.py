@@ -33,12 +33,8 @@ import os
 #       -calls vehicle_on_road(), traffic_light_on_road(), and vehicle_generator_update()
 class VehicleGeneratorSimulation(AutomaticSimulation):
 
-    def __init__(self, input_file, sim_file):
-        super().__init__(sim_file)
-        if (input_file != ""):
-            self.trafficSystem = TrafficSystem()
-            self.trafficSystem.ReadElementsFromFile(input_file)
-            self.file_name = os.path.basename(input_file)
+    def __init__(self, input_file):
+        super().__init__(input_file)
         # Get Vehicle Generator List
         self.vehicle_generator_list = self.trafficSystem.vehicleGeneratorList
         # Declare and initalize list of Vehicle Generator dictionaries to keep track of VGs
@@ -74,5 +70,4 @@ class VehicleGeneratorSimulation(AutomaticSimulation):
     # overrides AutomaticSimulation update()
     def update(self):
         self.vehicle_generator_update()
-        self.vehicle_on_road()
-        self.traffic_light_on_road()
+        super().update()

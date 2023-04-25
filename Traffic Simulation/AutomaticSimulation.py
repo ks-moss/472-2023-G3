@@ -29,14 +29,19 @@ import time
 #   update()
 #       -calls vehicle_on_road() and traffic_light_on_road()
 
+INPUT_FILE_PATCH = "./InputFiles/prototype2.xml"
 
 class AutomaticSimulation:
-    def __init__(self, INPUT_FILE_PATCH = "./InputFiles/trafficSim2.xml"):
-        self.green_light = green_light
+    def __init__(self, input_file):
         # create a TrafficSystem object from the input file
-        self.trafficSystem = TrafficSystem()
-        self.trafficSystem.ReadElementsFromFile(INPUT_FILE_PATCH) 
-        self.file_name = os.path.basename(INPUT_FILE_PATCH)       
+        if (input_file != ""):
+            self.trafficSystem = TrafficSystem()
+            self.trafficSystem.ReadElementsFromFile(input_file)
+            self.file_name = os.path.basename(input_file)
+        else:
+            self.trafficSystem = TrafficSystem()
+            self.trafficSystem.ReadElementsFromFile(INPUT_FILE_PATCH) 
+            self.file_name = os.path.basename(INPUT_FILE_PATCH)       
         # Get Vehicle List
         self.vehicle_list = self.trafficSystem.vehicleList
         # Get Traffic Light List
@@ -48,15 +53,18 @@ class AutomaticSimulation:
         # Simulate Intersection
         self.intersection_sim = IntersectionSim(self.intersection_list, self.road_list, self.traffic_light_list)
         #Get Bus Stop list
-        self.bust_stop_list = self.trafficSystem.busStopList
+        self.bus_stop_list = self.trafficSystem.busStopList
         # List of indices of vehicles that are out of bounds
         self.to_be_removed = []
 
-        
         # Store current state of trafficlight
-        self.trafficlight_current_state = []
+        self.trafficlight_current_states = []
         for i in range(len(self.traffic_light_list)):
-            self.trafficlight_current_state.append({"road": '', "position": 0, "cycle" : 0})
+            if i%2 == 0:
+                color = "green"
+            else:
+                color = "red"
+            self.trafficlight_current_states.append({"color": color, "counter": 0})
 
     def vehicle_on_road(self):
         
@@ -64,10 +72,7 @@ class AutomaticSimulation:
         # 1. FOR any vehicle in the road network
         for i in range(len(self.vehicle_list)):
             # 3.1 GOES HERE
-            # Execute use-case 3.1 out on the vehicle
-            if self.vehicle_list[i]["type"] == "bus":
-                busStopSimulation(self.bust_stop_list, self.vehicle_list, i)
-            
+            # Execute use-case 3.1 out on the vehicle            
             # print("\n==============")
             # print("Vehicle:" , i)
             # print("==============")
@@ -77,11 +82,8 @@ class AutomaticSimulation:
             # print("    -> acceleration: ", self.vehicle_list[i]["acceleration"])
             # print("    -> type: ", self.vehicle_list[i]["type"])
             
-            # If vehivle is at the intersection, then make a selection and update new position on the road
-            self.vehicle_list[i]["road"], self.vehicle_list[i]["position"] = self.intersection_sim.is_approaching_N_selected_road(self.vehicle_list[i]["road"], self.vehicle_list[i]["position"])
             # Get new speed and position
             VehicleCalculations.calculateVehicleSpeedAndPosition(self.vehicle_list, i)
-
 
 
     def traffic_light_on_road(self):
@@ -95,10 +97,11 @@ class AutomaticSimulation:
             # print("Road: ", self.traffic_light_list[i]["road"])
             # print("    -> position: ", self.traffic_light_list[i]["position"])
             # print("    -> cycle: ", self.traffic_light_list[i]["cycle"])
-            self.trafficlight_current_state[i]["road"] = self.traffic_light_list[i]["road"]
-            self.trafficlight_current_state[i]["position"] = self.traffic_light_list[i]["position"]
-            self.trafficlight_current_state[i]["cycle"] = self.traffic_light_list[i]["cycle"]
-            trafficLightInteraction(self.traffic_light_list, self.vehicle_list, i)
+            trafficLightInteraction(self.traffic_light_list, self.vehicle_list, i, self.trafficlight_current_states)
+
+    def bus_stop_on_road(self):
+        for i in range(len(self.bus_stop_list)):
+            busStopSimulation(self.bus_stop_list, self.vehicle_list, i)
 
     def create_vehicle_on_road(self, road, position, speed, acceration, type):
         self.vehicle_list.append({"road": road,
@@ -113,9 +116,16 @@ class AutomaticSimulation:
         
         self.to_be_removed.clear()
 
+    def create_traffic_light_on_road(self, road, position, cycle, color):
+        self.traffic_light_list.append({"road": road,
+                                        "position": position, 
+                                        "cycle": cycle})
+        self.trafficlight_current_states.append({"color": color, "counter": 0})
+
     def update(self):
         self.vehicle_on_road()
         self.traffic_light_on_road()
+        #self.bus_stop_on_road()
         VehicleCalculations.calculateVehicleOOB(self.vehicle_list, self.road_list, self.to_be_removed)
         
 

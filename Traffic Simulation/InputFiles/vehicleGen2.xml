@@ -1,10 +1,34 @@
 <root>
 	<VEHICLEGENERATOR>
+		<name>S Eastern Ave</name>
+		<frequency>10</frequency>
+		<position>0</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+		<type>car</type>
+	</VEHICLEGENERATOR>
+	<VEHICLEGENERATOR>
+		<name>E Windmill Pkwy</name>
+		<frequency>10</frequency>
+		<position>0</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+		<type>car</type>
+	</VEHICLEGENERATOR>
+	<VEHICLEGENERATOR>
+		<name>N Pecos Rd</name>
+		<frequency>10</frequency>
+		<position>0</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+		<type>car</type>
+	</VEHICLEGENERATOR>
+	<VEHICLEGENERATOR>
 		<name>E Windmall Pkwy</name>
 		<frequency>1</frequency>
 		<position>0</position>
         <speed>15</speed>
         <acceleration>1.2</acceleration>
-		<type>auto</type>
+		<type>car</type>
 	</VEHICLEGENERATOR>
 </root>
