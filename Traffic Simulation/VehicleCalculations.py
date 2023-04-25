@@ -38,14 +38,14 @@ for obj in list_of_objects:
     # types[0] = car, lengths[0] = 4 (car's length)
 
 #tentative variable to choose type of vehicle from config file (json)
-setVehicle = 0; #0 = car
+vehicleType = {"car": 0, "bus": 1, "fire truck": 2, "ambulance": 3, "police van": 4}
 
-type = types[setVehicle]
+"""type = types[setVehicle]
 length = lengths[setVehicle]
 maximumSpeed = maxSpeeds[setVehicle]
 maximumAcceleration = maxAccels[setVehicle]
 maximumBrakingFactor = maxBrakingFactors[setVehicle]
-minimumFollowingDistance = minFollowingDists[setVehicle]
+minimumFollowingDistance = minFollowingDists[setVehicle]"""
 
 # vehicles = trafficSystem.vehicleList
 # Appendix B.6 - Default Values
@@ -70,6 +70,7 @@ def calculateVehicleSpeedAndPosition(vehicleList: TrafficSystem, vehicleIndex):
     vehicle = vehicleList[vehicleIndex]
     speed = vehicle["speed"]
     position = vehicle["position"]
+    calculateAcceleration(vehicleList, vehicleIndex)
     acceleration = vehicle["acceleration"]
     
     if (speed + acceleration*simulationTime) < 0:
@@ -95,31 +96,28 @@ def calculateVehicleSpeedAndPosition(vehicleList: TrafficSystem, vehicleIndex):
 #   none
 def calculateAcceleration(vehicleList: TrafficSystem, vehicleIndex):
     vehicle = vehicleList[vehicleIndex]
-    frontVehicle = {"position": 999999999}
-    vehicleExists = False  
+    speed = vehicle["speed"]
+    typeIndex = vehicleType[vehicle["type"]]
+
+    closestVehicle = {"position": 999999999}
     for i in range(len(vehicleList)):
         currVehicle = vehicleList[i]
         if (i != vehicleIndex and currVehicle["road"] == vehicle["road"] and 
             currVehicle["position"] > vehicle["position"]):
-            vehicleExists = True
-            if (frontVehicle["position"] > currVehicle["position"]):
-                frontVehicle = vehicleList[i]
+            if (closestVehicle["position"] > currVehicle["position"]):
+                closestVehicle = currVehicle
 
-    speed = vehicle["speed"]
-    
-    # print("Front Vehicle Position ", frontVehicle["position"])
-    # print("Back Vehicle Position ", backVehicle["position"])
-    # print("Position Difference ", positionDifference)
-
-
-    if(vehicleExists == True):
-        positionDifference = frontVehicle["position"] - vehicle["position"] - length
-        speedDifference = speed - frontVehicle["speed"]
-        vehicleInteration = ((minimumFollowingDistance + max(0, speed + ((speed*speedDifference)/(2*math.sqrt(maximumAcceleration*maximumBrakingFactor)))))/positionDifference)
+    if(closestVehicle["position"] != 999999999):
+        positionDifference = closestVehicle["position"] - vehicle["position"] - lengths[typeIndex]
+        if (positionDifference < 3):
+            speedDifference = speed - closestVehicle["speed"]
+            vehicleInteration = ((minFollowingDists[typeIndex] + max(0, speed + ((speed*speedDifference)/(2*math.sqrt(maxAccels[typeIndex]*maxBrakingFactors[typeIndex])))))/positionDifference)
+        else:
+            vehicleInteration = 0
     else:
         vehicleInteration = 0
     
-    acceleration = maximumAcceleration*(1 - (speed/maximumSpeed)**4 - vehicleInteration**2)
+    acceleration = maxAccels[typeIndex]*(1 - (speed/maxSpeeds[typeIndex])**4 - vehicleInteration**2)
 
     vehicle["acceleration"] = acceleration
     #DEBUG
@@ -154,8 +152,10 @@ def adjustDesiredMaxSpeed(isSlowingDown):
 #   none
 def adjustAccelerationToStop(vehicles, vehicleIndex):
     # Eq:  a = -(b_max*v / v_max)
-    currentSpeed = vehicles[vehicleIndex]["speed"]
-    vehicles[vehicleIndex]["acceleration"] = -1 * ((maximumBrakingFactor * currentSpeed) / maximumSpeed)
+    vehicle = vehicles[vehicleIndex]
+    typeIndex = vehicleType[vehicle["type"]]
+    currentSpeed = vehicle["speed"]
+    vehicle["acceleration"] = -1 * ((maxBrakingFactors[typeIndex] * currentSpeed) / maxSpeeds[typeIndex])
 
 
 # Checks to see if each vehicle is out of bounds by 
@@ -201,7 +201,7 @@ def calculateVehicleOOB(vehicleList: TrafficSystem, roadList: TrafficSystem, to_
 #   void
 def applyDecelerationFactor(vehicles, i):
 
-    deceleration_factor = 0.5  # Slow it down by half
+    deceleration_factor = 0.2  # Slow it down by half
     
     # Apply the deceleration factor to the ith vehicle
     vehicles[i]["acceleration"] *= deceleration_factor
