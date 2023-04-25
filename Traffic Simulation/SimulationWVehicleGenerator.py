@@ -55,7 +55,8 @@ class VehicleGeneratorSimulation(AutomaticSimulation):
             # 3.1.1 If no vehicle on road between positions 0 and 2*(length of vehicle)
             noVehicle = True
             for v in self.vehicle_list:
-                if (v["road"] == self.vehicle_generator_list[i]["name"]) and (v["position"] <= (VehicleCalculations.length * 2)):
+                vType = VehicleCalculations.vehicleType[self.vehicle_generator_list[i]['type']]
+                if (v["road"] == self.vehicle_generator_list[i]["name"]) and (v["position"] <= (VehicleCalculations.lengths[vType] * 2)):
                     noVehicle = False
             # 3.1.1.1 (If all of the above) THEN add vehicle to road at position 0
             if (noVehicle and self.vehicle_generator_ready[i]["ready"]):

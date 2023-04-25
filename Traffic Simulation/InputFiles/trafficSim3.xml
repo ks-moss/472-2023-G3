@@ -9,7 +9,7 @@
     </ROAD>
 <!-- Minor Roads -->
     <ROAD>
-        <name>E Windmall Pkwy</name>
+        <name>E Windmill Pkwy</name>
         <length>200</length>
     </ROAD>
      <ROAD>
@@ -25,19 +25,19 @@
 <!-- Keep them together -->
     <CROSSROADS>
         <road position="-50">S Eastern Ave</road>
-        <road position="50">E Windmall Pkwy</road>
+        <road position="50">E Windmill Pkwy</road>
     </CROSSROADS>
     <TRAFFICLIGHT>
     <!-- Major Road -->
         <road>S Eastern Ave</road>
         <position>50</position>
-        <cycle>20</cycle>
+        <cycle>2000</cycle>
     </TRAFFICLIGHT>
     <TRAFFICLIGHT>
     <!-- Minor Roads -->
-        <road>E Windmall Pkwy</road>
+        <road>E Windmill Pkwy</road>
         <position>50</position>
-        <cycle>20</cycle>
+        <cycle>2000</cycle>
     </TRAFFICLIGHT>
 <!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
 <!-- CROSSROADS = road A intersects to Road B -->
@@ -50,32 +50,32 @@
     <!-- Major Road -->
         <road>S Eastern Ave</road>
         <position>150</position>
-        <cycle>20</cycle>
+        <cycle>2000</cycle>
     </TRAFFICLIGHT>
     <TRAFFICLIGHT>
     <!-- Minor Roads -->
         <road>E Wigwam Ave</road>
         <position>50</position>
-        <cycle>20</cycle>
+        <cycle>2000</cycle>
     </TRAFFICLIGHT>
 <!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
 <!-- CROSSROADS = road A intersects to Road B -->
 <!-- Keep them together -->
     <CROSSROADS>
         <road position="50">N Pecos Rd</road>
-        <road position="50">E Windmall Pkwy</road>
+        <road position="50">E Windmill Pkwy</road>
     </CROSSROADS>
     <TRAFFICLIGHT>
     <!-- Major Road -->
         <road>N Pecos Rd</road>
         <position>150</position>
-        <cycle>20</cycle>
+        <cycle>2000</cycle>
     </TRAFFICLIGHT>
     <TRAFFICLIGHT>
     <!-- Minor Roads -->
-        <road>E Windmall Pkwy</road>
+        <road>E Windmill Pkwy</road>
         <position>150</position>
-        <cycle>20</cycle>
+        <cycle>2000</cycle>
     </TRAFFICLIGHT>
 <!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
 <!-- CROSSROADS = road A intersects to Road B -->
@@ -88,13 +88,13 @@
     <!-- Major Road -->
         <road>N Pecos Rd</road>
         <position>50</position>
-        <cycle>20</cycle>
+        <cycle>2000</cycle>
     </TRAFFICLIGHT>
     <TRAFFICLIGHT>
     <!-- Minor Roads -->
         <road>E Wigwam Ave</road>
         <position>150</position>
-        <cycle>20</cycle>
+        <cycle>2000</cycle>
     </TRAFFICLIGHT>
 <!--CROSSROADS(1),TRAFFICLIGHT(2): Must be declaired as a pair / name and position must be the same for all-->
 
@@ -114,7 +114,7 @@
         <type>police van</type>
     </VEHICLE>
     <VEHICLE>
-        <road>E Windmall Pkwy</road>
+        <road>E Windmill Pkwy</road>
         <position>100</position>
         <speed>15</speed>
         <acceleration>1.2</acceleration>
@@ -142,4 +142,37 @@
         <waitingtime>5</waitingtime>
     </BUSSTOP>
 
+<!-- VEHICLE GENERATORS -->
+    <VEHICLEGENERATOR>
+		<name>S Eastern Ave</name>
+		<frequency>500</frequency>
+		<position>0</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+		<type>car</type>
+	</VEHICLEGENERATOR>
+	<!-- <VEHICLEGENERATOR>
+		<name>E Windmill Pkwy</name>
+		<frequency>500</frequency>
+		<position>0</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+		<type>car</type>
+	</VEHICLEGENERATOR>
+	<VEHICLEGENERATOR>
+		<name>N Pecos Rd</name>
+		<frequency>500</frequency>
+		<position>0</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+		<type>car</type>
+	</VEHICLEGENERATOR>
+	<VEHICLEGENERATOR>
+		<name>E Windmill Pkwy</name>
+		<frequency>400</frequency>
+		<position>0</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+		<type>car</type>
+	</VEHICLEGENERATOR> -->
 </root>

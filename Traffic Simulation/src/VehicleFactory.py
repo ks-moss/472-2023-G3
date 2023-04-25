@@ -4,6 +4,8 @@ from threading import Thread
 import random as rng
 rng.seed(rng.random())
 
+#TODO adjust vehicle scales & positions
+
 class Sedan(Entity):
     def __init__(self, parent):
         super().__init__(parent = parent)
@@ -14,6 +16,7 @@ class Sedan(Entity):
         self.y = 0.15
         self.z = -4
         self.collider = 'box'
+        self.add_to_scene_entities = False
     
 class Bus(Entity):
     def __init__(self, parent):
@@ -24,6 +27,7 @@ class Bus(Entity):
         self.y = 1
         self.z = -10
         self.collider = 'box'
+        self.add_to_scene_entities = False
 
 class FireTruck(Entity):
     def __init__(self, parent):
@@ -34,6 +38,7 @@ class FireTruck(Entity):
         self.y = 1
         self.z = -8
         self.collider = 'box'
+        self.add_to_scene_entities = False
 
 class PoliceCar(Entity):
     def __init__(self, parent):
@@ -44,6 +49,7 @@ class PoliceCar(Entity):
         self.y = 0.4
         self.z = -6
         self.collider = 'box'
+        self.add_to_scene_entities = False
 
 class Ambulance(Entity):
     def __init__(self, parent):
@@ -54,6 +60,7 @@ class Ambulance(Entity):
         self.y = 1
         self.z = -6.5
         self.collider = 'box'
+        self.add_to_scene_entities = False
 
 class OffRoad(Entity):
     def __init__(self, parent):
@@ -65,6 +72,7 @@ class OffRoad(Entity):
         self.y = 0.5
         self.z = -5.7
         self.collider = 'box'
+        self.add_to_scene_entities = False
 
 class SportsCar(Entity):
     def __init__(self, parent):
@@ -76,6 +84,7 @@ class SportsCar(Entity):
         self.y = 0.14
         self.z = -5
         self.collider = 'box'
+        self.add_to_scene_entities = False
 
 class Tuner(Entity):
     def __init__(self, parent):
@@ -87,6 +96,7 @@ class Tuner(Entity):
         self.y = 0.5
         self.z = -5
         self.collider = 'box'
+        self.add_to_scene_entities = False
 
 class IceCreamTruck(Entity):
     def __init__(self, parent):
@@ -97,6 +107,7 @@ class IceCreamTruck(Entity):
         self.y = 1
         self.z = -4.5
         self.collider = 'box'
+        self.add_to_scene_entities = False
 
 class Camper(Entity):
     def __init__(self, parent):
@@ -108,6 +119,7 @@ class Camper(Entity):
         self.y = 1
         self.z = -4.5
         self.collider = 'box'
+        self.add_to_scene_entities = False
 
         
 
@@ -201,6 +213,30 @@ class VehicleFactory(Entity):
                               self.startPoints,
                               parent = start,
                               type = vtype,
+                              z = pos,
+                              add_to_scene_entities = False)
+            self.vehicleObjs.append(vehicle)
+    
+    def moveVehicles(self, objs, vehicles):
+        for e, v in zip(objs, vehicles):
+            if not e.move(v):
+                destroy(e)
+                objs.remove(e)
+                vehicles.remove(v)
+
+    def addVehicle(self):
+        if self.autoSim.vehicle_generator_update():
+            newVehicle = self.vehicles[-1]
+            road = newVehicle['road']
+            pos = newVehicle['position']
+            vtype = newVehicle['type']
+            start = self.startPoints[road]
+            limit = self.limits[road]
+
+            vehicle = Vehicle(limit, 
+                              self.startPoints,
+                              parent = start,
+                              type = vtype,
                               z = pos)
             self.vehicleObjs.append(vehicle)
     
@@ -210,31 +246,11 @@ class VehicleFactory(Entity):
     # grabs the data from the vehicle states and sends them 
     # to each of the vehicles respectivelly
     def update(self):
-        self.autoSim.vehicle_on_road()
-        def moveVehicles(objs, vehicles):
-            for e, v in zip(objs, vehicles):
-                if not e.move(v):
-                    destroy(e)
-                    objs.remove(e)
-                    vehicles.remove(v)
-        thread = Thread(target=moveVehicles, args=(self.vehicleObjs, self.vehicles))
-        thread.start()
+        Thread(target=self.autoSim.vehicle_on_road).start()
+        Thread(target=self.moveVehicles, args=(self.vehicleObjs, self.vehicles)).start()
+        Thread(target=self.addVehicle).start()
         
-        
-        # if self.autoSim.vehicle_generator_update():
-            # newVehicle = self.vehicles[-1]
-            # road = newVehicle['road']
-            # pos = newVehicle['position']
-            # vtype = newVehicle['type']
-            # start = self.startPoints[road]
-            # limit = self.limits[road]
-
-            # vehicle = Vehicle(limit, 
-            #                   self.startPoints,
-            #                   parent = start,
-            #                   type = vtype,
-            #                   z = pos)
-            # self.vehicleObjs.append(vehicle)
+    
 
 
 

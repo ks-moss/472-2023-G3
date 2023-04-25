@@ -38,7 +38,8 @@ class Road(Entity):
                            z = p/length - .5 + .5/length,
                            scale = (.5, 1, 1/length),
                            color = color.gray,
-                           collider = 'box')
+                           collider = 'box',
+                           add_to_scene_entities = False)
             if piece.intersects(ignore=RoadGen.ignoreList).hit:
                 destroy(piece)
             RoadGen.ignoreList.append(piece)
@@ -50,13 +51,15 @@ class Road(Entity):
                            z = p/length - .5 + .5/length,
                            scale = (.5, 1, 1/length),
                            color = color.gray,
-                           collider = 'box')
+                           collider = 'box',
+                           add_to_scene_entities = False)
             if piece.intersects(ignore=RoadGen.ignoreList).hit:
                 destroy(piece)
             RoadGen.ignoreList.append(piece)
 
         for p in RoadGen.ignoreList:
             p.collider = None
+        self.add_to_scene_entities = False
 
             
             
@@ -106,10 +109,10 @@ class RoadGen:
             x = intersection[0]['position']
             y = intersection[1]['position']
             w = self.roadWidth
-            Entity(model = 'cube', scale = (w/2, 1, w/2), color = color.gray, position = (x - w*.75, .3, y - w*.75))
-            Entity(model = 'cube', scale = (w/2, 1, w/2), color = color.gray, position = (x - w*.75, .3, y + w*.75))
-            Entity(model = 'cube', scale = (w/2, 1, w/2), color = color.gray, position = (x + w*.75, .3, y - w*.75))
-            Entity(model = 'cube', scale = (w/2, 1, w/2), color = color.gray, position = (x + w*.75, .3, y + w*.75))
+            Entity(model = 'cube', scale = (w/2, 1, w/2), color = color.gray, position = (x - w*.75, .3, y - w*.75), add_to_scene_entities=False)
+            Entity(model = 'cube', scale = (w/2, 1, w/2), color = color.gray, position = (x - w*.75, .3, y + w*.75), add_to_scene_entities=False)
+            Entity(model = 'cube', scale = (w/2, 1, w/2), color = color.gray, position = (x + w*.75, .3, y - w*.75), add_to_scene_entities=False)
+            Entity(model = 'cube', scale = (w/2, 1, w/2), color = color.gray, position = (x + w*.75, .3, y + w*.75), add_to_scene_entities=False)
 
 
             print(intersection[0]['road'], 'x', intersection[1]['road'])
@@ -156,10 +159,11 @@ class RoadGen:
 
                 # create starting point entities
                 startPoint = Entity(parent = roadObj,
-                                    model = 'cube',
+                                    # model = 'cube',
                                     z = -0.5,
                                     y = 1,
-                                    scale = (1 / self.roadWidth, 1, 1 / length))
+                                    scale = (1 / self.roadWidth, 1, 1 / length),
+                                    add_to_scene_entities=False)
                 self.startingPoints[name] = startPoint
         
         for r in self.roadObjs:

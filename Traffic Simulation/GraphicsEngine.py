@@ -16,19 +16,20 @@ from src.RoadGen import RoadGen
 from src.VehicleFactory import VehicleFactory
 from src.TrafficLights import TrafficLights
 from src.SunLight import SunLight
+from src.BusStops import BusStops
 
 # python modules
-from types import MethodType
 from threading import Thread
 
 
 
 # what to do next
-#TODO add vehicle generator
 #TODO clean and reset scene
 #TODO 4.1 GUI for simulation
 #TODO 4.2 GUI for traffic lights
 #TODO 4.3 GUI for vehicle generator
+#TODO reduce lag | frame drops
+#TODO maybe add some flair
 
 
 # Camera Class
@@ -56,6 +57,7 @@ class Camera(FirstPersonController):
         camera.y = 100  # distance from origin
         camera.fov = 120
         self.focusTimer = 0
+        self.add_to_scene_entities = False
     
 
     # called when the left mouse button is clicked
@@ -117,7 +119,7 @@ class GraphicsEngine(Ursina):
 
         # window module settings
         window.title = "Traffic Simulation 3D"
-        window.vsync = True
+        window.vsync = False
         window.borderless = False
         window.fullscreen = False
         window.exit_button.disable()
@@ -128,7 +130,7 @@ class GraphicsEngine(Ursina):
         self.cam = Camera(gravity = 0)
 
         # create simulation data object
-        self.simData = VehicleGeneratorSimulation("./InputFiles/vehicleGen2.xml", "./InputFiles/trafficSim3.xml")
+        self.simData = VehicleGeneratorSimulation("./InputFiles/trafficSim3.xml")
 
         self.createScene()
 
@@ -138,16 +140,22 @@ class GraphicsEngine(Ursina):
     # calls the functions that creates the scene up.
     def createScene(self):
         Entity.default_shader = lit_with_shadows_shader
-        try:
-            thread = Thread(target = self.load_assets, args = '')
-            thread.start()
-        except Exception as e:
-            print("error starting thread", e)
-        self.createEnvironment()
-        self.createWorldMap()
-        thread.join()
-        self.addDefaultVehicles()
-        self.createTrafficLights()
+        t1 = Thread(target = self.load_assets)
+        t2 = Thread(target = self.createEnvironment)
+        t3 = Thread(target = self.createWorldMap)
+        t4 = Thread(target = self.addDefaultVehicles)
+        t5 = Thread(target = self.createTrafficLights)
+        t6 = Thread(target = self.createBusStops)
+
+        t1.start()
+        t2.start()
+        t3.start()      # still don't know how the loading times are still slow
+
+        # t4, t5, & t6 need startingPoints from t3
+        t3.join()
+        t4.start()
+        t5.start()
+        t6.start()
 
     
     def load_assets(self):
@@ -204,6 +212,11 @@ class GraphicsEngine(Ursina):
     def createTrafficLights(self):
         self.trafficLights = TrafficLights(self.simData, self.startingPoints)
         self.trafficLights.createTrafficLights()
+
+    
+    def createBusStops(self):
+        self.busStops = BusStops(self.simData, self.startingPoints)
+        self.busStops.createBusStops()
 
 
     # resetSimulation

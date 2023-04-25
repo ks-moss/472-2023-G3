@@ -70,17 +70,13 @@ class TrafficLights(Entity):
         super().__init__()
         self.autoSim = autoSim
         self.tlights = autoSim.traffic_light_list
-        self.tlightStates = autoSim.trafficlight_current_state
-        self.glight = autoSim.green_light
+        self.tlightStates = autoSim.trafficlight_current_states
         self.startPoints = startingPoints
 
         for l in self.tlights:
             l['position'] -= self.roadWidth
 
         self.update()
-        for r in self.glight.keys():
-            if 'E' == r[0] or 'W' == r[0]:
-                self.glight[r] = False
 
 
     # createTrafficLights
@@ -108,10 +104,9 @@ class TrafficLights(Entity):
     def update(self):
         self.autoSim.traffic_light_on_road()
         for l, s in zip(self.lightObjs, self.tlightStates):
-            name = s['road']
-            if self.glight[name]:
+            if s['color'] == 'green':
                 l.green()
-            else:
+            elif s['color'] == 'red':
                 l.red()
 
 
