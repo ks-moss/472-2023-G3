@@ -182,7 +182,7 @@ def calculateVehicleOOB(vehicleList: TrafficSystem, roadList: TrafficSystem, to_
                 if (vehicle["position"] > road["length"]):
                     # remove vehicle from road
                     to_be_removed.append(i)
-                    print("Vehicle", i, "has driven off the road, ")
+                    #print("Vehicle", i, "has driven off the road, ")
     
     #DEBUG
     # print('current vehicle list', *vehicles, sep="\n")

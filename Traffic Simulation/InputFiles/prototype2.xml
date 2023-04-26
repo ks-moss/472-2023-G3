@@ -102,4 +102,12 @@
         <position>50</position>
         <waitingtime>20</waitingtime>
     </BUSSTOP> -->
+    <VEHICLEGENERATOR>
+		<name>S Eastern Ave</name>
+		<frequency>259</frequency>
+		<position>0</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+		<type>car</type>
+	</VEHICLEGENERATOR>
 </root>

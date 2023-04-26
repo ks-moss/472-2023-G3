@@ -89,6 +89,20 @@ class IntersectionSim:
         self.is_approaching_N_selected_road()
         
         
+def turnVehiclesAtIntersection(intersection_list, index, vehicles_list):
+    intersection = intersection_list[index]
+    for vehicle in vehicles_list:
+        if (rng.randint(1, 20) == 1):
+            if vehicle["road"] == intersection[0]["road"]:
+                if vehicle["position"] > intersection[0]["position"] and vehicle["position"] < (intersection[0]["position"]+1):
+                    vehicle["road"] = intersection[1]["road"]
+                    vehicle["position"] = intersection[1]["position"] + 1
+            if vehicle["road"] == intersection[1]["road"]:
+                if vehicle["position"] > intersection[1]["position"] and vehicle["position"] < (intersection[1]["position"]+1):
+                    vehicle["road"] = intersection[0]["road"]
+                    vehicle["position"] = intersection[0]["position"] + 1
+
+
 # interSim = IntersectionSim()   
 
 
