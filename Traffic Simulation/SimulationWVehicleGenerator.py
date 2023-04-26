@@ -61,7 +61,7 @@ class VehicleGeneratorSimulation(AutomaticSimulation):
             # 3.1.1.1 (If all of the above) THEN add vehicle to road at position 0
             if (noVehicle and self.vehicle_generator_ready[i]["ready"]):
                 gen = self.vehicle_generator_list[i]
-                self.vehicle_list.append({"road": gen["name"], "position": gen["position"], "speed": gen["speed"], "acceleration": gen["acceleration"], "type":gen["type"]})
+                self.create_vehicle_on_road(gen["name"], gen["position"], gen["speed"], gen["acceleration"], gen["type"])
                 # Reset vehicle generator ready
                 self.vehicle_generator_ready[i]["ready"] = False
                 self.vehicle_generator_ready[i]["counter"] = 0

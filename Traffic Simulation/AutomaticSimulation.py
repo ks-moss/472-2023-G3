@@ -1,8 +1,8 @@
 # 3.3
 from TrafficSimulation2 import *
-from VehicleCalculations import *
-from TrafficLightSimulation  import *
-from SimulationIntersection import *
+from VehicleCalculations import calculateVehicleSpeedAndPosition, calculateVehicleOOB
+from TrafficLightSimulation  import trafficLightInteraction
+from SimulationIntersection import turnVehiclesAtIntersection
 from BusStopSimulation import *
 import os
 import time
@@ -52,7 +52,7 @@ class AutomaticSimulation:
         # Get Crossroads
         self.intersection_list = self.trafficSystem.intersectionList
         # Simulate Intersection
-        self.intersection_sim = IntersectionSim(self.intersection_list, self.road_list, self.traffic_light_list)
+        #self.intersection_sim = IntersectionSim(self.intersection_list, self.road_list, self.traffic_light_list)
         #Get Bus Stop list
         self.bus_stop_list = self.trafficSystem.busStopList
         # List of indices of vehicles that are out of bounds
@@ -84,7 +84,7 @@ class AutomaticSimulation:
             # print("    -> type: ", self.vehicle_list[i]["type"])
             
             # Get new speed and position
-            VehicleCalculations.calculateVehicleSpeedAndPosition(self.vehicle_list, i)
+            calculateVehicleSpeedAndPosition(self.vehicle_list, i)
             if 'GraphicsEngine.py' in __main__.__file__:
                 self.vehicle_list[i]['road'], self.vehicle_list[i]['position'] = self.intersection_sim.is_approaching_N_selected_road(self.vehicle_list[i]['road'], self.vehicle_list[i]['position'])
 
@@ -106,6 +106,10 @@ class AutomaticSimulation:
     def bus_stop_on_road(self):
         for i in range(len(self.bus_stop_list)):
             busStopSimulation(self.bus_stop_list, self.vehicle_list, i)
+
+    def intersection_on_road(self):
+        for i in range(len(self.intersection_list)):
+            turnVehiclesAtIntersection(self.intersection_list, i, self.vehicle_list)
 
     def create_vehicle_on_road(self, road, position, speed, acceration, type):
         self.vehicle_list.append({"road": road,
@@ -129,8 +133,9 @@ class AutomaticSimulation:
     def update(self):
         self.vehicle_on_road()
         self.traffic_light_on_road()
-        #self.bus_stop_on_road()
-        VehicleCalculations.calculateVehicleOOB(self.vehicle_list, self.road_list, self.to_be_removed)
+        self.bus_stop_on_road()
+        self.intersection_on_road()
+        calculateVehicleOOB(self.vehicle_list, self.road_list, self.to_be_removed)
         
 
 
