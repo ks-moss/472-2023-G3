@@ -1,5 +1,23 @@
 import xml.etree.ElementTree as ET
-# Element class
+
+# checkLightState function
+# attributes:
+#   light - the current state of the light
+#   time - the current time
+# Precondition: 
+#   There exists a light element, and a current time variable
+# Postcondition
+#   Returns True if given light element should be green at the current time, false otherwise
+
+def checkLightState(light, time):
+    cycle = light["cycle"]
+    cycleIteration = (int) (time / light["cycle"])
+    if (cycleIteration % 2 == 0):
+        return False # Assumes red light initial value
+    else:
+        return True
+
+# Element class›
 # attributes:
 #   attributeListDictionary - dictionary of attributes
 #   elementType -
