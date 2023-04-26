@@ -11,7 +11,7 @@ import xml.etree.ElementTree as ET
 
 def checkLightState(light, time):
     cycle = light["cycle"]
-    cycleIteration = (int) (time / light["cycle"])
+    cycleIteration = int(time / light["cycle"])
     if (cycleIteration % 2 == 0):
         return False # Assumes red light initial value
     else:
