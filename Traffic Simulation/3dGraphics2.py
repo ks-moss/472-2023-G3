@@ -27,7 +27,7 @@ class Graphics:
 
         # Text settings
         Text.size = 0.02
-
+        self.text_message = Text(text="", y=.46, x=-.7, scale=2, color=color.red)
 
         # create base
         box = Entity(model='quad', scale=(280,200,0), color="76AE76")
@@ -51,7 +51,8 @@ class Graphics:
         add_vehicles_button = Button(text='Add\nVehicle', color=color.azure, highlight_color=color.cyan, position=(0.50, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.on_add_vehicle_button_click)
         restartButton = Button(text='Restart\nSimulation', color=rgb(128, 128, 0), highlight_color=color.cyan, position=(0.38, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.on_restart_button_click)
         endButton = Button(text='End\nSimulation', color=rgb(128, 0, 0), highlight_color=color.red, position=(0.62, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.on_end_button_click)
-        addBusStopButton = Button(text='Add\nTraffic\nLight', color=color.blue, highlight_color=color.cyan, position=(.44, 0.34), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_traffic_light_button_click)
+        addTrafficLightButton = Button(text='Add\nTraffic\nLight', color=color.blue, highlight_color=color.cyan, position=(.44, 0.34), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_traffic_light_button_click)
+        addBusStopButton = Button(text='Add\nBus\nStop', color=color.blue, highlight_color=color.cyan, position=(.56, 0.34), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_bus_stop_button_click)
         self.selectedRoadNotifier = Button(text=("Road:\n"+self.selectedRoad), color=color.black, position=(.26, 0.43), scale=(0.1, 0.1), model='circle')
         self.selectedPositionNotifier = Button(text=("Position:\n"+str(self.selectedPosition)), color=color.black, position=(.14, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3)
         
@@ -111,7 +112,7 @@ class Graphics:
                 e.x = 0
                 roadText= Text(text=r["name"], scale=(20,1), color=color.black)
                 roadText.parent = road_model
-                roadText.x = -15
+                roadText.x = -13
                 roadText.y = (e.y / (50*num_EW_roads)) - .02
                 roadText.z = -2
 
@@ -189,7 +190,6 @@ class Graphics:
 
         #PLACE BUS STOPS
         for t in self.trafficSystem.bus_stop_list:
-            #print("BUSSSTOPS", t)
 
             for i in range(len(self.roads_Entity_objects)):
                 r = self.roads_Entity_objects[i]
@@ -244,23 +244,23 @@ class Graphics:
                     vehicle.scale = (5,2,1)
                     vehicle.color = color.white
                     vehicle.texture=load_texture(f'textures/bus.png')
-                    trigger_box3 = Entity(model='wireframe_cube', color=color.white, scale=(2, 1, 1), collider='box', add_to_scene_entities=False)
+                    trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2, 1, 1), collider='box', add_to_scene_entities=False)
 
                 elif (tsVehicle["type"] == 'fire truck'):
                     vehicle.scale = (6,2,1)
                     vehicle.color = color.red
                     vehicle.texture=load_texture(f'textures/fireTruck.png')
-                    trigger_box3 = Entity(model='wireframe_cube', color=color.white, scale=(2, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
+                    trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
                 elif (tsVehicle["type"] == 'police van'):
                     vehicle.scale = (4,1,1)
                     vehicle.color = color.white
                     vehicle.texture=load_texture(f'textures/police.png')
-                    trigger_box3 = Entity(model='wireframe_cube', color=color.white, scale=(2, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
+                    trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
                 elif (tsVehicle["type"] == 'car'):
                     vehicle.texture=load_texture(f'textures/car.png')
-                    trigger_box3 = Entity(model='wireframe_cube', color=color.white, scale=(2.75, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
+                    trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2.75, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
 
                 # Add the car to the list of vehicles
@@ -375,22 +375,27 @@ class Graphics:
 
             self.trafficSystem.create_vehicle_on_road(road, position, speed, acceleration, type)
             self.createVehicleEntity(len(self.trafficSystem.vehicle_list)-1)"""
+        
         if self.selectedRoad != "":
             road = self.selectedRoad
             roadObstructed = False
             for v in self.trafficSystem.vehicle_list:
                 if v["road"] == road and (v["position"] < self.selectedPosition + 4 and v["position"] > self.selectedPosition - 4):
                     roadObstructed = True
-                    print("Road obstructed")
+                    self.text_message.text = "Road obstructed"
+                    invoke(self.clear_error_message, delay=2)
             
             if (not roadObstructed):
                 self.trafficSystem.create_vehicle_on_road(road, self.selectedPosition, 10, 1.2, 'car')
                 self.createVehicleEntity(len(self.trafficSystem.vehicle_list)-1)
         else:
-            print("Select a road first")
-
-
-
+            self.text_message.text = "Select a road first"
+            invoke(self.clear_error_message, delay=2)
+    
+    #clear error message on screen
+    def clear_error_message(self):
+        self.text_message.text = ""
+        
     def add_traffic_light_button_click(self):
 
         store_dup = []
@@ -436,13 +441,47 @@ class Graphics:
                         self.trafficSystem.create_traffic_light_on_road(first[0], 55, 300, "green")
                         self.lights_Entity_objects.append(EW_traffic_Entity)
         else:
-            print("Cannot add anymore traffic light!")
-
-
-
+            self.text_message.text = "Traffic Light Limit Reached"
+            invoke(self.clear_error_message, delay=2)
+    
+    def add_bus_stop_button_click(self):
+        
+        if self.selectedRoad != "":
+            road = self.selectedRoad
+            roadObstructed = False
+            for v in self.trafficSystem.bus_stop_list:
+                if v["road"] == road:
+                    roadObstructed = True
+                    self.text_message.text = "Road already contains bus stop"
+                    invoke(self.clear_error_message, delay=2)
+            
+            if (not roadObstructed):
+                if (self.selectedRoad[0] == "N" or self.selectedRoad[0] == "S") and self.selectedRoad[1] == " ":
+                    NS_bus_stop = Entity(model='cube', scale=(5, 0.5, 1), color= color.white)
+                    NS_bus_stop.position = self.roadPosition
+                    NS_bus_stop.z -= 1
+                    NS_bus_stop.x += 1
+                    NS_bus_stop.y += 1
+                    self.trafficSystem.bus_stop_list.append({"road": self.selectedRoad, "position": self.selectedPosition, "waitingtime": 10}) 
+                    self.bus_stop_Entity_objects.append(NS_bus_stop)
+                    
+                elif (self.selectedRoad[0] == "E" or self.selectedRoad[0] == "W") and self.selectedRoad[1] == " ":
+                    EW_bus_stop = Entity(model='cube', scale=(0.5, 5, 1), color= color.white)
+                    EW_bus_stop.position = self.roadPosition
+                    EW_bus_stop.position = self.roadPosition
+                    EW_bus_stop.z -= 1
+                    EW_bus_stop.x += 1
+                    EW_bus_stop.y += 1
+                    self.trafficSystem.bus_stop_list.append({"road": self.selectedRoad, "position": self.selectedPosition, "waitingtime": 10})  
+                    self.bus_stop_Entity_objects.append(EW_bus_stop)
+        else:
+            self.text_message.text = "Select a road first"
+            invoke(self.clear_error_message, delay=2)
+    
     def road_on_click(self):
         roadName = mouse.hovered_entity.name
         self.selectedRoad = roadName
+        self.roadPosition = mouse.hovered_entity.position
         print("Click on road: ", roadName)
 
 
