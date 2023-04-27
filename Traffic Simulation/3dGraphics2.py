@@ -412,37 +412,41 @@ class Graphics:
 
         store_dup = sorted(store_dup, key=lambda x: x[1], reverse=False)
 
-        first = store_dup[0]
+        if self.selectedRoad != "":
+            road = self.selectedRoad
+            roadObstructed = False
+            for v in store_dup:
+                if v[0] == road and v[1]>2:
+                    roadObstructed = True
+                    self.text_message.text = "Traffic Light Limit Reached"
+                    invoke(self.clear_error_message, delay=2)
 
-        if (first[1] < 3):
+            if (not roadObstructed):
 
-            for i in range(len(self.roads_Entity_objects)):
-                r = self.roads_Entity_objects[i]
+                if (self.selectedRoad[0] == "N" or self.selectedRoad[0] == "S") and self.selectedRoad[1] == " ":
+                            NS_traffic_Entity = Entity(model='cube', scale=(5, 0.5, 1), color= color.green)
+                            NS_traffic_Entity.position = self.roadPosition
+                            NS_traffic_Entity.z -= 1
+                            NS_traffic_Entity.x += 1
+                            NS_traffic_Entity.y += 5
+                            NS_traffic_Entity.name = self.selectedRoad
+                            self.trafficSystem.create_traffic_light_on_road(self.selectedRoad, 55, 300, "green")
+                            self.lights_Entity_objects.append(NS_traffic_Entity)
 
-                if (r.name == first[0]):
-
-                    if (first[0][0] == "N" or first[0][0] == "S") and first[0][1] == " ":
-                        NS_traffic_y = ((100-self.trafficSystem.road_list[i]["length"])/2)
-                        NS_traffic_Entity = Entity(model='cube', scale=(5, 0.5, 1), color= color.green)
-                        NS_traffic_Entity.x = r.x
-                        NS_traffic_Entity.y = NS_traffic_y + 4
-                        NS_traffic_Entity.z = -.5
-                        NS_traffic_Entity.name = first[0]
-                        self.trafficSystem.create_traffic_light_on_road(first[0], 55, 300, "green")
-                        self.lights_Entity_objects.append(NS_traffic_Entity)
-
-                    elif (first[0][0] == "E" or first[0][0] == "W") and first[0][1] == " ":
-                        EW_traffic_x = ((100-self.trafficSystem.road_list[i]["length"])/2)
-                        EW_traffic_Entity = Entity(model='cube', scale=(0.5, 5, 1), color= color.red)
-                        EW_traffic_Entity.x = EW_traffic_x + 4
-                        EW_traffic_Entity.y = r.y
-                        EW_traffic_Entity.z = -.5
-                        EW_traffic_Entity.name = first[0]
-                        self.trafficSystem.create_traffic_light_on_road(first[0], 55, 300, "green")
-                        self.lights_Entity_objects.append(EW_traffic_Entity)
+                elif (self.selectedRoad[0] == "E" or self.selectedRoad[0] == "W") and self.selectedRoad[1] == " ":
+                            EW_traffic_Entity = Entity(model='cube', scale=(0.5, 5, 1), color= color.red)
+                            EW_traffic_Entity.position = self.roadPosition
+                            EW_traffic_Entity.z -= 1
+                            EW_traffic_Entity.x += 5
+                            EW_traffic_Entity.y += 1
+                            EW_traffic_Entity.name = self.selectedRoad
+                            self.trafficSystem.create_traffic_light_on_road(self.selectedRoad, 55, 300, "green")
+                            self.lights_Entity_objects.append(EW_traffic_Entity)
         else:
-            self.text_message.text = "Traffic Light Limit Reached"
+            self.text_message.text = "Select a road first"
             invoke(self.clear_error_message, delay=2)
+
+
     
     def add_bus_stop_button_click(self):
         
