@@ -386,7 +386,19 @@ class Graphics:
                     invoke(self.clear_error_message, delay=2)
             
             if (not roadObstructed):
-                self.trafficSystem.create_vehicle_on_road(road, self.selectedPosition, 10, 1.2, 'bus')
+                vTypeNum = random.randint(0 ,3)
+                vType = ""
+
+                if(vTypeNum == 0):
+                    vType = "bus"
+                elif (vTypeNum == 1):
+                    vType = "fire truck"
+                elif (vTypeNum == 2):
+                    vType = "police van"
+                elif (vTypeNum == 3):
+                    vType = "car"
+
+                self.trafficSystem.create_vehicle_on_road(road, self.selectedPosition, 10, 1.2, vType)
                 self.createVehicleEntity(len(self.trafficSystem.vehicle_list)-1)
         else:
             self.text_message.text = "Select a road first"
