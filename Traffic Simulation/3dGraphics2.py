@@ -386,7 +386,7 @@ class Graphics:
                     invoke(self.clear_error_message, delay=2)
             
             if (not roadObstructed):
-                self.trafficSystem.create_vehicle_on_road(road, self.selectedPosition, 10, 1.2, 'car')
+                self.trafficSystem.create_vehicle_on_road(road, self.selectedPosition, 10, 1.2, 'bus')
                 self.createVehicleEntity(len(self.trafficSystem.vehicle_list)-1)
         else:
             self.text_message.text = "Select a road first"
@@ -465,8 +465,8 @@ class Graphics:
                     NS_bus_stop.position = self.roadPosition
                     NS_bus_stop.z -= 1
                     NS_bus_stop.x += 1
-                    NS_bus_stop.y += 1
-                    self.trafficSystem.bus_stop_list.append({"road": self.selectedRoad, "position": self.selectedPosition, "waitingtime": 10}) 
+                    NS_bus_stop.y += 3
+                    self.trafficSystem.bus_stop_list.append({"road": self.selectedRoad, "position": 50, "waitingtime": 10}) 
                     self.bus_stop_Entity_objects.append(NS_bus_stop)
                     
                 elif (self.selectedRoad[0] == "E" or self.selectedRoad[0] == "W") and self.selectedRoad[1] == " ":
@@ -474,9 +474,9 @@ class Graphics:
                     EW_bus_stop.position = self.roadPosition
                     EW_bus_stop.position = self.roadPosition
                     EW_bus_stop.z -= 1
-                    EW_bus_stop.x += 1
+                    EW_bus_stop.x += 3
                     EW_bus_stop.y += 1
-                    self.trafficSystem.bus_stop_list.append({"road": self.selectedRoad, "position": self.selectedPosition, "waitingtime": 10})  
+                    self.trafficSystem.bus_stop_list.append({"road": self.selectedRoad, "position": 50, "waitingtime": 10})  
                     self.bus_stop_Entity_objects.append(EW_bus_stop)
         else:
             self.text_message.text = "Select a road first"

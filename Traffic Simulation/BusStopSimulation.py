@@ -20,6 +20,7 @@ def busStopSimulation(busStop, vehicles, busStopIndex):
     
     busStop_position = busStop[busStopIndex]["position"]
     busStop_road = busStop[busStopIndex]["road"]
+    busStop_cycle = busStop[busStopIndex]["waitingtime"]
     
     # Initializes busStop dict
     if busStop_road not in stopTimes:
@@ -36,22 +37,21 @@ def busStopSimulation(busStop, vehicles, busStopIndex):
         # Make sure the current vehicle is on the current road
             if vehicles[i]["road"] == busStop_road:   
                 # Adjust acceleration of vehicle if the vehicle is behind the bus stop's position
+                
                 if vehicles[i]["position"] < busStop_position:
                     distance_to_bus_stop = busStop_position - vehicles[i]["position"]
                     # 1 IF a bus type vehicle is in the deceleration distance
                     if vehicles[i]["type"] == "bus" and distance_to_bus_stop <= VehicleCalculations.decelerationDistance and distance_to_bus_stop >= VehicleCalculations.stoppingDistance:
                         # 1.1 THEN apply the deceleration factor to the vehicle 
                         # Apply deceleration to bus and all vehicles behind bus
-                        for j in range (i, len(vehicles)):
-                            VehicleCalculations.applyDecelerationFactor(vehicles, j)
+                        VehicleCalculations.applyDecelerationFactor(vehicles, i)
                     # 2 ELSE IF a bus type vehicle is in the stopping distance
                     elif vehicles[i]["type"] == "bus" and distance_to_bus_stop <= VehicleCalculations.stoppingDistance:
                         # 2.1 THEN causes the vehicle to stop
                         # Apply decleration to stop to bus and all vehicles behind bus
-                        for k in range (i, len(vehicles)):
-                            VehicleCalculations.adjustAccelerationToStop(vehicles, k)
+                        VehicleCalculations.adjustAccelerationToStop(vehicles, i)
 
-                        if vehicles[i]["type"] == "bus" and distance_to_bus_stop > 0 and distance_to_bus_stop < 0.1:
+                        if vehicles[i]["type"] == "bus" and distance_to_bus_stop > 0 and distance_to_bus_stop < 0.3:
                             vehicles[i]["speed"] = 0
                             vehicles[i]["acceleration"] = 0
 

@@ -56,7 +56,7 @@ absoluteMaxSpeed = 16.6
 #maximumBrakingFactor = 4.61
 #minimumFollowingDistance = 4
 simulationTime = 0.0166
-decelerationDistance = 50
+decelerationDistance = 40
 stoppingDistance = 15
 delayFactor = 0.4
 

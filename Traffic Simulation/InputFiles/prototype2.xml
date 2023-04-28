@@ -95,7 +95,7 @@
     <BUSSTOP>
         <road>S Eastern Ave</road>
         <position>50</position>
-        <waitingtime>20</waitingtime>
+        <waitingtime>10</waitingtime>
     </BUSSTOP>
     <!-- <BUSSTOP>
         <road>E Windmill Pkwy</road>
