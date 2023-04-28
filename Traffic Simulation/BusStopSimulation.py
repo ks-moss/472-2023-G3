@@ -72,8 +72,17 @@ def busStopSimulation(busStop, vehicles, busStopIndex):
                             print("| Bus Elapsed Time", elapsedTime)
                             print("______________________________________________________\n")
                     
-                    # 3 IF time since vehicle with bus type stopped > waiting time   
-                    if elapsedTime > busStop[busStopIndex]["waitingtime"]:
+                    # 3 IF time since vehicle with bus type stopped > waiting time
+
+                    # Convert elapsedTime to an int to allow the the comparison with busStop[busStopIndex]["waitingtime"]
+                    if isinstance(elapsedTime, datetime.datetime):
+                        # If elapsedTime is a datetime object, convert it to an int
+                        elapsedTimeComparison = int(elapsedTime.timestamp())
+                    else:
+                        # Else, already an int
+                        elapsedTimeComparison = elapsedTime
+
+                    if elapsedTimeComparison > busStop[busStopIndex]["waitingtime"]:
                         # 3.1 THEN the vehicle may depart 
                         # Change bus position to leave bus stop   
                         vehicles[i]["position"] = busStop_position + 0.1              
