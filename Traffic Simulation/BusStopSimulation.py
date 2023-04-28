@@ -62,7 +62,12 @@ def busStopSimulation(busStop, vehicles, busStopIndex):
                                 # Set the waiting time of the indexed bus back to zero since it has arrived
                                 busStop[busStopIndex]["waitingtime"] = 0
                             else:
-                                difference_time = datetime.datetime.now() - stopTimes[busStop_road]
+                                # Check to see if stop_time is an int, then convert to a datatime.datatime object
+                                stop_time = stopTimes[busStop_road]
+                                if isinstance(stop_time, int):
+                                    stop_time = datetime.datetime.fromtimestamp(stop_time)
+                                
+                                difference_time = datetime.datetime.now() - stop_time
                                 elapsedTime = difference_time.total_seconds()
                             print("______________________________________________________")
                             print("| BUS AT BUS STOP                                     ")
