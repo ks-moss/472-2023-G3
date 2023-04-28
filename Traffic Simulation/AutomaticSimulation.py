@@ -112,11 +112,13 @@ class AutomaticSimulation:
             turnVehiclesAtIntersection(self.intersection_list, i, self.vehicle_list)
 
     def create_vehicle_on_road(self, road, position, speed, acceration, type):
-        self.vehicle_list.append({"road": road,
-                                  "position": position,
-                                  "speed": speed,
-                                  "acceleration": acceration,
-                                  "type": type})
+        self.vehicle_list.append({
+            "road": road,
+            "position": position,
+            "speed": speed,
+            "acceleration": acceration,
+            "type": type
+        })
         
     def remove_vehicles_off_road(self):
         for i in sorted(self.to_be_removed, reverse=True):
@@ -125,10 +127,19 @@ class AutomaticSimulation:
         self.to_be_removed.clear()
 
     def create_traffic_light_on_road(self, road, position, cycle, color):
-        self.traffic_light_list.append({"road": road,
-                                        "position": position, 
-                                        "cycle": cycle})
+        self.traffic_light_list.append({
+            "road": road,
+            "position": position, 
+            "cycle": cycle
+        })
         self.trafficlight_current_states.append({"color": color, "counter": 0})
+
+    def create_bus_stop_on_road(self, road, position, waitingTime):
+        self.bus_stop_list.append({
+            "road": road,
+            "position": position,
+            "waitingtime": waitingTime
+        })
 
     def update(self):
         self.vehicle_on_road()

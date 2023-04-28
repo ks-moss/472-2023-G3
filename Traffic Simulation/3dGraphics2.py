@@ -27,7 +27,8 @@ class Graphics:
 
         # Text settings
         Text.size = 0.02
-        self.text_message = Text(text="", y=.46, x=-.7, scale=2, color=color.red)
+        self.text_message = Text(text="", y=-.40, x=-.7, scale=2, color=color.red)
+        self.text_message.always_on_top = True
 
         # create base
         box = Entity(model='quad', scale=(280,200,0), color="76AE76")
@@ -39,8 +40,7 @@ class Graphics:
         self.lights_Entity_objects = [] # list of traffic light entities
         self.bus_stop_Entity_objects = []
 
-        self.selectedRoad = ""
-        self.tempSelectedPosition = 0
+        self.selectedRoad = {"name": "", "length": 0}
         self.selectedPosition = 0
 
         self.initializeRoads()
@@ -53,7 +53,7 @@ class Graphics:
         endButton = Button(text='End\nSimulation', color=rgb(128, 0, 0), highlight_color=color.red, position=(0.62, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.on_end_button_click)
         addTrafficLightButton = Button(text='Add\nTraffic\nLight', color=color.blue, highlight_color=color.cyan, position=(.44, 0.34), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_traffic_light_button_click)
         addBusStopButton = Button(text='Add\nBus\nStop', color=color.blue, highlight_color=color.cyan, position=(.56, 0.34), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_bus_stop_button_click)
-        self.selectedRoadNotifier = Button(text=("Road:\n"+self.selectedRoad), color=color.black, position=(.26, 0.43), scale=(0.1, 0.1), model='circle')
+        self.selectedRoadNotifier = Button(text=("Road:\n"+self.selectedRoad["name"]), color=color.black, position=(.26, 0.43), scale=(0.1, 0.1), model='circle')
         self.selectedPositionNotifier = Button(text=("Position:\n"+str(self.selectedPosition)), color=color.black, position=(.14, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3)
         
 
@@ -119,30 +119,8 @@ class Graphics:
 
 
     def initializeTrafficLights(self):
-        for t in self.trafficSystem.traffic_light_list:
-            for i in range(len(self.roads_Entity_objects)):
-                r = self.roads_Entity_objects[i]
-                if (r.name == t["road"]):
-                    road_index = i
-
-            r1 = self.roads_Entity_objects[road_index]
-            if (r1.name[0] == "N" or r1.name[0] == "S") and r1.name[1] == " ":
-                NS_traffic_y = (t["position"]-50) + ((100-self.trafficSystem.road_list[road_index]["length"])/2)
-                NS_traffic_Entity = Entity(model='cube', scale=(5, 0.5, 1), color= color.green)
-                NS_traffic_Entity.x = r1.x
-                NS_traffic_Entity.y = NS_traffic_y + 4
-                NS_traffic_Entity.z = -.5
-                NS_traffic_Entity.name = t["road"]
-                self.lights_Entity_objects.append(NS_traffic_Entity)
-
-            elif (r1.name[0] == "E" or r1.name[0] == "W") and r1.name[1] == " ":
-                EW_traffic_x = (t["position"]-50) + ((100-self.trafficSystem.road_list[road_index]["length"])/2)
-                EW_traffic_Entity = Entity(model='cube', scale=(0.5, 5, 1), color= color.red)
-                EW_traffic_Entity.x = EW_traffic_x + 4
-                EW_traffic_Entity.y = r1.y
-                EW_traffic_Entity.z = -.5
-                EW_traffic_Entity.name = t["road"]
-                self.lights_Entity_objects.append(EW_traffic_Entity)
+        for i in range(len(self.trafficSystem.traffic_light_list)):
+            self.createTrafficLightEntity(i)
 
 
 
@@ -187,33 +165,8 @@ class Graphics:
 
 
     def initializeBusStop(self):
-
-        #PLACE BUS STOPS
-        for t in self.trafficSystem.bus_stop_list:
-
-            for i in range(len(self.roads_Entity_objects)):
-                r = self.roads_Entity_objects[i]
-                if (r.name == t["road"]):
-                    road_index = i
-            
-            r1 = self.roads_Entity_objects[road_index]
-            if (r1.name[0] == "N" or r1.name[0] == "S") and r1.name[1] == " ":
-                NS_bus_stop_y = (t["position"]-50) + ((100-self.trafficSystem.road_list[road_index]["length"])/2)
-                NS_bus_stop_Entity = Entity(model='cube', scale=(5, 0.5, 1), color= color.white)
-                NS_bus_stop_Entity.x = r1.x
-                NS_bus_stop_Entity.y = NS_bus_stop_y + 2
-                NS_bus_stop_Entity.z = -.5
-                NS_bus_stop_Entity.name = t["position"]
-                self.bus_stop_Entity_objects.append(NS_bus_stop_Entity)
-
-            elif (r1.name[0] == "E" or r1.name[0] == "W") and r1.name[1] == " ":
-                EW_bus_stop_x = (t["position"]-50) + ((100-self.trafficSystem.road_list[road_index]["length"])/2)
-                EW_bus_stop_Entity = Entity(model='cube', scale=(0.5, 5, 1), color= color.white)
-                EW_bus_stop_Entity.x = EW_bus_stop_x + 2
-                EW_bus_stop_Entity.y = r1.y
-                EW_bus_stop_Entity.z = -.5
-                EW_bus_stop_Entity.name = t["position"]
-                self.bus_stop_Entity_objects.append(EW_bus_stop_Entity)
+        for i in range(len(self.trafficSystem.bus_stop_list)):
+            self.createBusStopEntity(i)
 
 
 
@@ -270,6 +223,66 @@ class Graphics:
 
 
 
+    def createTrafficLightEntity(self, index):
+
+        traffic_light = self.trafficSystem.traffic_light_list[index]
+
+        for i in range(len(self.roads_Entity_objects)):
+            r = self.roads_Entity_objects[i]
+            if (r.name == traffic_light["road"]):
+                road_index = i
+
+        r1 = self.roads_Entity_objects[road_index]
+        if (r1.name[0] == "N" or r1.name[0] == "S") and r1.name[1] == " ":
+            NS_traffic_y = (traffic_light["position"]-50) + ((100-self.trafficSystem.road_list[road_index]["length"])/2)
+            NS_traffic_Entity = Entity(model='cube', scale=(5, 0.5, 1), color= color.green)
+            NS_traffic_Entity.x = r1.x
+            NS_traffic_Entity.y = NS_traffic_y + 4
+            NS_traffic_Entity.z = -.5
+            NS_traffic_Entity.name = traffic_light["road"]
+            self.lights_Entity_objects.append(NS_traffic_Entity)
+
+        elif (r1.name[0] == "E" or r1.name[0] == "W") and r1.name[1] == " ":
+            EW_traffic_x = (traffic_light["position"]-50) + ((100-self.trafficSystem.road_list[road_index]["length"])/2)
+            EW_traffic_Entity = Entity(model='cube', scale=(0.5, 5, 1), color= color.red)
+            EW_traffic_Entity.x = EW_traffic_x + 4
+            EW_traffic_Entity.y = r1.y
+            EW_traffic_Entity.z = -.5
+            EW_traffic_Entity.name = traffic_light["road"]
+            self.lights_Entity_objects.append(EW_traffic_Entity)
+
+    
+    
+    def createBusStopEntity(self, index):
+
+        bus_stop = self.trafficSystem.bus_stop_list[index]
+
+        for i in range(len(self.roads_Entity_objects)):
+            r = self.roads_Entity_objects[i]
+            if (r.name == bus_stop["road"]):
+                road_index = i
+        
+        r1 = self.roads_Entity_objects[road_index]
+        if (r1.name[0] == "N" or r1.name[0] == "S") and r1.name[1] == " ":
+            NS_bus_stop_y = (bus_stop["position"]-50) + ((100-self.trafficSystem.road_list[road_index]["length"])/2)
+            NS_bus_stop_Entity = Entity(model='cube', scale=(5, 0.5, 0.1), color= color.white)
+            NS_bus_stop_Entity.x = r1.x
+            NS_bus_stop_Entity.y = NS_bus_stop_y +3
+            NS_bus_stop_Entity.z = -.5
+            NS_bus_stop_Entity.name = bus_stop["position"]
+            self.bus_stop_Entity_objects.append(NS_bus_stop_Entity)
+
+        elif (r1.name[0] == "E" or r1.name[0] == "W") and r1.name[1] == " ":
+            EW_bus_stop_x = (bus_stop["position"]-50) + ((100-self.trafficSystem.road_list[road_index]["length"])/2)
+            EW_bus_stop_Entity = Entity(model='cube', scale=(0.5, 5, 0.1), color= color.white)
+            EW_bus_stop_Entity.x = EW_bus_stop_x +3
+            EW_bus_stop_Entity.y = r1.y
+            EW_bus_stop_Entity.z = -.5
+            EW_bus_stop_Entity.name = bus_stop["position"]
+            self.bus_stop_Entity_objects.append(EW_bus_stop_Entity)
+    
+    
+    
     def calculateVehiclePosition(self, road, vPosition):
         roadLength = 0
         for r in self.trafficSystem.road_list:
@@ -330,7 +343,7 @@ class Graphics:
 
 
     def updateNotifiers(self):
-        self.selectedRoadNotifier.text = ("Road:\n"+self.selectedRoad)
+        self.selectedRoadNotifier.text = ("Road:\n"+self.selectedRoad["name"])
         self.selectedPositionNotifier.text = ("Position:\n"+str(self.selectedPosition))
 
     
@@ -365,28 +378,25 @@ class Graphics:
 
 
     def on_add_vehicle_button_click(self):
-        """for newVehicle in addVehicle():
             
-            road = newVehicle["name"]
-            speed = newVehicle["speed"]
-            type = newVehicle["type"]
-            position = newVehicle["position"]
-            acceleration = newVehicle["acceleration"]
+        if self.selectedRoad["name"] != "":
+            road_name = self.selectedRoad["name"]
+            road_length = self.selectedRoad["length"]
+            invalid_selection = False
 
-            self.trafficSystem.create_vehicle_on_road(road, position, speed, acceleration, type)
-            self.createVehicleEntity(len(self.trafficSystem.vehicle_list)-1)"""
-        
-        if self.selectedRoad != "":
-            road = self.selectedRoad
-            roadObstructed = False
+            if (self.selectedPosition > road_length):
+                invalid_selection = True
+                self.text_message.text = "Selected position is larger than selected road length"
+                invoke(self.clear_error_message, delay=2)
+
             for v in self.trafficSystem.vehicle_list:
-                if v["road"] == road and (v["position"] < self.selectedPosition + 4 and v["position"] > self.selectedPosition - 4):
-                    roadObstructed = True
+                if v["road"] == road_name and (v["position"] < self.selectedPosition + 4 and v["position"] > self.selectedPosition - 4):
+                    invalid_selection = True
                     self.text_message.text = "Road obstructed"
                     invoke(self.clear_error_message, delay=2)
             
-            if (not roadObstructed):
-                self.trafficSystem.create_vehicle_on_road(road, self.selectedPosition, 10, 1.2, 'car')
+            if not invalid_selection:
+                self.trafficSystem.create_vehicle_on_road(road_name, self.selectedPosition, 10, 1.2, 'car')
                 self.createVehicleEntity(len(self.trafficSystem.vehicle_list)-1)
         else:
             self.text_message.text = "Select a road first"
@@ -398,50 +408,42 @@ class Graphics:
         
     def add_traffic_light_button_click(self):
 
-        store_dup = []
-        for i in range(len(self.lights_Entity_objects)):
-            found = False
-            for j in range(len(store_dup)):
-                if store_dup[j][0] == str(self.lights_Entity_objects[i]):
-                    store_dup[j][1] += 1
-                    found = True
-                    break
-            if not found:
-                store_dup.append([str(self.lights_Entity_objects[i].name), 1])
+        if self.selectedRoad["name"] != "":
+            road_name = self.selectedRoad["name"]
+            road_length = self.selectedRoad["length"]
+            invalid_selection = False
 
+            if (self.selectedPosition > road_length):
+                invalid_selection = True
+                self.text_message.text = "Selected position is larger than selected road length"
+                invoke(self.clear_error_message, delay=2)
 
-        store_dup = sorted(store_dup, key=lambda x: x[1], reverse=False)
-
-        if self.selectedRoad != "":
-            road = self.selectedRoad
-            roadObstructed = False
-            for v in store_dup:
-                if v[0] == road and v[1]>2:
-                    roadObstructed = True
-                    self.text_message.text = "Traffic Light Limit Reached"
+            for bs in self.trafficSystem.bus_stop_list:
+                if bs["road"] == road_name and (self.selectedPosition >= bs["position"]-10 and self.selectedPosition <= bs["position"]+10):
+                    invalid_selection = True
+                    self.text_message.text = "Traffic light may not be added within 10 units of a bus stop"
                     invoke(self.clear_error_message, delay=2)
+                    break
+            
+            for tl in self.trafficSystem.traffic_light_list:
+                if tl["road"] == road_name and (self.selectedPosition >= tl["position"]-10 and self.selectedPosition <= tl["position"]+10):
+                    invalid_selection = True
+                    self.text_message.text = "Traffic light may not be added within 10 units of another traffic light"
+                    invoke(self.clear_error_message, delay=2)
+                    break
 
-            if (not roadObstructed):
+            for intersection in self.trafficSystem.intersection_list:
+                if intersection[0]["road"] == road_name and (self.selectedPosition >= intersection[0]["position"]-10 and self.selectedPosition <= intersection[0]["position"]+10) or\
+                   intersection[1]["road"] == road_name and (self.selectedPosition >= intersection[1]["position"]-10 and self.selectedPosition <= intersection[1]["position"]+10):
+                    invalid_selection = True
+                    self.text_message.text = "Traffic light may not be added within 10 units of an intersection"
+                    invoke(self.clear_error_message, delay=2)
+                    break
 
-                if (self.selectedRoad[0] == "N" or self.selectedRoad[0] == "S") and self.selectedRoad[1] == " ":
-                            NS_traffic_Entity = Entity(model='cube', scale=(5, 0.5, 1), color= color.green)
-                            NS_traffic_Entity.position = self.roadPosition
-                            NS_traffic_Entity.z -= 1
-                            NS_traffic_Entity.x += 1
-                            NS_traffic_Entity.y += 5
-                            NS_traffic_Entity.name = self.selectedRoad
-                            self.trafficSystem.create_traffic_light_on_road(self.selectedRoad, 55, 300, "green")
-                            self.lights_Entity_objects.append(NS_traffic_Entity)
+            if not invalid_selection:
+                self.trafficSystem.create_traffic_light_on_road(road_name, self.selectedPosition, 300, "green")
+                self.createTrafficLightEntity(len(self.trafficSystem.traffic_light_list)-1)
 
-                elif (self.selectedRoad[0] == "E" or self.selectedRoad[0] == "W") and self.selectedRoad[1] == " ":
-                            EW_traffic_Entity = Entity(model='cube', scale=(0.5, 5, 1), color= color.red)
-                            EW_traffic_Entity.position = self.roadPosition
-                            EW_traffic_Entity.z -= 1
-                            EW_traffic_Entity.x += 5
-                            EW_traffic_Entity.y += 1
-                            EW_traffic_Entity.name = self.selectedRoad
-                            self.trafficSystem.create_traffic_light_on_road(self.selectedRoad, 55, 300, "green")
-                            self.lights_Entity_objects.append(EW_traffic_Entity)
         else:
             self.text_message.text = "Select a road first"
             invoke(self.clear_error_message, delay=2)
@@ -450,43 +452,54 @@ class Graphics:
     
     def add_bus_stop_button_click(self):
         
-        if self.selectedRoad != "":
-            road = self.selectedRoad
-            roadObstructed = False
-            for v in self.trafficSystem.bus_stop_list:
-                if v["road"] == road:
-                    roadObstructed = True
-                    self.text_message.text = "Road already contains bus stop"
+        if self.selectedRoad["name"] != "":
+            road_name = self.selectedRoad["name"]
+            road_length = self.selectedRoad["length"]
+            invalid_selection = False
+
+            if (self.selectedPosition > road_length):
+                invalid_selection = True
+                self.text_message.text = "Selected position is larger than selected road length"
+                invoke(self.clear_error_message, delay=2)
+
+            for bs in self.trafficSystem.bus_stop_list:
+                if bs["road"] == road_name and (self.selectedPosition >= bs["position"]-10 and self.selectedPosition <= bs["position"]+10):
+                    invalid_selection = True
+                    self.text_message.text = "Bus stop may not be added within 10 units of another bus stop"
                     invoke(self.clear_error_message, delay=2)
+                    break
+
+            for tl in self.trafficSystem.traffic_light_list:
+                if tl["road"] == road_name and (self.selectedPosition >= tl["position"]-10 and self.selectedPosition <= tl["position"]+10):
+                    invalid_selection = True
+                    self.text_message.text = "Bus stop may not be added within 10 units of a traffic light"
+                    invoke(self.clear_error_message, delay=2)
+                    break
+
+            for intersection in self.trafficSystem.intersection_list:
+                if intersection[0]["road"] == road_name and (self.selectedPosition >= intersection[0]["position"]-10 and self.selectedPosition <= intersection[0]["position"]+10) or\
+                   intersection[1]["road"] == road_name and (self.selectedPosition >= intersection[1]["position"]-10 and self.selectedPosition <= intersection[1]["position"]+10):
+                    invalid_selection = True
+                    self.text_message.text = "Bus stop may not be added within 10 units of an intersection"
+                    invoke(self.clear_error_message, delay=2)
+                    break
+                
             
-            if (not roadObstructed):
-                if (self.selectedRoad[0] == "N" or self.selectedRoad[0] == "S") and self.selectedRoad[1] == " ":
-                    NS_bus_stop = Entity(model='cube', scale=(5, 0.5, 1), color= color.white)
-                    NS_bus_stop.position = self.roadPosition
-                    NS_bus_stop.z -= 1
-                    NS_bus_stop.x += 1
-                    NS_bus_stop.y += 1
-                    self.trafficSystem.bus_stop_list.append({"road": self.selectedRoad, "position": self.selectedPosition, "waitingtime": 10}) 
-                    self.bus_stop_Entity_objects.append(NS_bus_stop)
-                    
-                elif (self.selectedRoad[0] == "E" or self.selectedRoad[0] == "W") and self.selectedRoad[1] == " ":
-                    EW_bus_stop = Entity(model='cube', scale=(0.5, 5, 1), color= color.white)
-                    EW_bus_stop.position = self.roadPosition
-                    EW_bus_stop.position = self.roadPosition
-                    EW_bus_stop.z -= 1
-                    EW_bus_stop.x += 1
-                    EW_bus_stop.y += 1
-                    self.trafficSystem.bus_stop_list.append({"road": self.selectedRoad, "position": self.selectedPosition, "waitingtime": 10})  
-                    self.bus_stop_Entity_objects.append(EW_bus_stop)
+            if not invalid_selection:
+                self.trafficSystem.create_bus_stop_on_road(road_name, self.selectedPosition, 10)
+                self.createBusStopEntity(len(self.trafficSystem.bus_stop_list)-1)
+
         else:
             self.text_message.text = "Select a road first"
             invoke(self.clear_error_message, delay=2)
     
+
+
     def road_on_click(self):
         roadName = mouse.hovered_entity.name
-        self.selectedRoad = roadName
-        self.roadPosition = mouse.hovered_entity.position
-        print("Click on road: ", roadName)
+        for r in self.trafficSystem.road_list:
+            if r["name"] == roadName:
+                self.selectedRoad = r
 
 
 
@@ -504,32 +517,28 @@ def update():
 
 def input(key):
     if key == '0':
-        graphics.tempSelectedPosition = graphics.tempSelectedPosition*10 + 0
+        graphics.selectedPosition = graphics.selectedPosition*10 + 0
     elif key == '1':
-        graphics.tempSelectedPosition = graphics.tempSelectedPosition*10 + 1
+        graphics.selectedPosition = graphics.selectedPosition*10 + 1
     elif key == '2':
-        graphics.tempSelectedPosition = graphics.tempSelectedPosition*10 + 2
+        graphics.selectedPosition = graphics.selectedPosition*10 + 2
     elif key == '3':
-        graphics.tempSelectedPosition = graphics.tempSelectedPosition*10 + 3
+        graphics.selectedPosition = graphics.selectedPosition*10 + 3
     elif key == '4':
-        graphics.tempSelectedPosition = graphics.tempSelectedPosition*10 + 4
+        graphics.selectedPosition = graphics.selectedPosition*10 + 4
     elif key == '5':
-        graphics.tempSelectedPosition = graphics.tempSelectedPosition*10 + 5
+        graphics.selectedPosition = graphics.selectedPosition*10 + 5
     elif key == '6':
-        graphics.tempSelectedPosition = graphics.tempSelectedPosition*10 + 6
+        graphics.selectedPosition = graphics.selectedPosition*10 + 6
     elif key == '7':
-        graphics.tempSelectedPosition = graphics.tempSelectedPosition*10 + 7
+        graphics.selectedPosition = graphics.selectedPosition*10 + 7
     elif key == '8':
-        graphics.tempSelectedPosition = graphics.tempSelectedPosition*10 + 8
+        graphics.selectedPosition = graphics.selectedPosition*10 + 8
     elif key == '9':
-        graphics.tempSelectedPosition = graphics.tempSelectedPosition*10 + 9
+        graphics.selectedPosition = graphics.selectedPosition*10 + 9
     elif key == Keys.backspace:
-        cur = graphics.tempSelectedPosition
-        graphics.tempSelectedPosition = int((cur - (cur % 10)) / 10)
-        print(graphics.tempSelectedPosition)
-    elif key == Keys.enter:
-        graphics.selectedPosition = graphics.tempSelectedPosition
-        graphics.tempSelectedPosition = 0
+        cur = graphics.selectedPosition
+        graphics.selectedPosition = int((cur - (cur % 10)) / 10)
 
 
 
