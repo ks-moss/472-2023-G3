@@ -59,6 +59,8 @@ def busStopSimulation(busStop, vehicles, busStopIndex):
                             if busArrived[busStop_road] == False:
                                 stopTimes[busStop_road] = datetime.datetime.now()
                                 busArrived[busStop_road] = True
+                                # Set the waiting time of the indexed bus back to zero since it has arrived
+                                busStop[busStopIndex]["waitingtime"] = 0
                             else:
                                 difference_time = datetime.datetime.now() - stopTimes[busStop_road]
                                 elapsedTime = difference_time.total_seconds()
@@ -66,21 +68,21 @@ def busStopSimulation(busStop, vehicles, busStopIndex):
                             print("| BUS AT BUS STOP                                     ")
                             print("______________________________________________________")
                             print("| Bus Stop on", busStop_road)
-                            print("| Bus Waiting Time: ", elapsedTime)
+                            print("| Bus Waiting Time: ", busStop[busStopIndex]["waitingtime"])
+                            print("| Bus Elapsed Time", elapsedTime)
                             print("______________________________________________________\n")
                     
-                        # 3 IF time since vehicle with bus type stopped > waiting time
-                        
-                        '''if elapsedTime == busStop[busStopIndex]["waitingtime"]:
-                            # 3.1 THEN the vehicle may depart 
-                            # Change bus position to leave bus stop   
-                            vehicles[i]["position"] = busStop_position + 0.1              
-                            for l in range (i, len(vehicles)):
-                                VehicleCalculations.calculateAcceleration(vehicles,l)
-                            print("______________________________________________________")
-                            print("BUS IS NOW LEAVING BUS STOP ON", busStop_road)
-                            print("______________________________________________________")
-                            stopTimes[busStop_road] = 0'''
+                    # 3 IF time since vehicle with bus type stopped > waiting time   
+                    if elapsedTime > busStop[busStopIndex]["waitingtime"]:
+                        # 3.1 THEN the vehicle may depart 
+                        # Change bus position to leave bus stop   
+                        vehicles[i]["position"] = busStop_position + 0.1              
+                        for l in range (i, len(vehicles)):
+                            VehicleCalculations.calculateAcceleration(vehicles,l)
+                        print("______________________________________________________")
+                        print("BUS IS NOW LEAVING BUS STOP ON", busStop_road)
+                        print("______________________________________________________")
+                        stopTimes[busStop_road] = 0
                         
     
     # Return the list of vehicles that have interacted with the bus stop with updated attributes
