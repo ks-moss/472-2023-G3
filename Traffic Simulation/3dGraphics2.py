@@ -15,7 +15,7 @@ class Graphics:
         window.title = "Traffic Simulation 3D"
         window.vsync = False
         window.borderless = False
-        window.fullscreen = False
+        window.fullscreen = True
         # window.fps_counter.disable()
         window.cog_button.disable()
 
