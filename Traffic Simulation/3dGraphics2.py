@@ -56,13 +56,12 @@ class Graphics:
         self.selectedRoadNotifier = Button(text=("Road:\n"+self.selectedRoad["name"]), color=color.black, position=(.26, 0.43), scale=(0.1, 0.1), model='circle')
         self.selectedPositionNotifier = Button(text=("Position:\n"+str(self.selectedPosition)), color=color.black, position=(.14, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3)
 
-        add_vehicles_button = Button(text='Add\nBus', color=color.azure, highlight_color=color.cyan, position=(0.70, 0.33), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_bus_on_click)
-        add_vehicles_button = Button(text='Add\nFire Truck', color=color.azure, highlight_color=color.cyan, position=(0.70, 0.22), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_fire_truck_on_click)
-        add_vehicles_button = Button(text='Add\nPolice Van', color=color.azure, highlight_color=color.cyan, position=(0.70, 0.11), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_police_van_on_click)
-        add_vehicles_button = Button(text='Add\nAmbulance', color=color.azure, highlight_color=color.cyan, position=(0.70, -.0), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_ambulance_on_click)
-        add_vehicles_button = Button(text='Add\nCar', color=color.azure, highlight_color=color.cyan, position=(0.70, -0.11), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_car_on_click)       
-
-
+        add_bus_button = Button(text='Add\nBus', color=color.azure, highlight_color=color.cyan, position=(0.70, 0.33), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_bus_on_click)
+        add_fire_truck_button = Button(text='Add\nFire Truck', color=color.azure, highlight_color=color.cyan, position=(0.70, 0.22), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_fire_truck_on_click)
+        add_police_van_button = Button(text='Add\nPolice Van', color=color.azure, highlight_color=color.cyan, position=(0.70, 0.11), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_police_van_on_click)
+        add_ambulance_button = Button(text='Add\nAmbulance', color=color.azure, highlight_color=color.cyan, position=(0.70, -.0), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_ambulance_on_click)
+        add_car_button = Button(text='Add\nCar', color=color.azure, highlight_color=color.cyan, position=(0.70, -0.11), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_car_on_click)  
+    
     def initializeRoads(self):
         num_NS_roads = 0
         num_EW_roads = 0
