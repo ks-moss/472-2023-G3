@@ -396,7 +396,7 @@ class Graphics:
                     invoke(self.clear_error_message, delay=2)
             
             if not invalid_selection:
-                self.trafficSystem.create_vehicle_on_road(road_name, self.selectedPosition, 10, 1.2, 'car')
+                self.trafficSystem.create_vehicle_on_road(road_name, self.selectedPosition, 10, 1.2, 'bus')
                 self.createVehicleEntity(len(self.trafficSystem.vehicle_list)-1)
         else:
             self.text_message.text = "Select a road first"

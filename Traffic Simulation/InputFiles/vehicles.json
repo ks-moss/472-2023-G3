@@ -9,11 +9,11 @@
   },
   {
     "type": "bus",
-    "length": 12,
+    "length": 8,
     "maximumSpeed": 11.4,
     "maximumAcceleration": 1.22,
     "maximumBrakingFactor": 4.29,
-    "minimumFollowingDistance": 12
+    "minimumFollowingDistance": 8
   },
   {
     "type": "fire truck",
