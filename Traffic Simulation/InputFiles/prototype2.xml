@@ -48,7 +48,7 @@
         <position>40</position>
         <speed>15</speed>
         <acceleration>1.2</acceleration>
-        <type>car</type>
+        <type>fire truck</type>
     </VEHICLE>
     <VEHICLE>
         <road>E Wigwam Ave</road>
@@ -62,7 +62,7 @@
         <position>75</position>
         <speed>15</speed>
         <acceleration>1.2</acceleration>
-        <type>car</type>
+        <type>ambulance</type>
     </VEHICLE>
     <VEHICLE>
         <road>N Pecos Rd</road>
@@ -76,7 +76,7 @@
         <position>60</position>
         <speed>15</speed>
         <acceleration>1.2</acceleration>
-        <type>car</type>
+        <type>bus</type>
     </VEHICLE>
     <VEHICLE>
         <road>E Windmill Pkwy</road>
@@ -86,8 +86,22 @@
         <type>fire truck</type>
     </VEHICLE>
     <VEHICLE>
-        <road>E Windmill Pkwy</road>
+        <road>N Pecos Rd</road>
         <position>10</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>police van</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>S Eastern Ave</road>
+        <position>10</position>
+        <speed>15</speed>
+        <acceleration>1.2</acceleration>
+        <type>ambulance</type>
+    </VEHICLE>
+    <VEHICLE>
+        <road>N Pecos Rd</road>
+        <position>5</position>
         <speed>15</speed>
         <acceleration>1.2</acceleration>
         <type>car</type>
@@ -95,7 +109,7 @@
     <BUSSTOP>
         <road>S Eastern Ave</road>
         <position>50</position>
-        <waitingtime>20</waitingtime>
+        <waitingtime>10</waitingtime>
     </BUSSTOP>
     <!-- <BUSSTOP>
         <road>E Windmill Pkwy</road>

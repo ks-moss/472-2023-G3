@@ -42,20 +42,25 @@ class Graphics:
 
         self.selectedRoad = {"name": "", "length": 0}
         self.selectedPosition = 0
+        self.selectedVehicleType = '' 
 
         self.initializeRoads()
         self.initializeVehicles()
         self.initializeIntersections()
         self.initializeBusStop()
 
-        add_vehicles_button = Button(text='Add\nVehicle', color=color.azure, highlight_color=color.cyan, position=(0.50, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.on_add_vehicle_button_click)
-        restartButton = Button(text='Restart\nSimulation', color=rgb(128, 128, 0), highlight_color=color.cyan, position=(0.38, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.on_restart_button_click)
+        restartButton = Button(text='Restart\nSimulation', color=rgb(128, 128, 0), highlight_color=color.cyan, position=(0.50, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.on_restart_button_click)
         endButton = Button(text='End\nSimulation', color=rgb(128, 0, 0), highlight_color=color.red, position=(0.62, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.on_end_button_click)
-        addTrafficLightButton = Button(text='Add\nTraffic\nLight', color=color.blue, highlight_color=color.cyan, position=(.44, 0.34), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_traffic_light_button_click)
-        addBusStopButton = Button(text='Add\nBus\nStop', color=color.blue, highlight_color=color.cyan, position=(.56, 0.34), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_bus_stop_button_click)
+        addTrafficLightButton = Button(text='Add\nTraffic\nLight', color=color.blue, highlight_color=color.cyan, position=(0.56, 0.22), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_traffic_light_button_click)
+        addBusStopButton = Button(text='Add\nBus\nStop', color=color.blue, highlight_color=color.cyan, position=(0.56, 0.33), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_bus_stop_button_click)
         self.selectedRoadNotifier = Button(text=("Road:\n"+self.selectedRoad["name"]), color=color.black, position=(.26, 0.43), scale=(0.1, 0.1), model='circle')
         self.selectedPositionNotifier = Button(text=("Position:\n"+str(self.selectedPosition)), color=color.black, position=(.14, 0.43), scale=(0.1, 0.1), model='circle', text_scale=0.3)
-        
+
+        add_vehicles_button = Button(text='Add\nBus', color=color.azure, highlight_color=color.cyan, position=(0.70, 0.33), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_bus_on_click)
+        add_vehicles_button = Button(text='Add\nFire Truck', color=color.azure, highlight_color=color.cyan, position=(0.70, 0.22), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_fire_truck_on_click)
+        add_vehicles_button = Button(text='Add\nPolice Van', color=color.azure, highlight_color=color.cyan, position=(0.70, 0.11), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_police_van_on_click)
+        add_vehicles_button = Button(text='Add\nAmbulance', color=color.azure, highlight_color=color.cyan, position=(0.70, -.0), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_ambulance_on_click)
+        add_vehicles_button = Button(text='Add\nCar', color=color.azure, highlight_color=color.cyan, position=(0.70, -0.11), scale=(0.1, 0.1), model='circle', text_scale=0.3, on_click=self.add_car_on_click)       
 
 
     def initializeRoads(self):
@@ -201,7 +206,7 @@ class Graphics:
 
                 elif (tsVehicle["type"] == 'fire truck'):
                     vehicle.scale = (6,2,1)
-                    vehicle.color = color.red
+                    vehicle.color = color.white
                     vehicle.texture=load_texture(f'textures/fireTruck.png')
                     trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
@@ -210,6 +215,12 @@ class Graphics:
                     vehicle.color = color.white
                     vehicle.texture=load_texture(f'textures/police.png')
                     trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
+
+                elif(tsVehicle["type"] == 'ambulance'):
+                    vehicle.scale = (6,2,1)
+                    vehicle.color = color.white
+                    vehicle.texture=load_texture(f'textures/ambulance.png')
+                    trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2.75, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
                 elif (tsVehicle["type"] == 'car'):
                     vehicle.texture=load_texture(f'textures/car.png')
@@ -396,12 +407,30 @@ class Graphics:
                     invoke(self.clear_error_message, delay=2)
             
             if not invalid_selection:
-                self.trafficSystem.create_vehicle_on_road(road_name, self.selectedPosition, 10, 1.2, 'bus')
+                self.trafficSystem.create_vehicle_on_road(road_name, self.selectedPosition, 10, 1.2, self.selectedVehicleType)
                 self.createVehicleEntity(len(self.trafficSystem.vehicle_list)-1)
         else:
             self.text_message.text = "Select a road first"
             invoke(self.clear_error_message, delay=2)
-    
+
+
+    def add_bus_on_click(self):
+        self.selectedVehicleType = 'bus'
+        self.on_add_vehicle_button_click()
+    def add_fire_truck_on_click(self):
+        self.selectedVehicleType = 'fire truck'
+        self.on_add_vehicle_button_click()
+    def add_police_van_on_click(self):
+        self.selectedVehicleType = 'police van'
+        self.on_add_vehicle_button_click()
+    def add_ambulance_on_click(self):
+        self.selectedVehicleType = 'ambulance'
+        self.on_add_vehicle_button_click()
+    def add_car_on_click(self):
+        self.selectedVehicleType = 'car'
+        self.on_add_vehicle_button_click()
+
+
     #clear error message on screen
     def clear_error_message(self):
         self.text_message.text = ""
