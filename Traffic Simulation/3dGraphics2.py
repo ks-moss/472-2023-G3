@@ -211,7 +211,8 @@ class Graphics:
                     vehicle.texture=load_texture(f'textures/police.png')
                     trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
-                elif(tsVehicle["type"] == 'ambulance'):
+                elif(tsVehicle["type"] == '
+                '):
                     vehicle.scale = (6,2,1)
                     vehicle.color = color.white
                     vehicle.texture=load_texture(f'textures/ambulance.png')
@@ -402,7 +403,7 @@ class Graphics:
                     invoke(self.clear_error_message, delay=2)
             
             if not invalid_selection:
-                self.trafficSystem.create_vehicle_on_road(road_name, self.selectedPosition, 10, 1.2, 'ambulance')
+                self.trafficSystem.create_vehicle_on_road(road_name, self.selectedPosition, 10, 1.2, 'car')
                 self.createVehicleEntity(len(self.trafficSystem.vehicle_list)-1)
         else:
             self.text_message.text = "Select a road first"
