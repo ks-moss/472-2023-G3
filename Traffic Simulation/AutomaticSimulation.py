@@ -67,6 +67,11 @@ class AutomaticSimulation:
                 color = "red"
             self.trafficlight_current_states.append({"color": color, "counter": 0})
 
+        # Stores a counter for each vehicle (only used by buses)
+        self.bus_stop_counter = []
+        for v in self.vehicle_list:
+            self.bus_stop_counter.append({"counter": 0})
+
     def vehicle_on_road(self):
         
 
@@ -105,7 +110,7 @@ class AutomaticSimulation:
 
     def bus_stop_on_road(self):
         for i in range(len(self.bus_stop_list)):
-            busStopSimulation(self.bus_stop_list, self.vehicle_list, i)
+            busStopSimulation(self.bus_stop_list, self.vehicle_list, i, self.bus_stop_counter)
 
     def intersection_on_road(self):
         for i in range(len(self.intersection_list)):
@@ -119,11 +124,14 @@ class AutomaticSimulation:
             "acceleration": acceration,
             "type": type
         })
+        self.bus_stop_counter.append({"counter": 0})
         
     def remove_vehicles_off_road(self):
         for i in sorted(self.to_be_removed, reverse=True):
             del self.vehicle_list[i]
-        
+        for i in sorted(self.to_be_removed, reverse=True):
+            del self.bus_stop_counter[i]
+
         self.to_be_removed.clear()
 
     def create_traffic_light_on_road(self, road, position, cycle, color):

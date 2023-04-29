@@ -39,8 +39,9 @@ def trafficLightInteraction (trafficLight, vehicles, light_index, lightStates):
                         if (l["position"] < trafficLight[light_index]["position"] and l["position"] > vehicles[i]["position"]):
                             lightInBetween = True
                     if (not lightInBetween):
-                        vehicles[i]["speed"] = 10
-                        vehicles[i]["acceleration"] = 2
+                        if (vehicles[i]["speed"] < 1):
+                            vehicles[i]["speed"] = 8
+                            vehicles[i]["acceleration"] = 2
            
                     
     # 3.1 IF traffic light is red
