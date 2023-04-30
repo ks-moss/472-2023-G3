@@ -34,3 +34,5 @@ class TestElement(unittest.TestCase):
     def test_empty_attribute_lists(self):
         elem = func.Element()
         self.assertEqual(len(elem.attributeListDictionary), 0)
+
+unittest.main()
