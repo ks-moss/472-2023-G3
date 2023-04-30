@@ -330,3 +330,42 @@ class TrafficSystem:
         #delete all the vehicles not on a road referring to our deleteIndexList
         for i in sorted(deleteIndexList, reverse = True):   
             del self.trafficLightList[i]
+            
+        # Rule 6 - There is a maximum of one vehicle generator on each road
+        vehicleGenerators = self.vehicleGeneratorList
+        roads = self.roadList
+        deleteIndexList = []
+        for i in range(len(vehicleGenerators)):           # Iterate through generators finding road it is on
+            thisRoad = vehicleGenerators[i]["name"]
+            hasGen = False                                
+            for x in range(len(roads)):                   # Iterate through roads to find match
+                if thisRoad == roads[x]["name"]:          # Found generator on road
+                    hasGen = True
+            if hasGen == True:                            # If road already has a generator, max generators has been met
+                max = True
+            if max == True:
+                deleteIndexList.append(i)
+                self.errorList.append("- This road: " + thisRoad + " has max amount of vehicle generators.")
+        for i in sorted(deleteIndexList, reverse = True):
+            del self.vehicleGeneratorList[i]
+
+        # Rule 7 - A traffic light must not be within the deceleration distance of another traffic light
+        trafficLights = self.trafficLightList
+        roads = self.roadList
+        deleteIndexList = []
+        for i in range(len(trafficLights)):                # Iterate to find road and position of traffic light
+            thisRoad = trafficLights[i]["road"]         
+            thisPosition = trafficLights[i]["position"]
+            thisLight = trafficLights[i]
+            for x in range(i + 1, len(trafficLights)):            
+                otherRoad = trafficLights[x]["road"]         
+                otherPosition = trafficLights[x]["position"]
+                otherLight = trafficLights[x]
+            if thisRoad == otherRoad:                    
+                distance = abs(thisPosition - otherPosition)
+                if distance < 30:                           # 30 is deceleration distance
+                    deleteIndexList.append(i)
+                    self.errorList.append("- Traffic light " + thisLight + " is within deceleration distance of traffic light " + otherLight + ".")
+
+        for i in sorted(deleteIndexList, reverse = True):  
+            del self.trafficLightList[i]
