@@ -216,8 +216,7 @@ class TrafficSystem:
                 speed = int(elem.find("speed").text)
                 acceleration = float(elem.find("acceleration").text)
                 type = elem.find("type").text
-                position = int(elem.find("position").text)
-                self.vehicleGeneratorList.append({"name": name, "frequency": frequency, "speed": speed, "acceleration": acceleration, "type": type, "position" : position})
+                self.vehicleGeneratorList.append({"name": name, "frequency": frequency, "speed": speed, "acceleration": acceleration, "type": type})
             elif elem.tag == "CROSSROADS":
                 temp_list = []
                 # iterate through the child elements of the CROSSROADS element
@@ -293,3 +292,41 @@ class TrafficSystem:
         #         self.errorList.append("- A vehicle generator was found on the road \"" + thisRoad + "\" which does not exist")         
         # for i in sorted(deleteIndexList, reverse = True):  
         #     del self.vehicleGeneratorList[i]
+
+        #rule 4 - The position of each vehicle is less than the length of the road.
+        vehicles = self.vehicleList
+        roads = self.roadList
+        deleteIndexList = []
+        for i in range(len(vehicles)):             
+            thisPosition = vehicles[i]["position"]                  #iterate through cars finding road & position
+            thisRoad = vehicles[i]["road"]       
+            isLess = False                         
+            for x in range(len(roads)):                             #iterating through roads until we find a match
+                if thisRoad == roads[x]["name"]:                    #found the road car is on
+                    if thisPosition < roads[x]["length"]:           #now checking position is less than road length
+                        isLess = True
+            if isLess == False:                    #if the vehicle position greater than lenght, remove it 
+                deleteIndexList.append(i)         
+                self.errorList.append("- A vehicle was found with a position not on it's road \"" + thisRoad + "\" ")       
+        #delete all the vehicles not on a road referring to our deleteIndexList
+        for i in sorted(deleteIndexList, reverse = True):   
+            del self.vehicleList[i]
+
+        #rule 5 - The position of each traffic light is less than the length of the road.
+        trafficLights = self.trafficLightList
+        roads = self.roadList
+        deleteIndexList = []
+        for i in range(len(trafficLights)):                
+            thisRoad = trafficLights[i]["road"]                  #iterate through lights finding road & position
+            thisPosition = trafficLights[i]["position"]       
+            isLess = False                         
+            for x in range(len(roads)):                             #iterating through roads until we find a match
+                if thisRoad == roads[x]["name"]:                    #found the road car is on
+                    if thisPosition < roads[x]["length"]:           #now checking position is less than road length
+                        isLess = True
+            if isLess == False:                    #if the vehicle position greater than lenght, remove it 
+                deleteIndexList.append(i)         
+                self.errorList.append("- A traffic light was found with a position not on it's road \"" + thisRoad + "\" ")       
+        #delete all the vehicles not on a road referring to our deleteIndexList
+        for i in sorted(deleteIndexList, reverse = True):   
+            del self.trafficLightList[i]
