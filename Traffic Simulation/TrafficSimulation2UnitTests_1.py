@@ -34,3 +34,5 @@ class TestCheckLightState(unittest.TestCase):
         }
         time = 300 # 10 minutes, 20 iterations of the cycle
         self.assertFalse(func.checkLightState(light, time))
+
+unittest.main()

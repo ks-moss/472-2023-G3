@@ -27,3 +27,5 @@ class TestTurnVehiclesAtIntersection(unittest.TestCase):
         random.seed(42)
         func.turnVehiclesAtIntersection(intersection_list, 1, vehicles_list)
         self.assertListEqual(vehicles_list, [{"road": "A", "position": 1}, {"road": "A", "position": 1}])
+
+unittest.main()
