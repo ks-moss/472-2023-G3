@@ -1,5 +1,5 @@
 import unittest
-import VehicleCalculations
+from src import VehicleCalculations
 
 class TrafficSimulationTest(unittest.TestCase):
 

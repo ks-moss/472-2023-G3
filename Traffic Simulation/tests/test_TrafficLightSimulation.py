@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
-import VehicleCalculations
-import TrafficLightSimulation
+from src import VehicleCalculations
+from src import TrafficLightSimulation
 
 
 # Goal: Test each condition within the trafficLightInteraction method

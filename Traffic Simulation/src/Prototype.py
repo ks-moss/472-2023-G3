@@ -1,15 +1,15 @@
 from ursina import *
 import random
-from SimulationWVehicleGenerator import VehicleGeneratorSimulation
-from TrafficLightSimulation import *
+from .SimulationWVehicleGenerator import VehicleGeneratorSimulation
+from .TrafficLightSimulation import *
 import sys
-#from VehicleGenerator import addVehicle
 
 class Graphics:
     
-    def __init__(self):
+    def __init__(self, input_file):
 
-        self.trafficSystem = VehicleGeneratorSimulation("./InputFiles/prototype2.xml")
+        self.input_file = input_file
+        self.trafficSystem = VehicleGeneratorSimulation(input_file)
 
         # window module settings
         window.title = "Traffic Simulation 3D"
@@ -17,7 +17,6 @@ class Graphics:
         window.borderless = False
         window.fullscreen = True
         # window.fps_counter.disable()
-        window.cog_button.disable()
 
         # Create a camera with a bird's eye view
         camera.orthographic = True
@@ -71,14 +70,14 @@ class Graphics:
             if (r["name"][0] == "N" or r["name"][0] == "S") and r["name"][1] == " ":
                 num_NS_roads += 1
                 road_model = Entity(model='cube', scale=(7, r["length"], 0.1), color=color.gray, collider='box', on_click=self.road_on_click)
-                road_model.texture=load_texture(f'textures/road.png')
+                road_model.texture='src/textures/road.png'
                 road_model.name = r["name"]
                 self.roads_Entity_objects.append(road_model)
 
             elif (r["name"][0] == "E" or r["name"][0] == "W") and r["name"][1] == " ":
                 num_EW_roads += 1
                 road_model = Entity(model='cube', scale=(r["length"], 7, 0.1), color=color.gray, collider='box', on_click=self.road_on_click)
-                road_model.texture=load_texture(f'textures/road2.png')
+                road_model.texture='src/textures/road2.png'
                 road_model.name = r["name"]
                 self.roads_Entity_objects.append(road_model)
             
@@ -200,29 +199,29 @@ class Graphics:
                 if (tsVehicle["type"] == 'bus'):
                     vehicle.scale = (5,2,1)
                     vehicle.color = color.white
-                    vehicle.texture=load_texture(f'textures/bus.png')
+                    vehicle.texture='src/textures/bus.png'
                     trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2, 1, 1), collider='box', add_to_scene_entities=False)
 
                 elif (tsVehicle["type"] == 'fire truck'):
                     vehicle.scale = (6,2,1)
                     vehicle.color = color.white
-                    vehicle.texture=load_texture(f'textures/fireTruck.png')
+                    vehicle.texture='src/textures/fireTruck.png'
                     trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
                 elif (tsVehicle["type"] == 'police van'):
                     vehicle.scale = (4,1,1)
                     vehicle.color = color.white
-                    vehicle.texture=load_texture(f'textures/police.png')
+                    vehicle.texture='src/textures/police.png'
                     trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
                 elif(tsVehicle["type"] == 'ambulance'):
                     vehicle.scale = (6,2,1)
                     vehicle.color = color.white
-                    vehicle.texture=load_texture(f'textures/ambulance.png')
+                    vehicle.texture='src/textures/ambulance.png'
                     trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2.75, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
                 elif (tsVehicle["type"] == 'car'):
-                    vehicle.texture=load_texture(f'textures/car.png')
+                    vehicle.texture='src/textures/car.png'
                     trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2.75, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
 
@@ -374,7 +373,7 @@ class Graphics:
         self.lights_Entity_objects.clear()
         self.bus_stop_Entity_objects.clear()
         
-        self.trafficSystem = VehicleGeneratorSimulation("./InputFiles/prototype2.xml")
+        self.trafficSystem = VehicleGeneratorSimulation(self.input_file)
         self.initializeVehicles()
         self.initializeTrafficLights()
         self.initializeIntersections()
@@ -572,5 +571,5 @@ def input(key):
 
 if __name__ == "__main__":
     app = Ursina()
-    graphics = Graphics()
+    graphics = Graphics("./InputFiles/prototype2.xml")
     app.run()

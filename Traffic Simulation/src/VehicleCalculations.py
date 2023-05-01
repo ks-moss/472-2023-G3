@@ -1,4 +1,4 @@
-from TrafficSimulation2 import TrafficSystem
+from .TrafficSimulation2 import TrafficSystem
 import math
 import json
 

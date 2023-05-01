@@ -1,4 +1,4 @@
-import TrafficSimulation2 as func
+from src import TrafficSimulation2 as func
 import unittest
 
 class TestCheckLightState(unittest.TestCase):
@@ -111,4 +111,5 @@ class TestSimpleOutput(unittest.TestCase):
         )
         self.assertEqual(output, expected_output)
 
-unittest.main()
+if __name__ == '__main__':
+    unittest.main()

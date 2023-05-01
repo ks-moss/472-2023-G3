@@ -1,0 +1,10 @@
+<root>    
+    <ROAD>
+        <name>S Eastern Ave</name>
+        <length>100</length>
+    </ROAD>
+    <ROAD>
+        <name>E Wigwam Ave</name>
+        <length>100</length>
+    </ROAD>
+</root>

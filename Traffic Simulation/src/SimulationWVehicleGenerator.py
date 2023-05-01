@@ -1,8 +1,7 @@
 # 3.4
-import VehicleCalculations
-from TrafficSimulation2 import TrafficSystem
-from AutomaticSimulation import AutomaticSimulation
-import os
+from src import VehicleCalculations
+from .TrafficSimulation2 import TrafficSystem
+from .AutomaticSimulation import AutomaticSimulation
 
 # Goal: Simulation with vehicle generator
 # Precondition: The system contains a diagram of the virtual road network. There is a vehicle generator on a road.
