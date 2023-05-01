@@ -1,7 +1,13 @@
 # 3.4
+import sys
+import os
+
+FILE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(FILE_DIR))
+
 from src import VehicleCalculations
-from .TrafficSimulation2 import TrafficSystem
-from .AutomaticSimulation import AutomaticSimulation
+from src.TrafficSimulation2 import TrafficSystem
+from src.AutomaticSimulation import AutomaticSimulation
 
 # Goal: Simulation with vehicle generator
 # Precondition: The system contains a diagram of the virtual road network. There is a vehicle generator on a road.

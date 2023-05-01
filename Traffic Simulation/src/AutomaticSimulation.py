@@ -1,11 +1,15 @@
 # 3.3
-from .TrafficSimulation2 import *
-from .VehicleCalculations import calculateVehicleSpeedAndPosition, calculateVehicleOOB
-from .TrafficLightSimulation  import trafficLightInteraction
-from .SimulationIntersection import turnVehiclesAtIntersection
-from .BusStopSimulation import *
+import sys
 import os
-import time
+
+FILE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(FILE_DIR))
+
+from src.TrafficSimulation2 import *
+from src.VehicleCalculations import calculateVehicleSpeedAndPosition, calculateVehicleOOB
+from src.TrafficLightSimulation  import trafficLightInteraction
+from src.SimulationIntersection import turnVehiclesAtIntersection
+from src.BusStopSimulation import *
 import __main__
 
 # Goal: Run simulation automatically

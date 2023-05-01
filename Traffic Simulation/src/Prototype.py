@@ -1,8 +1,13 @@
 from ursina import *
 import random
-from .SimulationWVehicleGenerator import VehicleGeneratorSimulation
-from .TrafficLightSimulation import *
 import sys
+import os
+
+FILE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(FILE_DIR))
+
+from src.SimulationWVehicleGenerator import VehicleGeneratorSimulation
+from src.TrafficLightSimulation import *
 
 class Graphics:
     
