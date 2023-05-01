@@ -204,6 +204,8 @@ class TestGraphics(unittest.TestCase):
 
         self.assertTrue(len(graphics.vehicles) == 0)
 
+
+
     def test_update(self):
         graphics = Graphics("./InputFiles/test.xml")
         graphics.selectedRoad = graphics.trafficSystem.road_list[0]
@@ -215,6 +217,15 @@ class TestGraphics(unittest.TestCase):
         update()
         self.assertTrue(graphics.trafficSystem.vehicle_list[0]["position"] != graphics.selectedPosition)
         self.assertTrue(Entity(graphics.vehicles[0]).position.x != entity_x)
+
+        graphics.selectedPosition = 99.9
+        graphics.add_car_on_click()
+        self.assertTrue(len(graphics.vehicles) == 2)
+        update()
+        self.assertTrue(len(graphics.vehicles) == 1)
+
+
+
 
 if __name__ == '__main__':
     unittest.main()

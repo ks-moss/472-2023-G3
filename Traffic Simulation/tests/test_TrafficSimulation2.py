@@ -74,29 +74,30 @@ class TestSimpleOutput(unittest.TestCase):
     
     def test_generateSimpleOutputString(self):
         
+        ts = func.TrafficSystem()
         # create sample data
-        func.roadList = [
+        ts.roadList = [
             {"name": "road1", "length": 5},
             {"name": "road2", "length": 3}
         ]
-        func.vehicleList = [
+        ts.vehicleList = [
             {"type": "car", "road": "road1", "position": 2},
             {"type": "bus", "road": "road1", "position": 4},
             {"type": "fire truck", "road": "road2", "position": 1},
             {"type": "ambulance", "road": "road2", "position": 2},
         ]
-        func.trafficLightList = [
-            {"road": "road1", "position": 1, "state": "green"},
-            {"road": "road1", "position": 3, "state": "red"},
-            {"road": "road2", "position": 0, "state": "green"}
+        ts.trafficLightList = [
+            {"road": "road1", "position": 1, "cycle": 20},
+            {"road": "road1", "position": 3, "cycle": 10},
+            {"road": "road2", "position": 0, "cycle": 20}
         ]
-        func.busStopList = [
+        ts.busStopList = [
             {"road": "road1", "position": 0},
             {"road": "road2", "position": 2}
         ]
         
         # call the method with a specific time
-        output = func.generateSimpleOutputString(10)
+        output = ts.generateSimpleOutputString(10)
         
         # check the output string
         expected_output = (
