@@ -75,14 +75,14 @@ class Graphics:
             if (r["name"][0] == "N" or r["name"][0] == "S") and r["name"][1] == " ":
                 num_NS_roads += 1
                 road_model = Entity(model='cube', scale=(7, r["length"], 0.1), color=color.gray, collider='box', on_click=self.road_on_click)
-                road_model.texture='src/textures/road.png'
+                road_model.texture='./textures/road.png'
                 road_model.name = r["name"]
                 self.roads_Entity_objects.append(road_model)
 
             elif (r["name"][0] == "E" or r["name"][0] == "W") and r["name"][1] == " ":
                 num_EW_roads += 1
                 road_model = Entity(model='cube', scale=(r["length"], 7, 0.1), color=color.gray, collider='box', on_click=self.road_on_click)
-                road_model.texture='src/textures/road2.png'
+                road_model.texture='./textures/road2.png'
                 road_model.name = r["name"]
                 self.roads_Entity_objects.append(road_model)
             
@@ -204,29 +204,29 @@ class Graphics:
                 if (tsVehicle["type"] == 'bus'):
                     vehicle.scale = (5,2,1)
                     vehicle.color = color.white
-                    vehicle.texture='src/textures/bus.png'
+                    vehicle.texture='./textures/bus.png'
                     trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2, 1, 1), collider='box', add_to_scene_entities=False)
 
                 elif (tsVehicle["type"] == 'fire truck'):
                     vehicle.scale = (6,2,1)
                     vehicle.color = color.white
-                    vehicle.texture='src/textures/fireTruck.png'
+                    vehicle.texture='./textures/fireTruck.png'
                     trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
                 elif (tsVehicle["type"] == 'police van'):
                     vehicle.scale = (4,1,1)
                     vehicle.color = color.white
-                    vehicle.texture='src/textures/police.png'
+                    vehicle.texture='./textures/police.png'
                     trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
                 elif(tsVehicle["type"] == 'ambulance'):
                     vehicle.scale = (6,2,1)
                     vehicle.color = color.white
-                    vehicle.texture='src/textures/ambulance.png'
+                    vehicle.texture='./textures/ambulance.png'
                     trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2.75, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
                 elif (tsVehicle["type"] == 'car'):
-                    vehicle.texture='src/textures/car.png'
+                    vehicle.texture='./textures/car.png'
                     trigger_box3 = Entity(model='wireframe_cube', color=color.clear, scale=(2.75, 1, 1), collider='box', origin_x=.3, add_to_scene_entities=False)
 
 

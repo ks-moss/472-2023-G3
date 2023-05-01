@@ -10,7 +10,6 @@ import xml.etree.ElementTree as ET
 #   Returns True if given light element should be green at the current time, false otherwise
 
 def checkLightState(light, time):
-    cycle = light["cycle"]
     cycleIteration = int(time / light["cycle"])
     if (cycleIteration % 2 == 0):
         return False # Assumes red light initial value
@@ -146,7 +145,7 @@ class TrafficSystem:
                  if (busStop["road"] == road["name"]):
                       if (trafficLightString[busStop["position"]] == ' '):
                            trafficLightString = trafficLightString[:busStop["position"] + 1] + "|" + trafficLightString[busStop["position"] + 2:]
-                 busStopString = busStopString[:busStop["position"] + 1] + "B" + busStopString[busStopLight["position"] + 2:]
+                 busStopString = busStopString[:busStop["position"] + 1] + "B" + busStopString[busStop["position"] + 2:]
                       
             output = output + "\n" + road["name"] + "\n"
             output = output + " > road          " + roadString + "\n"
@@ -158,6 +157,7 @@ class TrafficSystem:
         f = open(fileName, "w")
         f.write(self.generateSimpleOutputString(time))
         f.close()
+        return self.generateSimpleOutputString(time)
 
     def ReadElementsFromFile(self, fileName):
         tree = ET.parse(fileName)
