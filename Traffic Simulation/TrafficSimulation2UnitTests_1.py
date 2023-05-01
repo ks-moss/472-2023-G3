@@ -70,10 +70,7 @@ class TestElement(unittest.TestCase):
         self.assertEqual(len(elem.attributeListDictionary), 0)
 
 
-
-#from your_module import YourClass
-
-class Test(unittest.TestCase):
+class TestSimpleOutput(unittest.TestCase):
     
     def test_generateSimpleOutputString(self):
         
@@ -113,6 +110,5 @@ class Test(unittest.TestCase):
             " > bus stops     |   B|\n"
         )
         self.assertEqual(output, expected_output)
-
 
 unittest.main()
