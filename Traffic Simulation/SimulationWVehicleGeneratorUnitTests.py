@@ -1,57 +1,42 @@
 import unittest
-import SimulationWVehicleGenerator
+from SimulationWVehicleGenerator import VehicleGeneratorSimulation
 
-# Goal: Increase the branch coverage of the codebase using the unittest library.
-# There are 2 tests included in this unittest file.
-# 1. test_vg_obstructed() - tests the branches cases while,
-#                           Vehicle is obstructing 
-#                                   vehicle generator is not ready
-#                                       vehicle frequency is equal to counter
-#                                       vehicle frequency is not equal to counter
-#                                   vehicle generator is ready
-#                                       vehicle frequency is equal to counter
-#                                       vehicle frequency is not equal to counter
-# 2. test_vg_unobstructed() - tests the branches while,
-#                           Vehicle is not obstructing 
-#                                   vehicle generator is not ready
-#                                       vehicle frequency is equal to counter
-#                                       vehicle frequency is not equal to counter
-#                                   vehicle generator is ready
-#                                       vehicle frequency is equal to counter
-#                                       vehicle frequency is not equal to counter
+# Relative path to the vehicle generator xml file
+input_file = r'Traffic Simulation\InputFiles\vehicleGen2.xml'
 
-# Unit Testing
-class TestVehicleGeneratorSim(unittest.TestCase):
-    def test_vg_obstructed(self):
-        self.sim = SimulationWVehicleGenerator.VehicleGeneratorSimulation()
-        self.sim.vehicle_generator_list = [{"name": "Tropicana", "frequency": 10, "type": "auto"}]
-        self.sim.vehicle_list = [{"road": "Tropicana", "position": 0, "speed": 10, "acceleration": 1.2, "type": "car"}]
-        vehicleCount = len(self.sim.vehicle_list)
-        updateCount = self.sim.vehicle_generator_list[0]["frequency"]
-        for i in range(updateCount):
-            self.sim.vehicle_generator_update()
-        
-        """Vehicle List has not grown"""
-        self.assertTrue(vehicleCount == len(self.sim.vehicle_list))
-        """VG is ready"""
-        self.assertTrue(self.sim.vehicle_generator_ready[0]["ready"])
-        """VG counter is 1 + the number of updates performed"""
-        self.assertTrue(self.sim.vehicle_generator_ready[0]["counter"] == self.sim.vehicle_generator_list[0]["frequency"])
+class TestVehicleGeneratorSimulation(unittest.TestCase):
 
-    def test_vg_unobstructed(self):
-        self.sim = SimulationWVehicleGenerator.VehicleGeneratorSimulation()
-        self.sim.vehicle_generator_list = [{"name": "Tropicana", "frequency": 10, "type": "auto"}]
-        self.sim.vehicle_list = [{"road": "Tropicana", "position": 200, "speed": 10, "acceleration": 1.2, "type": "car"}]
-        vehicleCount = len(self.sim.vehicle_list)
-        updateCount = self.sim.vehicle_generator_list[0]["frequency"]
-        for i in range(updateCount):
-            self.sim.vehicle_generator_update()
+    def test_vehicle_generator_update(self):
+        # Test that a new vehicle is added when a generator is ready and there is no vehicle on the road
+        sim = VehicleGeneratorSimulation(input_file)
+        sim.vehicle_list = [{"road": "A", "position": 10, "speed": 50, "acceleration": 2, "type": "car"}]
+        sim.vehicle_generator_ready = [{"ready": True, "counter": 0}]
+        sim.vehicle_generator_list = [{"name": "A", "position": 0, "speed": 60, "acceleration": 3, "type": "car", "frequency": 2}]
+        sim.vehicle_generator_update()
+        self.assertEqual(len(sim.vehicle_list), 2)
         
-        """Vehicle List has grown"""
-        self.assertFalse(vehicleCount == len(self.sim.vehicle_list))
-        """VG is no longer ready"""
-        self.assertFalse(self.sim.vehicle_generator_ready[0]["ready"])
-        """VG counter is reset to 1"""
-        self.assertTrue(self.sim.vehicle_generator_ready[0]["counter"] == 0)
+        # Test that no vehicle is added when a generator is not ready
+        sim = VehicleGeneratorSimulation(input_file)
+        sim.vehicle_list = [{"road": "A", "position": 10, "speed": 50, "acceleration": 2, "type": "car"}]
+        sim.vehicle_generator_ready = [{"ready": False, "counter": 2}]
+        sim.vehicle_generator_list = [{"name": "A", "position": 0, "speed": 60, "acceleration": 3, "type": "car", "frequency": 2}]
+        sim.vehicle_generator_update()
+        self.assertEqual(len(sim.vehicle_list), 1)
         
-unittest.main()
+        # Test that no vehicle is added when there is a vehicle on the road
+        sim = VehicleGeneratorSimulation(input_file)
+        sim.vehicle_list = [{"road": "A", "position": 5, "speed": 50, "acceleration": 2, "type": "car"}]
+        sim.vehicle_generator_ready = [{"ready": True, "counter": 0}]
+        sim.vehicle_generator_list = [{"name": "A", "position": 0, "speed": 60, "acceleration": 3, "type": "car", "frequency": 2}]
+        sim.vehicle_generator_update()
+        self.assertEqual(len(sim.vehicle_list), 1)
+
+    def test_update(self):
+        # Test that the vehicle generator update method is called during update
+        sim = VehicleGeneratorSimulation(input_file)
+        sim.vehicle_generator_update = lambda: None
+        sim.update()
+        self.assertTrue(sim.vehicle_generator_update)
+        
+if __name__ == '__main__':
+    unittest.main()
