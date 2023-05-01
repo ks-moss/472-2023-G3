@@ -35,4 +35,84 @@ class TestCheckLightState(unittest.TestCase):
         time = 300 # 10 minutes, 20 iterations of the cycle
         self.assertFalse(func.checkLightState(light, time))
 
+class TestElement(unittest.TestCase):
+    
+    # Test element equals
+    def test_correct_element_type(self):
+        elem = func.Element(elementType="TRAFFIC LIGHT")
+        self.assertEqual(elem.elementType, "TRAFFIC LIGHT")
+        
+    # Test element mismatch
+    def test_invalid_element_type(self):
+        with self.assertRaises(AssertionError):
+            elem = func.Element(elementType="INVALID")
+        
+    # Testing adding attributes to elements
+    def test_append_attribute(self):
+        elem = func.Element(attributeTypeList=["color"], attributeValueList=["red"])
+        elem.Append("position", (0,0))
+        self.assertEqual(elem["position"], (0,0))
+        
+    # Testing getter
+    def test_get_existing_attribute(self):
+        elem = func.Element(attributeTypeList=["color"], attributeValueList=["red"])
+        self.assertEqual(elem["color"], "red")
+        
+    # Test getter (element that does not exist)
+    def test_get_nonexisting_attribute(self):
+        elem = func.Element(attributeTypeList=["color"], attributeValueList=["red"])
+        with self.assertRaises(AssertionError):
+            elem["position"]
+
+    # Testing empty attributes        
+    def test_empty_attribute_lists(self):
+        elem = func.Element()
+        self.assertEqual(len(elem.attributeListDictionary), 0)
+
+
+
+#from your_module import YourClass
+
+class Test(unittest.TestCase):
+    
+    def test_generateSimpleOutputString(self):
+        
+        # create sample data
+        func.roadList = [
+            {"name": "road1", "length": 5},
+            {"name": "road2", "length": 3}
+        ]
+        func.vehicleList = [
+            {"type": "car", "road": "road1", "position": 2},
+            {"type": "bus", "road": "road1", "position": 4},
+            {"type": "fire truck", "road": "road2", "position": 1},
+            {"type": "ambulance", "road": "road2", "position": 2},
+        ]
+        func.trafficLightList = [
+            {"road": "road1", "position": 1, "state": "green"},
+            {"road": "road1", "position": 3, "state": "red"},
+            {"road": "road2", "position": 0, "state": "green"}
+        ]
+        func.busStopList = [
+            {"road": "road1", "position": 0},
+            {"road": "road2", "position": 2}
+        ]
+        
+        # call the method with a specific time
+        output = func.generateSimpleOutputString(10)
+        
+        # check the output string
+        expected_output = (
+            "\nroad1\n"
+            " > road          |=C==B|\n"
+            " > trafficLights |G R  |\n"
+            " > bus stops     | B   |\n"
+            "\nroad2\n"
+            " > road          |= ==|\n"
+            " > trafficLights |G   |\n"
+            " > bus stops     |   B|\n"
+        )
+        self.assertEqual(output, expected_output)
+
+
 unittest.main()
