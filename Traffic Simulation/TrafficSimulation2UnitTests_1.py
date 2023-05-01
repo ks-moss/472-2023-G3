@@ -16,7 +16,7 @@ class TestCheckLightState(unittest.TestCase):
         light = {
             "cycle": 15 # 15 seconds cycle
         }
-        time = 35 # 3rd iteration of the cycle
+        time = 45 # 3rd iteration of the cycle
         self.assertTrue(func.checkLightState(light, time))
     
     #Tests light at at time 0
