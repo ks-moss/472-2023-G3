@@ -1,6 +1,6 @@
 import unittest
-import VehicleCalculations
-from BusStopSimulation import busStopSimulation
+from src import VehicleCalculations
+from src.BusStopSimulation import busStopSimulation
 
 class TestBusStopSimulation(unittest.TestCase):
 

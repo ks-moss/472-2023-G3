@@ -1,4 +1,4 @@
-import VehicleCalculations
+from src import VehicleCalculations
 import datetime
 import time
 # Goal: Simulating traffic lights

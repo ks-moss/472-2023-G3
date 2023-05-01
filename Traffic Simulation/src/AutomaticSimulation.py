@@ -1,9 +1,9 @@
 # 3.3
-from TrafficSimulation2 import *
-from VehicleCalculations import calculateVehicleSpeedAndPosition, calculateVehicleOOB
-from TrafficLightSimulation  import trafficLightInteraction
-from SimulationIntersection import turnVehiclesAtIntersection
-from BusStopSimulation import *
+from .TrafficSimulation2 import *
+from .VehicleCalculations import calculateVehicleSpeedAndPosition, calculateVehicleOOB
+from .TrafficLightSimulation  import trafficLightInteraction
+from .SimulationIntersection import turnVehiclesAtIntersection
+from .BusStopSimulation import *
 import os
 import time
 import __main__

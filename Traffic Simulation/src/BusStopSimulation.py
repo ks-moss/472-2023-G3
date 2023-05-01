@@ -1,4 +1,4 @@
-import VehicleCalculations
+from src import VehicleCalculations
 import datetime
 
 # Vehicles adapt depending on bus stops

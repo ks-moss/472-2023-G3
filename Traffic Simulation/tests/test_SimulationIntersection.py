@@ -1,4 +1,4 @@
-import SimulationIntersection as func
+import src.SimulationIntersection as func
 import unittest
 import random
 
@@ -28,4 +28,5 @@ class TestTurnVehiclesAtIntersection(unittest.TestCase):
         func.turnVehiclesAtIntersection(intersection_list, 1, vehicles_list)
         self.assertListEqual(vehicles_list, [{"road": "A", "position": 1}, {"road": "A", "position": 1}])
 
-unittest.main()
+if __name__ == '__main__':
+    unittest.main()
