@@ -1,6 +1,11 @@
+import sys
+import os
+
+FILE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(FILE_DIR))
+
 from src import VehicleCalculations
-import datetime
-import time
+
 # Goal: Simulating traffic lights
 # Precondition: The system contains a diagram of the virtual road network. There is a traffic light on a road.
 # Postcondition: Vehicles adapt depending on the state of the traffic light.

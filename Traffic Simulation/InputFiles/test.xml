@@ -7,4 +7,18 @@
         <name>E Wigwam Ave</name>
         <length>100</length>
     </ROAD>
+    <CROSSROADS>
+        <road position="-5">S Eastern Ave</road>
+        <road position="-50">E Wigwam Ave</road>
+    </CROSSROADS>
+    <BUSSTOP>
+        <road>E Wigwam Ave</road>
+        <position>75</position>
+        <waitingtime>10</waitingtime>
+    </BUSSTOP>
+    <BUSSTOP>
+        <road>S Eastern Ave</road>
+        <position>75</position>
+        <waitingtime>10</waitingtime>
+    </BUSSTOP>
 </root>

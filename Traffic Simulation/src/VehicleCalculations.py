@@ -1,4 +1,10 @@
-from .TrafficSimulation2 import TrafficSystem
+import sys
+import os
+
+FILE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(FILE_DIR))
+
+from src.TrafficSimulation2 import TrafficSystem
 import math
 import json
 

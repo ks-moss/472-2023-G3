@@ -1,5 +1,10 @@
+import sys
+import os
+
+FILE_DIR = os.path.dirname(os.path.abspath(__file__))
+sys.path.append(os.path.dirname(FILE_DIR))
+
 from src import VehicleCalculations
-import datetime
 
 # Vehicles adapt depending on bus stops
 # Parameters:
